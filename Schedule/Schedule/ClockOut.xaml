@@ -1,0 +1,15 @@
+﻿<Window x:Class="Schedule.ClockOut"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Schedule"
+        mc:Ignorable="d"
+        Title="ClockOut" Height="350" Width="525">
+    <Grid>
+        <ComboBox x:Name="Hour" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="85,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
+        <ComboBox x:Name="Minute" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="200,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
+        <ComboBox x:Name="AMPM" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="314,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
+        <Button x:Name="ClockOutButton" Content="Clock Out" HorizontalAlignment="Left" Margin="200,223,0,0" VerticalAlignment="Top" Width="86" Height="39" Click="ClockOut_Click"/>
+    </Grid>
+</Window>

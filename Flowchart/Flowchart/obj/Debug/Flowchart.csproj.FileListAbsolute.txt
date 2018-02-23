@@ -1,0 +1,17 @@
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\bin\Debug\Flowchart.exe.config
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\bin\Debug\Flowchart.exe
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\bin\Debug\Flowchart.pdb
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.csprojResolveAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\MainWindow.g.cs
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\App.g.cs
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart_MarkupCompile.cache
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart_MarkupCompile.lref
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\MainWindow.baml
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.g.resources
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.Properties.Resources.resources
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.csproj.GenerateResource.Cache
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.exe
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.pdb
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Chart.g.cs
+C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Chart.baml
