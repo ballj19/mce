@@ -73,48 +73,10 @@ namespace mods
             foreach (var item in ListBox1.SelectedItems)
             {
                 Console.WriteLine(item.ToString());
-                Process.Start("C:\\Program Files\\Notepad++\\notepad++.exe", "G:\\Software\\" + item.ToString());
-                System.Threading.Thread.Sleep(1000);
-                Process.Start("C:\\CW32\\cw32.exe", "G:\\Software\\" + item.ToString());
+                Process.Start(Properties.Settings.Default.TextEditor.ToString(), "G:\\Software\\" + item.ToString());
             }
         }
-
-        private void Archive_Click(object sender, RoutedEventArgs e)
-        {
-            string createdFileString = "";
-            foreach (var item in ListBox1.SelectedItems)
-            {
-                string itemString = item.ToString();
-                int extensionIndex = itemString.IndexOf(".");
-                bool oldCheck = false;
-                int oldNum = 0;
-                string newFileName = "";
-                while (!oldCheck)
-                {
-                    try
-                    {
-                        if (oldNum == 0)
-                        {
-                            newFileName = itemString.Substring(0, extensionIndex) + ".OLD";
-                        }
-                        else
-                        {
-                            newFileName = itemString.Substring(0, extensionIndex) + ".OLD" + oldNum;
-                        }
-                        File.Copy("G:\\Software\\Product\\" + itemString, "G:\\Software\\Product\\" + newFileName);
-                        oldCheck = true;
-                    }
-                    catch
-                    {
-                        oldNum++;
-                    }
-                }
-                createdFileString += newFileName + " was created.\n";
-            }
-            MessageBox.Show(createdFileString);
-            //SearchFiles();
-        }
-
+        
         private void ModDocs_Click(object sender, RoutedEventArgs e)
         {
             if(TextBox1.Text == "")
@@ -398,7 +360,7 @@ namespace mods
                 }
             }
 
-            JobInfo.Text += "Spare Outputs:\n";
+            JobInfo.Text += "\nSpare Outputs:\n";
 
             for (int x = 0; x < 4; x++)
             {
@@ -768,7 +730,7 @@ namespace mods
         private void Track_Mod()
         {
             Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("C:\\Users\\Jacob.Ball\\Desktop\\Trac_Mod.xlsm",0,true);
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm",0,true);
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
@@ -833,12 +795,6 @@ namespace mods
         {
             SettingsWindow settingsWindow = new SettingsWindow(this);
             settingsWindow.Show();
-        }
-
-        private void Automate_Click(object sender, RoutedEventArgs e)
-        {
-            Procedure proc = new Procedure("Product\\MP2COC\\C45215a.asm");
-            proc.Show();
         }
     }
 }

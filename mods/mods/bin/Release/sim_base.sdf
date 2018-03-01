@@ -1577,7 +1577,7 @@ Value= No
 Value= No
 
 [AFECheckBox]
-Value= No
+Value= Yes
 
 [LCDCheckBox]
 Value= No
@@ -1630,11 +1630,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -1760,7 +1760,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -1996,11 +1996,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2126,7 +2126,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -2164,11 +2164,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2294,7 +2294,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -2356,11 +2356,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2486,7 +2486,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -2524,11 +2524,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2654,7 +2654,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -2692,11 +2692,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2822,7 +2822,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -2860,11 +2860,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -2990,7 +2990,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -3148,11 +3148,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -3278,7 +3278,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -3664,11 +3664,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -3794,7 +3794,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -4054,11 +4054,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -4184,7 +4184,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -4318,11 +4318,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -4448,7 +4448,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -4822,11 +4822,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -4952,7 +4952,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -5266,11 +5266,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -5396,7 +5396,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -5602,11 +5602,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -5732,7 +5732,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -6010,11 +6010,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -6140,7 +6140,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -6817,11 +6817,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -6947,7 +6947,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -6985,11 +6985,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -7115,7 +7115,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -7207,11 +7207,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -7337,7 +7337,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -7375,11 +7375,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -7505,7 +7505,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -7543,11 +7543,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -7673,7 +7673,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -8059,11 +8059,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -8189,7 +8189,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -8227,11 +8227,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -8357,7 +8357,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -8395,11 +8395,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -8525,7 +8525,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0
@@ -8599,11 +8599,11 @@ ValueW= 441
 ValueH= 242
 
 [AFEForm]
-Visible= 0
-ValueL= 434
-ValueT= 360
-ValueW= 257
-ValueH= 100
+Visible= 1
+ValueL= 1030
+ValueT= 365
+ValueW= 270
+ValueH= 105
 
 [CANCommForm]
 Visible= 0
@@ -8729,7 +8729,7 @@ Visible= 1
 ValueL= 4
 ValueT= 649
 ValueW= 865
-ValueH= 221
+ValueH= 350
 
 [SpareOutputsForm]
 Visible= 0

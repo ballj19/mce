@@ -11,5 +11,8 @@
         <TextBlock x:Name="CursorPosition" HorizontalAlignment="Left" Margin="114,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Height="22"/>
         <Button x:Name="Simulate" Content="Simulate" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="99" Click="Simulate_Click"/>
         <TextBlock x:Name="ProcedureLog" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="472" Height="673" x:FieldModifier="public"/>
+        <CheckBox x:Name="CarCallsBox" Content="Car Calls" HorizontalAlignment="Left" Margin="114,40,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="FireServiceBox" Content="Fire Service" HorizontalAlignment="Left" Margin="187,40,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="DLMBox" Content="DLM" HorizontalAlignment="Left" Margin="271,40,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

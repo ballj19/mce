@@ -21,7 +21,7 @@ namespace mods
         {
             this.index = 0;
 
-            string[] lines = System.IO.File.ReadAllLines(@"sim_base.sdf");
+            string[] lines = System.IO.File.ReadAllLines(@"C:\\Simulator\\default.sdf");
             this.sim_base = lines.ToList();
 
             this.filepath = filepath;

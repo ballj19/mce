@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="Modification Hub" Height="800" Width="900">
+        Title="Modification Hub by Jake Ball" Height="800" Width="900">
     <Grid Margin="0,0,0,0" Height="1080" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -16,18 +16,17 @@
         <Button Content="Search" HorizontalAlignment="Left" Margin="298,41,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
         <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,37,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
-        <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="183" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
+        <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="157" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
         <Button Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
-        <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
-        <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,254,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
-        <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,227,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
-        <Button x:Name="Archive" Content="Archive" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="Archive_Click" Height="22"/>
+        <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,148,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
+        <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,228,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
+        <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,40,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
-        <Button x:Name="ShowPrints" Content="Job Folder" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
+        <Button x:Name="ShowPrints" Content="Job Folder" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" Margin="420,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="562" Height="703"/>
-        <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
+        <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,121,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
         <TextBox x:Name="LandingLevels" Margin="75,328,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="40" Height="18"/>
-        <TextBox x:Name="LandingConfig" Margin="113,328,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="65" Height="18" RenderTransformOrigin="0.5,0.5">
+        <TextBox x:Name="LandingConfig" Margin="113,328,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="103" Height="18" RenderTransformOrigin="0.5,0.5">
             <TextBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -40,7 +39,6 @@
         <Label x:Name="LandingConfigHeader" Margin="75,300,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Landing Configuration" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="142" Height="30"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
         <Button x:Name="OpenSettings" Content="Settings" HorizontalAlignment="Left" Margin="789,10,0,0" VerticalAlignment="Top" Width="75" Click="OpenSettings_Click"/>
-        <Button x:Name="Automate" Content="Automate" HorizontalAlignment="Left" Margin="709,10,0,0" VerticalAlignment="Top" Width="75" Click="Automate_Click"/>
     </Grid>
 
 </Window>

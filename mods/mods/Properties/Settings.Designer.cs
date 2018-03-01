@@ -47,5 +47,17 @@ namespace mods.Properties {
                 this["Username"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\CW32\\\\cw32.exe")]
+        public string TextEditor {
+            get {
+                return ((string)(this["TextEditor"]));
+            }
+            set {
+                this["TextEditor"] = value;
+            }
+        }
     }
 }

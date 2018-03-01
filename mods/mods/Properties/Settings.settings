@@ -9,5 +9,8 @@
     <Setting Name="Username" Type="System.String" Scope="User">
       <Value Profile="(Default)">Username</Value>
     </Setting>
+    <Setting Name="TextEditor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\\CW32\\cw32.exe</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
