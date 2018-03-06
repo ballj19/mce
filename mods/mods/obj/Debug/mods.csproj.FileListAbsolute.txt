@@ -36,3 +36,5 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.csproj.GenerateRes
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.exe
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.pdb
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.baml

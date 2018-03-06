@@ -12,9 +12,6 @@
         <TextBox x:Name="Username" Text="" HorizontalAlignment="Left" Height="23" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148"/>
         <Label Content="Username" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="27"/>
         <Label Content="Add nicknames separated by ;" HorizontalAlignment="Left" Margin="158,22,0,0" VerticalAlignment="Top" Height="25"/>
-        <TextBox x:Name="TextEditorBox" HorizontalAlignment="Left" Height="23" Margin="10,83,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="215"/>
-        <Label Content="Text Editor" HorizontalAlignment="Left" Margin="10,57,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="Browse" Content="Browse" HorizontalAlignment="Left" Margin="230,84,0,0" VerticalAlignment="Top" Width="75" Click="Browse_Click"/>
 
     </Grid>
 </Window>

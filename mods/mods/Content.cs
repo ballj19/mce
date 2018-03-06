@@ -62,11 +62,22 @@ namespace mods
             {
                 if (line == "")
                 {
-                    //empty line, do noting
+                    //empty line, do nothing
                 }
                 else
                 {
-                    content.Add(line);
+                    //Need this logic because sometimes the first byte is defined on the same line as the label - inconsistently
+                    //So we force the defined byte onto the next line always
+                    if (line.Contains(":") && !line.EndsWith(":"))
+                    {
+                        int colonIndex = line.IndexOf(":");
+                        content.Add(line.Substring(0, colonIndex + 1).Trim());
+                        content.Add(line.Substring(colonIndex + 1, line.Length - colonIndex - 1).Trim());
+                    }
+                    else
+                    {
+                        content.Add(line);
+                    }
                 }
             }
 
@@ -385,85 +396,48 @@ namespace mods
                 ioLabels = this.outputLabels;
             }
 
+            string[] labelNumbers = { "", "2", "3", "4" };
+
             foreach (string ioLabel in ioLabels)
             {
-                if (this.content.FindIndex(x => x.StartsWith(ioLabel + ":")) != -1)
+                foreach (string labelNumber in labelNumbers)
                 {
-                    int io_index = this.content.FindIndex(x => x.StartsWith(ioLabel + ":"));
-                    for (int x = 0; x < 8; x++)
+                    if (this.content.FindIndex(x => x.StartsWith(ioLabel + labelNumber + ":")) != -1)
                     {
-                        int iomap_index = io_index + x + 1;
-                        string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
-
-                        for (int y = 0; y < 8; y++)
+                        int io_index = this.content.FindIndex(x => x.StartsWith(ioLabel + labelNumber + ":"));
+                        for (int x = 0; x < 8; x++)
                         {
-                            if (io == 'I')
-                            {
-                                if (iomap_binary[7 - y] == '1')
-                                {
-                                    ios[io_x, io_y] = iomap[x, 7 - y];
-                                    io_y--;
+                            int iomap_index = io_index + x + 1;
+                            string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
 
-                                    if (io_y == -1)
+                            for (int y = 0; y < 8; y++)
+                            {
+                                if (io == 'I')
+                                {
+                                    if (iomap_binary[7 - y] == '1')
                                     {
-                                        io_x++;
-                                        io_y = 7;
+                                        ios[io_x, io_y] = iomap[x, 7 - y];
+                                        io_y--;
+
+                                        if (io_y == -1)
+                                        {
+                                            io_x++;
+                                            io_y = 7;
+                                        }
                                     }
                                 }
-                            }
-                            else //This is needed because outputs get added in reverse
-                            {
-                                if (iomap_binary[y] == '1')
+                                else //This is needed because outputs get added in reverse
                                 {
-                                    ios[io_x, io_y] = iomap[x, y];
-                                    io_y--;
-
-                                    if (io_y == -1)
+                                    if (iomap_binary[y] == '1')
                                     {
-                                        io_x++;
-                                        io_y = 7;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                        ios[io_x, io_y] = iomap[x, y];
+                                        io_y--;
 
-                if (this.content.FindIndex(x => x.StartsWith(ioLabel + "2:")) != -1)
-                {
-                    int io2_index = this.content.FindIndex(x => x.StartsWith(ioLabel + "2:"));
-                    for (int x = 0; x < 8; x++)
-                    {
-                        int iomap_index = io2_index + x + 1;
-                        string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
-
-                        for (int y = 0; y < 8; y++)
-                        {
-                            if (io == 'I')
-                            {
-                                if (iomap_binary[7 - y] == '1')
-                                {
-                                    ios[io_x, io_y] = iomap[x+8, 7 - y];
-                                    io_y--;
-
-                                    if (io_y == -1)
-                                    {
-                                        io_x++;
-                                        io_y = 7;
-                                    }
-                                }
-                            }
-                            else //This is needed because outputs get added in reverse
-                            {
-                                if (iomap_binary[y] == '1')
-                                {
-                                    ios[io_x, io_y] = iomap[x+8, y];
-                                    io_y--;
-
-                                    if (io_y == -1)
-                                    {
-                                        io_x++;
-                                        io_y = 7;
+                                        if (io_y == -1)
+                                        {
+                                            io_x++;
+                                            io_y = 7;
+                                        }
                                     }
                                 }
                             }
@@ -519,5 +493,295 @@ namespace mods
 
             return number_of_cars;
         }
+
+        private void Build_LobbyMap(string file)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (string filepath in filepaths)
+            {
+                try
+                {
+                    string path = filepath + file;
+                    lines = System.IO.File.ReadAllLines(@path).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            if (lines.FindIndex(x => x.StartsWith("LOBBY:")) != -1)
+            {
+                int lobbyIndex = lines.FindIndex(x => x.StartsWith("LOBBY:"));
+
+                //Configuration A:  XXXX-XXXX-XXXX-XXXX
+                //Configuration B:  Bits 0-7 = X
+                //Configuration C:  Bits 0-3 = X or Bits 4-7 = X
+                //Configuration D:  Should Always Be X
+                //Configuration E:  000H = X
+                //Configuration F:  XXXX-XXXX-XXXX Bits 5-0
+                //Configuration Z:  Not Used
+            }
+        }
+
+        private List<string> NC_Input_Map(string file)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (string filepath in filepaths)
+            {
+                try
+                {
+                    string path = filepath + file;
+                    lines = System.IO.File.ReadAllLines(@path).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            List<string> ncinputs = new List<string>();
+
+            if (lines.FindIndex(x => x.StartsWith("NIOINS:")) != -1)
+            {
+                int io_index = lines.FindIndex(i => i.StartsWith("NIOINS:"));
+                int x = 0;
+                int iomap_index = io_index + x + 1;
+
+                while (lines[iomap_index].Trim().StartsWith("DB"))
+                {
+                    int comment_index = lines[iomap_index].IndexOf(';');
+                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                    bool building = false;
+                    StringBuilder ioCode = new StringBuilder();
+
+                    for (int c = 0; c < comment_string.Length; c++)
+                    {
+                        if (building)
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                            }
+                            else
+                            {
+                                ncinputs.Add(ioCode.ToString());
+                                ioCode.Clear();
+                                building = false;
+                            }
+                        }
+                        else
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                                building = true;
+                            }
+                            else
+                            {
+                                //do nothing
+                            }
+                        }
+                    }
+                    ncinputs.Add(ioCode.ToString());
+                    ioCode.Clear();
+                    building = false;
+                    x++;
+                    iomap_index = io_index + x + 1;
+                }
+            }
+
+            return ncinputs;
+        }
+
+        private List<string> NC_Output_Map(string file)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (string filepath in filepaths)
+            {
+                try
+                {
+                    string path = filepath + file;
+                    lines = System.IO.File.ReadAllLines(@path).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            List<string> ncoutputs = new List<string>();
+
+            if (lines.FindIndex(x => x.StartsWith("NIOOUTS:")) != -1)
+            {
+                int io_index = lines.FindIndex(i => i.StartsWith("NIOOUTS:"));
+                int x = 0;
+                int iomap_index = io_index + x + 1;
+
+                while (lines[iomap_index].Trim().StartsWith("DB"))
+                {
+                    int comment_index = lines[iomap_index].IndexOf(';');
+                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                    bool building = false;
+                    StringBuilder ioCode = new StringBuilder();
+
+                    for (int c = 0; c < comment_string.Length; c++)
+                    {
+                        if (building)
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                            }
+                            else
+                            {
+                                ncoutputs.Add(ioCode.ToString());
+                                ioCode.Clear();
+                                building = false;
+                            }
+                        }
+                        else
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                                building = true;
+                            }
+                            else
+                            {
+                                //do nothing
+                            }
+                        }
+                    }
+                    ncoutputs.Add(ioCode.ToString());
+                    ioCode.Clear();
+                    building = false;
+                    x++;
+                    iomap_index = io_index + x + 1;
+                }
+            }
+
+            return ncoutputs;
+        }
+
+        public List<string> NC_Inputs(string file)
+        {
+            List<string> ncinputs = new List<string>();
+            List<string> ncinputsmap = NC_Input_Map(file);
+
+            if (this.content.FindIndex(x => x.StartsWith("NIOINS:")) != -1)
+            {
+                int io_index = this.content.FindIndex(x => x.StartsWith("NIOINS:"));
+                for (int x = 0; x < ncinputsmap.Count/8; x++)
+                {
+                    int iomap_index = io_index + x + 1;
+                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (iomap_binary[7 - y] == '1')
+                        {
+                            ncinputs.Add(ncinputsmap[x * 8 + 7 - y]);
+                        }
+                    }
+                }
+            }
+
+            return ncinputs;
+        }
+
+        public List<string> NC_Outputs(string file)
+        {
+            List<string> ncoutputs = new List<string>();
+            List<string> ncoutputsmap = NC_Output_Map(file);
+
+            if (this.content.FindIndex(x => x.StartsWith("NIOOUTS:")) != -1)
+            {
+                int io_index = this.content.FindIndex(x => x.StartsWith("NIOOUTS:"));
+                for (int x = 0; x < ncoutputsmap.Count / 8; x++)
+                {
+                    int iomap_index = io_index + x + 1;
+                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (iomap_binary[7 - y] == '1')
+                        {
+                            ncoutputs.Add(ncoutputsmap[x * 8 + 7 - y]);
+                        }
+                    }
+                }
+            }
+
+            return ncoutputs;
+        }
+
+        private static readonly Dictionary<string, string> LobbyConfig = new Dictionary<string, string> {
+            {"00","BB" },
+            {"01","AC" },
+            {"02","AC" },
+            {"03","DD" },
+            {"04","CC" },
+            {"05","DD" },
+            {"06","AA" },
+            {"07","AA" },
+            {"08","AA" },
+            {"09","AC" },
+            {"0A","AA" },
+            {"0B","AA" },
+            {"0C","AA" },
+            {"0D","AA" },
+            {"0E","AA" },
+            {"0F","AC" },
+            {"10","AA" },
+            {"11","AA" },
+            {"12","AA" },
+            {"13","AA" },
+            {"14","AA" },
+            {"15","AA" },
+            {"16","AA" },
+            {"17","AA" },
+            {"18","AA" },
+            {"19","AA" },
+            {"1A","AC" },
+            {"1B","AA" },
+            {"1C","AA" },
+            {"1D","AA" },
+            {"1E","AA" },
+            {"1F","AC" },
+            {"20","EE" },
+            {"21","AA" },
+            {"22","AA" },
+            {"23","AA" },
+            {"24","AA" },
+            {"25","AA" },
+            {"26","AA" },
+            {"27","CC" },
+            {"28","CC" },
+            {"29","AC" },
+            {"2A","FF" },
+            {"2B","AC" },
+            {"2C","DD" },
+            {"2D","BB" },
+            {"2E","BB" },
+            {"2F","AA" },
+            {"30","AC" },
+            {"31","CC" },
+            {"32","FF" },
+            {"33","ZC" },
+            {"34","BB" },
+            {"35","ZC" },
+            {"36","EE" },
+            {"37","CC" },
+            {"38","" },
+            {"39","" },
+            {"3A","" },
+            {"3B","" },
+            {"3C","" },
+            {"3D","" },
+        };
     }
 }

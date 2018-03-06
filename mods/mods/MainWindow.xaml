@@ -16,30 +16,49 @@
         <Button Content="Search" HorizontalAlignment="Left" Margin="298,41,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
         <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,37,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
-        <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="157" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
+        <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="184" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
         <Button Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
-        <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,148,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
-        <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,228,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
-        <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
+        <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,175,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
+        <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,255,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
+        <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,228,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,40,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
-        <Button x:Name="ShowPrints" Content="Job Folder" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
-        <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" Margin="420,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="562" Height="703"/>
-        <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,121,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
-        <TextBox x:Name="LandingLevels" Margin="75,328,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="40" Height="18"/>
-        <TextBox x:Name="LandingConfig" Margin="113,328,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="103" Height="18" RenderTransformOrigin="0.5,0.5">
-            <TextBox.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="0.22"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </TextBox.RenderTransform>
-        </TextBox>
-        <Label x:Name="LandingConfigHeader" Margin="75,300,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Landing Configuration" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="142" Height="30"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
-        <Button x:Name="OpenSettings" Content="Settings" HorizontalAlignment="Left" Margin="789,10,0,0" VerticalAlignment="Top" Width="75" Click="OpenSettings_Click"/>
-    </Grid>
+        <Button x:Name="OpenFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="OpenFolder_Click"/>
+        <Button x:Name="ShowPrints" Content="Job Folder" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
+        <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,148,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
+        <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="378" Height="482" Margin="19,282,0,0"></TextBlock>
+        <TabControl Margin="413,41,0,0">
+            <TabItem Name="LandingsTab" Header="Landings">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label x:Name="LandingNormalHeader" Margin="56,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Normal" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
+                        <Label x:Name="LandingAltHeader" Margin="-2,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Alternate" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="LandingLevels" Margin="10,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="48" Height="18"/>
+                        <TextBox x:Name="LandingNormalConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
+                        <TextBox x:Name="LandingAltConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Name="IOTab" Header="Inputs/Outputs">
+                <TextBlock x:Name="IOInfo" HorizontalAlignment="Left" Margin="20,20,-93,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="562" Height="703"/>
+            </TabItem>
+            <TabItem Name="HeaderTab" Header="Headers">
+                <StackPanel Name="HeaderSP" Orientation="Horizontal">
 
+                </StackPanel>
+            </TabItem>
+            <TabItem Name="SettingsTab" Header="Settings">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Username" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="27"/>
+                    <TextBox x:Name="Username" Text="" HorizontalAlignment="Left" Height="23" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148"/>
+                    <Label Content="Add nicknames separated by ;" HorizontalAlignment="Left" Margin="158,-25,0,0" VerticalAlignment="Top" Height="25" RenderTransformOrigin="0.509,1.52"/>
+                    <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="257,20,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
+    </Grid>
 </Window>
 

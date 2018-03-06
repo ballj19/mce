@@ -65,6 +65,7 @@ namespace mods
             int aiox_index = 1561;
             int ce_index = 1564;
             int flex_index = 1567;
+            int dlm_index = 1591;
             int spare1_index = 7878;
             int eof_index = 8753;
 
@@ -78,6 +79,7 @@ namespace mods
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
             string ncBoard = content.Get_Bit("LOBBY:", 33, 1, 2);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 2);
             string[,] inputs = content.inputs;
 
             Write_Intermediate(number_of_landings_index);
@@ -100,6 +102,8 @@ namespace mods
             Write_CE_Board();
             Write_Intermediate(flex_index);
             Write_FLEX_Board();
+            Write_Intermediate(dlm_index);
+            Write_DLM_Board();
             Write_Intermediate(spare1_index);
             Write_Inputs(inputs);
             Write_Intermediate(eof_index);
@@ -278,6 +282,18 @@ namespace mods
         private void Write_FLEX_Board()
         {
             if (content.Get_Bit("BOTTOM:", 6, 1, 3) == "YES")
+            {
+                Write_Line("Value = Yes");
+            }
+            else
+            {
+                Write_Line("Value = No");
+            }
+        }
+
+        private void Write_DLM_Board()
+        {
+            if (content.Get_Bit("LOBBY:", 39, 0, 2) == "YES")
             {
                 Write_Line("Value = Yes");
             }

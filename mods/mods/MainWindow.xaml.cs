@@ -32,6 +32,7 @@ namespace mods
         public MainWindow()
         {
             InitializeComponent();
+            Username.Text = Properties.Settings.Default.Username;
             ListBox1.SelectionMode = SelectionMode.Extended;
             FileExtension.Items.Add(".asm");
             FileExtension.Items.Add(".old");
@@ -70,10 +71,18 @@ namespace mods
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            foreach (var item in ListBox1.SelectedItems)
+            if (ListBox1.SelectedItems.Count > 0)
             {
-                Console.WriteLine(item.ToString());
-                Process.Start(Properties.Settings.Default.TextEditor.ToString(), "G:\\Software\\" + item.ToString());
+                foreach (var item in ListBox1.SelectedItems)
+                {
+                    string cmd = "C:\\Windows\\explorer.exe";
+                    string arg = "G:\\Software\\" + ListBox1.SelectedItem.ToString();
+                    Process.Start(cmd, arg);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please Select an Item from the List");
             }
         }
         
@@ -275,29 +284,38 @@ namespace mods
         {
             Content content = new mods.Content(file);
 
+            DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
             string jobName = content.Get_String("JBNAME:", 1);
             string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
             string topFloorDecimal = (content.HexStringToDecimal(topFloor) + 1).ToString();
             string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
             string botFloorDecimal = (content.HexStringToDecimal(botFloor) + 1).ToString();
+            string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
+            string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
             string i4o = content.Get_Nibble("LOBBY:", 40, 1);
             string iox = content.Get_Nibble("LOBBY:", 40, 0);
             string aiox = content.Get_Nibble("LOBBY:", 52, 0);
+            string callbnu = content.Get_Nibble("LOBBY:", 41, 1);
             string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
-            string ncBoard = content.Get_Bit("LOBBY:", 33, 1, 2);
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 2);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
-            string[,] inputs = content.inputs;
-            string[,] outputs = content.outputs;
 
-            Draw_Landing_Preview(content);
-
+            //Job Info
             JobInfo.Text = "";
-            JobInfo.Text += file + "\n\n";
+            JobInfo.Text += file + "\n";
+            JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
             JobInfo.Text += jobName + "\n\n";
-            JobInfo.Text += "Top Floor: " + topFloor + "\t\t(" + topFloorDecimal + ")" + "\n";
-            JobInfo.Text += "Bottom Floor: " + botFloor + "\t(" + botFloorDecimal + ")" + "\n\n";
-            JobInfo.Text += "Independed Rear Doors: " + rearDoor + "\n\n";
+            JobInfo.Text += "Top Floor: " + topFloorDecimal + "\n";
+            JobInfo.Text += "Bottom Floor: " + botFloorDecimal + "\n\n";
+            JobInfo.Text += "Independent Rear Doors: " + rearDoor + "\n";
+            JobInfo.Text += "Security: " + Security(content) + "\n";
+            JobInfo.Text += "False Floors: " + falseFloors + "\n";
+            JobInfo.Text += "Nudging: " + nudging + "\n";
+
+            //Hardware
+            JobInfo.Text += "\n";
+            JobInfo.Text += "# of CALL Boards: " + callbnu + "\n";
             JobInfo.Text += "# of IOX Boards: " + iox + "\n";
             JobInfo.Text += "# of I4O Boards: " + i4o + "\n";
             JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
@@ -305,97 +323,14 @@ namespace mods
             JobInfo.Text += "NC Board: " + ncBoard + "\n";
             JobInfo.Text += "FT Board: " + ftBoard + "\n\n";
 
-            JobInfo.Text += "Spare Inputs:\n";
+            //Landings
+            Draw_Landing_Preview(content);
 
-            for (int x = 0; x < 8; x++)
-            {
-                string inputLine = "";
+            //Inputs and Outputs
+            Generate_IO(content,file);
 
-                for (int y = 0; y < 8; y++)
-                {
-                    string hyphen = "";
-                    if (y == 7)
-                    {
-                        if (x == 3)
-                        {
-                            hyphen = "\n\n";
-                        }
-                        else
-                        {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (inputs[x, y] == null)
-                    {
-                        inputLine += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        inputLine += inputs[x, y] + hyphen;
-                    }
-                }
-
-                if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
-                {
-                    if (x == 4)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        JobInfo.Text += inputLine;
-                    }
-                }
-                else
-                {
-                    JobInfo.Text += inputLine;
-                }
-            }
-
-            JobInfo.Text += "\nSpare Outputs:\n";
-
-            for (int x = 0; x < 4; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    string hyphen = "";
-                    if (y == 7)
-                    {
-                        if (x == 3)
-                        {
-                            hyphen = "\n\n";
-                        }
-                        else
-                        {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (outputs[x, 7 - y] == null)
-                    {
-                        JobInfo.Text += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        JobInfo.Text += outputs[x, 7 - y] + hyphen;
-                    }
-                }
-            }
+            //Headers
+            Generate_Headers(content);
         }
 
         private void MP2OGM_JobInfo(string file)
@@ -412,11 +347,15 @@ namespace mods
             LandingLevels.Height = 0;
             LandingLevels.BorderThickness = new System.Windows.Thickness(0);
 
-            LandingConfig.Text = "";
-            LandingConfig.Height = 0;
-            LandingConfig.BorderThickness = new System.Windows.Thickness(0);
+            LandingNormalConfig.Text = "";
+            LandingNormalConfig.Height = 0;
+            LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
+            LandingAltConfig.Text = "";
+            LandingAltConfig.Height = 0;
+            LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
 
-            LandingConfigHeader.Visibility = Visibility.Hidden;
+            LandingNormalHeader.Visibility = Visibility.Hidden;
+            LandingAltHeader.Visibility = Visibility.Hidden;
 
             //Draw_Group_Landing_Preview(content);
 
@@ -567,11 +506,9 @@ namespace mods
                     Simulator sim = new Simulator(item.ToString());
                     message += "File Created: " + sim.Write_File() + "\n";
                 }
-
             }
 
             MessageBox.Show(message);
-
         }
 
         public void Update_Search_History()
@@ -638,8 +575,92 @@ namespace mods
             }
         }
 
+        private string Security(Content content)
+        {
+            string security = "";
+
+            bool BSI = false;
+            bool SECRTY = false;
+            bool CRTLOK = false;
+            bool SECUR = false;
+            bool NEWSECRTY = false;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int i2 = 0; i2 < 8; i2++)
+                {
+                    if (content.inputs[i, i2] == "BSI")
+                    {
+                        BSI = true;
+                    }
+                }
+            }
+
+            if(content.Get_Bit("LOBBY:",31,0,0) == "YES")
+            {
+                NEWSECRTY = true;
+            }
+
+            if(content.Get_Bit("LOBBY:",31,0,1) == "YES")
+            {
+                CRTLOK = true;
+            }
+
+            if(content.Get_Bit("LOBBY:",31,0,3) == "YES")
+            {
+                SECRTY = true;
+            }
+
+            if(content.Get_Bit("CPVAR",7,1,0) == "YES" )
+            {
+                SECUR = true;
+            }
+
+            if(BSI)
+            {
+                security += "BSI";
+            }
+
+            if(SECRTY && CRTLOK && SECUR)
+            {
+                if(security != "")
+                {
+                    security += ", ";
+                }
+
+                security += "CRTLOCK";
+            }
+
+            if(NEWSECRTY)
+            {
+                if (security != "")
+                {
+                    security += ", ";
+                }
+
+                security += "ACE";
+            }
+
+            if(security == "")
+            {
+                return "NO";
+            }
+
+            return security;
+        }
+
         private void Draw_Landing_Preview(Content content)
         {
+            LandingNormalConfig.Text = "";
+            LandingNormalConfig.Height = 0;
+            LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
+            LandingAltConfig.Text = "";
+            LandingAltConfig.Height = 0;
+            LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
+
+            LandingNormalHeader.Visibility = Visibility.Hidden;
+            LandingAltHeader.Visibility = Visibility.Hidden;
+
             int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string front = "False";
             string rear = "False";
@@ -648,11 +669,11 @@ namespace mods
             LandingLevels.Height = 16 * top_landing + 10;
             LandingLevels.BorderThickness = new System.Windows.Thickness(2);
 
-            LandingConfig.Text = "";
-            LandingConfig.Height = 16 * top_landing + 10;
-            LandingConfig.BorderThickness = new System.Windows.Thickness(2);
+            LandingNormalConfig.Text = "";
+            LandingNormalConfig.Height = 16 * top_landing + 10;
+            LandingNormalConfig.BorderThickness = new System.Windows.Thickness(2);
 
-            LandingConfigHeader.Visibility = Visibility.Visible;
+            LandingNormalHeader.Visibility = Visibility.Visible;
 
             for (int x = top_landing; x >= 1; x--)
             {
@@ -675,8 +696,48 @@ namespace mods
                 }
 
                 LandingLevels.Text += x + "\n";
-                LandingConfig.Text += front + " " + rear + "\n";
+                LandingNormalConfig.Text += front + " " + rear + "\n";
             }
+
+            for(int i = 0; i < 8; i++)
+            {
+                for (int i2 = 0; i2 < 8; i2++)
+                {
+                    if (content.inputs[i,i2] == "ALT")
+                    {
+                        LandingAltHeader.Visibility = Visibility.Visible;
+
+                        LandingAltConfig.Text = "";
+                        LandingAltConfig.Height = 16 * top_landing + 10;
+                        LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
+                        for (int x = top_landing; x >= 1; x--)
+                        {
+
+                            if (content.Get_Bit("ALTMP:", x, 0, 3) == "YES")
+                            {
+                                front = "F";
+                            }
+                            else
+                            {
+                                front = ".";
+                            }
+
+                            if (content.Get_Bit("ALTMP:", x, 0, 2) == "YES")
+                            {
+                                rear = "R";
+                            }
+                            else
+                            {
+                                rear = ".";
+                            }
+                            LandingAltConfig.Text += front + " " + rear + "\n";
+                        }
+                    }
+                }
+            }
+
+            
         }
 
         private void Draw_Group_Landing_Preview(Content content)
@@ -689,11 +750,11 @@ namespace mods
             LandingLevels.Height = 16 * group_top_landing + 26;
             LandingLevels.BorderThickness = new System.Windows.Thickness(2);
 
-            LandingConfig.Text = "";
-            LandingConfig.Height = 16 * group_top_landing + 26;
-            LandingConfig.BorderThickness = new System.Windows.Thickness(2);
+            LandingNormalConfig.Text = "";
+            LandingNormalConfig.Height = 16 * group_top_landing + 26;
+            LandingNormalConfig.BorderThickness = new System.Windows.Thickness(2);
 
-            LandingConfigHeader.Visibility = Visibility.Visible;
+            LandingNormalHeader.Visibility = Visibility.Visible;
 
             string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
 
@@ -720,10 +781,428 @@ namespace mods
                     {
                         rear = ".\t";
                     }
-                    LandingConfig.Text += front + " " + rear;
+                    LandingNormalConfig.Text += front + " " + rear;
                 }
-                LandingConfig.Text += "\n";
+                LandingNormalConfig.Text += "\n";
                 LandingLevels.Text += x + "\n";
+            }
+        }
+
+        private void Generate_Headers(Content content)
+        {
+            HeaderSP.Children.Clear();
+
+            List<string> calls = new List<string>();
+
+            //ELIGI: Front Car Calls
+            for(int x = 0; x < 8; x++)
+            {
+                for(int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = 100 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+                for(int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = 100 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+            }
+
+            //ELIGI: Rear Car Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 9, 0, b) == "YES")
+                    {
+                        int callNum = 100 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 9, 1, b) == "YES")
+                    {
+                        int callNum = 100 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+            }
+
+            //ELIGI: Front Down Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
+                    {
+                        int callNum = 500 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
+                    {
+                        int callNum = 500 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+            }
+
+            //ELIGI: Rear Down Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
+                    {
+                        int callNum = 500 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
+                    {
+                        int callNum = 500 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+            }
+
+            //ELIGI: Front Up Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+            }
+
+            //ELIGI: Rear Up Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+            }
+
+            //CARDRF: Front Card Reader Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("CARDRF:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("CR" + callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("CARDRF:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("CR" + callNum.ToString());
+                    }
+                }
+            }
+
+            //CARDRR: Rear Card Reader Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("CARDRR:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("CR" + callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("CARDRR:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("CR" + callNum.ToString() + "R");
+                    }
+                }
+            }
+
+            //Add to Headers Tab
+            int numOfCalls = calls.Count;
+            int column = 0;
+            do
+            {
+                if(numOfCalls < 16)
+                {
+                    for(int x = 16 - numOfCalls; x > 0; x --)
+                    {
+                        calls.Add("N/C");
+                    }
+                }
+
+                StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin=new Thickness(30,50,0,0) };
+                for (int x = 15; x >= 0; x--)
+                {
+                    sp.Children.Add(
+                        new TextBox
+                        {
+                            Text = calls[column * 16 + x],
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0,-2,0,0)
+                        });
+                    numOfCalls--;
+                }
+                column++;
+
+                HeaderSP.Children.Add(sp);
+            } while (numOfCalls > 0);
+        }
+
+        private void Generate_IO(Content content, string file)
+        {
+            IOInfo.Text = "";
+
+            string[,] inputs = content.inputs;
+            string[,] outputs = content.outputs;
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 2);
+
+            IOInfo.Text += "Spare Inputs:\n";
+
+            for (int x = 0; x < 8; x++)
+            {
+                string inputLine = "";
+
+                for (int y = 0; y < 8; y++)
+                {
+                    string hyphen = "";
+                    if (y == 7)
+                    {
+                        if (x == 3)
+                        {
+                            hyphen = "\n\n";
+                        }
+                        else
+                        {
+                            hyphen = "\n";
+                        }
+                    }
+                    else if (y == 3)
+                    {
+                        hyphen = "-||-";
+                    }
+                    else
+                    {
+                        hyphen = "-";
+                    }
+                    if (inputs[x, y] == null)
+                    {
+                        inputLine += "XXXX" + hyphen;
+                    }
+                    else
+                    {
+                        inputLine += inputs[x, y] + hyphen;
+                    }
+                }
+
+                if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                {
+                    break;
+                }
+                else
+                {
+                    IOInfo.Text += inputLine;
+                }
+            }
+
+            IOInfo.Text += "\nSpare Outputs:\n";
+
+            for (int x = 0; x < 4; x++)
+            {
+                string outputLine = "";
+
+                for (int y = 0; y < 8; y++)
+                {
+                    string hyphen = "";
+                    if (y == 7)
+                    {
+                        if (x == 3)
+                        {
+                            hyphen = "\n\n";
+                        }
+                        else
+                        {
+                            hyphen = "\n";
+                        }
+                    }
+                    else if (y == 3)
+                    {
+                        hyphen = "-||-";
+                    }
+                    else
+                    {
+                        hyphen = "-";
+                    }
+                    if (outputs[x, 7 - y] == null)
+                    {
+                        outputLine += "XXXX" + hyphen;
+                    }
+                    else
+                    {
+                        outputLine += outputs[x, 7 - y] + hyphen;
+                    }
+                }
+
+                if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                {
+                    break;
+                }
+                else
+                {
+                    IOInfo.Text += outputLine;
+                }
+            }
+
+            if(ncBoard == "YES")
+            {
+                List<string> ncinputs = content.NC_Inputs(file);
+                List<string> ncoutputs = content.NC_Outputs(file);
+
+                IOInfo.Text += "\nNC Board Inputs:\n";
+
+                for (int x = 0; x < 8; x++)
+                {
+                    string inputLine = "";
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        string hyphen = "";
+                        if (y == 0)
+                        {
+                            if (x == 3)
+                            {
+                                hyphen = "\n\n";
+                            }
+                            else
+                            {
+                                hyphen = "\n";
+                            }
+                        }
+                        else if (y == 4)
+                        {
+                            hyphen = "-||-";
+                        }
+                        else
+                        {
+                            hyphen = "-";
+                        }
+                        if (x*8 + y >= ncinputs.Count || ncinputs[x*8 + y] == null)
+                        {
+                            inputLine = "XXXX" + hyphen + inputLine;
+                        }
+                        else
+                        {
+                            inputLine = ncinputs[x*8 + y] + hyphen + inputLine;
+                        }
+                    }
+
+                    if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        IOInfo.Text += inputLine;
+                    }
+                }
+
+                IOInfo.Text += "\nNC Board Outputs:\n";
+
+                for (int x = 0; x < 8; x++)
+                {
+                    string outputLine = "";
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        string hyphen = "";
+                        if (y == 0)
+                        {
+                            if (x == 3)
+                            {
+                                hyphen = "\n\n";
+                            }
+                            else
+                            {
+                                hyphen = "\n";
+                            }
+                        }
+                        else if (y == 4)
+                        {
+                            hyphen = "-||-";
+                        }
+                        else
+                        {
+                            hyphen = "-";
+                        }
+                        if (x * 8 + y >= ncoutputs.Count || ncoutputs[x * 8 + y] == null)
+                        {
+                            outputLine = "XXXX" + hyphen + outputLine;
+                        }
+                        else
+                        {
+                            outputLine = ncoutputs[x * 8 + y] + hyphen + outputLine;
+                        }
+                    }
+
+                    if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        IOInfo.Text += outputLine;
+                    }
+                }
             }
         }
 
@@ -790,11 +1269,40 @@ namespace mods
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
         }
-
-        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        
+        private void OpenFolder_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow(this);
-            settingsWindow.Show();
+            try
+            {
+                string path = "";
+                string deconstructedPath = ListBox1.SelectedItem.ToString();
+                while (deconstructedPath.Contains("\\"))
+                {
+                    int slashIndex = deconstructedPath.IndexOf("\\");
+                    path += deconstructedPath.Substring(0, slashIndex) + "\\";
+                    deconstructedPath = deconstructedPath.Substring(slashIndex + 1, deconstructedPath.Length - slashIndex - 1);
+                }
+
+                string cmd = "C:\\Windows\\explorer.exe";
+                string arg = "G:\\Software\\" + path;
+                Process.Start(cmd, arg);
+            }
+            catch
+            {
+                MessageBox.Show("Please Select an Item from the List");
+            }
+        }
+
+        private void AdvancedSearch_Click(object sender, RoutedEventArgs e)
+        {
+            AdvancedSearch advsearch = new AdvancedSearch();
+            advsearch.Show();
+        }
+
+        private void SaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Username = Username.Text;
+            Update_Search_History();
         }
     }
 }
