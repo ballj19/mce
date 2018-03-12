@@ -402,7 +402,7 @@ namespace mods
             string callbnu = content.Get_Nibble("LOBBY:", 41, 1);
             string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 2);
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
             string bsi = "NO";
             string secrty = content.Get_Bit("LOBBY:", 31, 0, 3);

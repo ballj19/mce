@@ -19,6 +19,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Media;
 
 namespace mods
 {
@@ -32,7 +33,9 @@ namespace mods
         public MainWindow()
         {
             InitializeComponent();
+            
             Username.Text = Properties.Settings.Default.Username;
+            CustomFoldersCheckBox.IsChecked = false;
             ListBox1.SelectionMode = SelectionMode.Extended;
             FileExtension.Items.Add(".asm");
             FileExtension.Items.Add(".old");
@@ -131,6 +134,14 @@ namespace mods
             }
 
             int progress = 0;
+            if(CustomFoldersCheckBox.IsChecked == true)
+            {
+                SearchProgress.Maximum = 29;
+            }
+            else
+            {
+                SearchProgress.Maximum = 11;
+            }
 
             string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
             string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGM", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM", "MC-MP2\\MP2COC", "MC-MP2\\MP2OGM" };
@@ -174,75 +185,78 @@ namespace mods
                 SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
             }
 
-            foreach (string location in source_locations)
+            if (CustomFoldersCheckBox.IsChecked == true)
             {
-                try
+                foreach (string location in source_locations)
                 {
-                    string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "G:\\Software\\Source\\" + location;
-                    string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                    foreach (string file in files)
+                    try
                     {
-                        //int locationIndex = file.IndexOf(location);
-                        int locationIndex = 12; //index after G:\Software
-                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                        ListBox1.Items.Add(jobFile);
+                        string jobNumber = "*" + TextBox1.Text + fileExtension;
+                        string folder = "G:\\Software\\Source\\" + location;
+                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            //int locationIndex = file.IndexOf(location);
+                            int locationIndex = 12; //index after G:\Software
+                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                            ListBox1.Items.Add(jobFile);
+                        }
+
                     }
-                    
-                }
-                catch
-                {
-
-                }
-                progress++;
-                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-            }
-
-            foreach (string location in custom_locations)
-            {
-                try
-                {
-                    string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "G:\\Software\\Custom\\" + location;
-                    string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                    foreach (string file in files)
+                    catch
                     {
-                        //int locationIndex = file.IndexOf(location);
-                        int locationIndex = 12;
-                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                        ListBox1.Items.Add(jobFile);
+
                     }
+                    progress++;
+                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
                 }
-                catch
-                {
 
-                }
-                progress++;
-                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-            }
-
-            foreach (string location in custom2_locations)
-            {
-                try
+                foreach (string location in custom_locations)
                 {
-                    string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "G:\\Software\\Custom2\\" + location;
-                    string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                    foreach (string file in files)
+                    try
                     {
-                        //int locationIndex = file.IndexOf(location);
-                        int locationIndex = 12;
-                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                        ListBox1.Items.Add(jobFile);
+                        string jobNumber = "*" + TextBox1.Text + fileExtension;
+                        string folder = "G:\\Software\\Custom\\" + location;
+                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            //int locationIndex = file.IndexOf(location);
+                            int locationIndex = 12;
+                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                            ListBox1.Items.Add(jobFile);
+                        }
                     }
-                    
-                }
-                catch
-                {
+                    catch
+                    {
 
+                    }
+                    progress++;
+                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
                 }
-                progress++;
-                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
+
+                foreach (string location in custom2_locations)
+                {
+                    try
+                    {
+                        string jobNumber = "*" + TextBox1.Text + fileExtension;
+                        string folder = "G:\\Software\\Custom2\\" + location;
+                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            //int locationIndex = file.IndexOf(location);
+                            int locationIndex = 12;
+                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                            ListBox1.Items.Add(jobFile);
+                        }
+
+                    }
+                    catch
+                    {
+
+                    }
+                    progress++;
+                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
+                }
             }
         }
 
@@ -292,13 +306,13 @@ namespace mods
             string botFloorDecimal = (content.HexStringToDecimal(botFloor) + 1).ToString();
             string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
             string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
-            string i4o = content.Get_Nibble("LOBBY:", 40, 1);
-            string iox = content.Get_Nibble("LOBBY:", 40, 0);
-            string aiox = content.Get_Nibble("LOBBY:", 52, 0);
-            string callbnu = content.Get_Nibble("LOBBY:", 41, 1);
+            int i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
+            int iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
+            int aiox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
+            int callbnu = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 41, 1));
             string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 2);
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
 
             //Job Info
@@ -330,23 +344,25 @@ namespace mods
             Generate_IO(content,file);
 
             //Headers
-            Generate_Headers(content);
+            Generate_Headers(content,file);
         }
 
         private void MP2OGM_JobInfo(string file)
         {
             Content content = new Content(file);
-
+            
+            DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
             string jobName = content.Get_String("JBNAME:", 1);
-            string iox = content.Get_Nibble("LOBBY:", 6, 0);
-            string i4o = content.Get_Nibble("LOBBY:", 6, 1);
+            int iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
+            int i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+            int callbnu = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
             string[,] inputs = content.inputs;
             string[,] outputs = content.outputs;
 
             LandingLevels.Text = "";
             LandingLevels.Height = 0;
             LandingLevels.BorderThickness = new System.Windows.Thickness(0);
-
+            
             LandingNormalConfig.Text = "";
             LandingNormalConfig.Height = 0;
             LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
@@ -357,15 +373,20 @@ namespace mods
             LandingNormalHeader.Visibility = Visibility.Hidden;
             LandingAltHeader.Visibility = Visibility.Hidden;
 
-            //Draw_Group_Landing_Preview(content);
+            Draw_Group_Landing_Preview(content);
 
             JobInfo.Text = "";
-            JobInfo.Text += file + "\n\n";
+            JobInfo.Text += file + "\n";
+            JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
             JobInfo.Text += jobName + "\n\n";
+            JobInfo.Text += "# of Call Boards: " + callbnu + "\n";
             JobInfo.Text += "# of IOX Boards: " + iox + "\n";
             JobInfo.Text += "# of I4O Boards: " + i4o + "\n\n";
 
-            JobInfo.Text += "Spare Inputs:\n";
+            HeaderSP.Children.Clear();
+
+            IOInfo.Text = "";
+            IOInfo.Text += "Spare Inputs:\n";
 
             for (int x = 0; x < 8; x++)
             {
@@ -411,16 +432,16 @@ namespace mods
                     }
                     else
                     {
-                        JobInfo.Text += inputLine;
+                        IOInfo.Text += inputLine;
                     }
                 }
                 else
                 {
-                    JobInfo.Text += inputLine;
+                    IOInfo.Text += inputLine;
                 }
             }
 
-            JobInfo.Text += "Spare Outputs:\n";
+            IOInfo.Text += "Spare Outputs:\n";
 
             for (int x = 0; x < 4; x++)
             {
@@ -448,11 +469,11 @@ namespace mods
                     }
                     if (outputs[x, 7 - y] == null)
                     {
-                        JobInfo.Text += "XXXX" + hyphen;
+                        IOInfo.Text += "XXXX" + hyphen;
                     }
                     else
                     {
-                        JobInfo.Text += outputs[x, 7 - y] + hyphen;
+                        IOInfo.Text += outputs[x, 7 - y] + hyphen;
                     }
                 }
             }
@@ -475,6 +496,13 @@ namespace mods
                     catch
                     {
                         JobInfo.Text = "Job Info could not be generated for this file.";
+                        IOInfo.Text = "";
+                        HeaderSP.Children.Clear();
+                        LandingAltConfig.Visibility = Visibility.Hidden;
+                        LandingAltHeader.Visibility = Visibility.Hidden;
+                        LandingNormalConfig.Visibility = Visibility.Hidden;
+                        LandingNormalHeader.Visibility = Visibility.Hidden;
+                        LandingLevels.Visibility = Visibility.Hidden;
                     }
                 }
                 else
@@ -486,6 +514,13 @@ namespace mods
                     catch
                     {
                         JobInfo.Text = "Job Info could not be generated for this file.";
+                        IOInfo.Text = "";
+                        HeaderSP.Children.Clear();
+                        LandingAltConfig.Visibility = Visibility.Hidden;
+                        LandingAltHeader.Visibility = Visibility.Hidden;
+                        LandingNormalConfig.Visibility = Visibility.Hidden;
+                        LandingNormalHeader.Visibility = Visibility.Hidden;
+                        LandingLevels.Visibility = Visibility.Hidden;
                     }
                 }
             }
@@ -645,12 +680,21 @@ namespace mods
             {
                 return "NO";
             }
+            else
+            {
+                security = "YES - " + security;
+            }
 
             return security;
         }
 
         private void Draw_Landing_Preview(Content content)
         {
+            LandingNormalHeader.Width = 96;
+            LandingNormalConfig.Width = 96;
+            LandingAltHeader.Width = 96;
+            LandingAltConfig.Width = 96;
+
             LandingNormalConfig.Text = "";
             LandingNormalConfig.Height = 0;
             LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
@@ -706,6 +750,7 @@ namespace mods
                     if (content.inputs[i,i2] == "ALT")
                     {
                         LandingAltHeader.Visibility = Visibility.Visible;
+                        LandingAltConfig.Visibility = Visibility.Visible;
 
                         LandingAltConfig.Text = "";
                         LandingAltConfig.Height = 16 * top_landing + 10;
@@ -745,7 +790,8 @@ namespace mods
             int group_top_landing = content.Get_Group_Top_Level();
             string front = "False";
             string rear = "False";
-
+            string tab = "";
+            
             LandingLevels.Text = "";
             LandingLevels.Height = 16 * group_top_landing + 26;
             LandingLevels.BorderThickness = new System.Windows.Thickness(2);
@@ -754,11 +800,20 @@ namespace mods
             LandingNormalConfig.Height = 16 * group_top_landing + 26;
             LandingNormalConfig.BorderThickness = new System.Windows.Thickness(2);
 
+            LandingAltConfig.Text = "";
+            LandingAltConfig.Height = 16 * group_top_landing + 26;
+            LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
             LandingNormalHeader.Visibility = Visibility.Visible;
+            LandingAltHeader.Visibility = Visibility.Hidden;
+            LandingAltConfig.Visibility = Visibility.Hidden;
 
             string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
 
             int number_of_cars = content.Get_Group_Num_Of_Cars();
+
+            LandingNormalHeader.Width = 48 + 48 * number_of_cars;
+            LandingNormalConfig.Width = 48 + 48 * number_of_cars;
 
             for (int x = group_top_landing; x >= 1; x--)
             {
@@ -775,147 +830,377 @@ namespace mods
 
                     if (content.Get_Bit("ELIGIV" + cars[c], x, 1, 0) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 1, 2) == "YES")
                     {
-                        rear = "R\t";
+                        rear = "R";
                     }
                     else
                     {
-                        rear = ".\t";
+                        rear = ".";
                     }
-                    LandingNormalConfig.Text += front + " " + rear;
+                    if( c < number_of_cars - 1)
+                    {
+                        tab = "\t";
+                    }
+                    else
+                    {
+                        tab = "";
+                    }
+                    LandingNormalConfig.Text += front + " " + rear + tab;
                 }
                 LandingNormalConfig.Text += "\n";
                 LandingLevels.Text += x + "\n";
             }
         }
 
-        private void Generate_Headers(Content content)
+        private void Generate_Headers(Content content, string file)
         {
             HeaderSP.Children.Clear();
 
             List<string> calls = new List<string>();
+            
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
 
-            //ELIGI: Front Car Calls
-            for(int x = 0; x < 8; x++)
+            if (ncBoard == "NO") //Exclude ELIGI: if NC board is set
             {
-                for(int b = 3; b >= 0; b--)
+                //ELIGI: Front Car Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 1, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                }
+
+                //ELIGI: Rear Car Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 9, 0, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 9, 1, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                }
+
+                //ELIGI: Front Down Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                }
+
+                //ELIGI: Rear Down Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                }
+
+                //ELIGI: Front Up Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                }
+
+                //ELIGI: Rear Up Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                }
+            }
+            
+            //XELIGI: Front Car Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("XELIGI:", x + 1, 0, b) == "YES")
                     {
                         int callNum = 100 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
-                for(int b = 3; b >= 0; b--)
+                for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 1, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 1, 1, b) == "YES")
                     {
                         int callNum = 100 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
             }
 
-            //ELIGI: Rear Car Calls
+            //XELIGI: Rear Car Calls
             for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 9, 0, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 9, 0, b) == "YES")
                     {
                         int callNum = 100 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
                     }
                 }
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 9, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 9, 1, b) == "YES")
                     {
                         int callNum = 100 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
                     }
                 }
             }
 
-            //ELIGI: Front Down Hall Calls
+            //XELIGI: Front Down Hall Calls
             for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 17, 0, b) == "YES")
                     {
                         int callNum = 500 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 17, 1, b) == "YES")
                     {
                         int callNum = 500 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
             }
 
-            //ELIGI: Rear Down Hall Calls
+            //XELIGI: Rear Down Hall Calls
             for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 25, 0, b) == "YES")
                     {
                         int callNum = 500 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
                     }
                 }
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 25, 1, b) == "YES")
                     {
                         int callNum = 500 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
                     }
                 }
             }
 
-            //ELIGI: Front Up Hall Calls
+            //XELIGI: Front Up Hall Calls
             for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 33, 0, b) == "YES")
                     {
                         int callNum = 600 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 33, 1, b) == "YES")
                     {
                         int callNum = 600 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString());
+                        calls.Add(callNum.ToString() + "X");
                     }
                 }
             }
 
-            //ELIGI: Rear Up Hall Calls
+            //XELIGI: Rear Up Hall Calls
             for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 41, 0, b) == "YES")
                     {
                         int callNum = 600 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
                     }
                 }
                 for (int b = 3; b >= 0; b--)
                 {
-                    if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
+                    if (content.Get_Bit("XELIGI:", x + 41, 1, b) == "YES")
                     {
                         int callNum = 600 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R");
+                        calls.Add(callNum.ToString() + "R" + "X");
+                    }
+                }
+            }
+
+            //HELIGI: Front Car Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("HELIGI:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("EC" + callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("HELIGI:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("EC" + callNum.ToString());
+                    }
+                }
+            }
+
+            //HELIGI: Rear Car Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("HELIGI:", x + 9, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("EC" + callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("HELIGI:", x + 9, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("EC" + callNum.ToString() + "R");
+                    }
+                }
+            }
+
+            //INELIG: System Input Eligibility Map
+            List<string> inelig = content.INELIG_Inputs(file);
+            foreach(string input in inelig)
+            {
+                calls.Add(input);
+            }
+
+            //FSECUR: Per Opening Security Input Eligibility Map
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("FSECUR:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("S" + callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("FSECUR:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("S" + callNum.ToString());
+                    }
+                }
+            }
+
+            //RSECUR: Per Opening Security Input Eligibility Map
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("RSECUR:", x + 1, 0, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 1;
+                        calls.Add("S" + callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("RSECUR:", x + 1, 1, b) == "YES")
+                    {
+                        int callNum = x * 8 + (3 - b) + 5;
+                        calls.Add("S" + callNum.ToString() + "R");
                     }
                 }
             }
@@ -1005,7 +1290,7 @@ namespace mods
 
             string[,] inputs = content.inputs;
             string[,] outputs = content.outputs;
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 2);
+            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
 
             IOInfo.Text += "Spare Inputs:\n";
 
@@ -1211,7 +1496,9 @@ namespace mods
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm",0,true);
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Excel._Worksheet dlmWorksheet = xlWorkbook.Sheets[2];
             Excel.Range xlRange = xlWorksheet.UsedRange;
+            Excel.Range dlmRange = dlmWorksheet.UsedRange;
 
             SearchHistory.Items.Add("---Active Mods---");
 
@@ -1234,6 +1521,27 @@ namespace mods
                 {
                     string engineer = xlRange.Cells[row, 8].Value2.ToString();
                     string jobNumber = xlRange.Cells[row, 5].Value2.ToString();
+                    foreach (string username in Usernames)
+                    {
+                        if (engineer.Contains(username))
+                        {
+                            if (jobNumber.Contains("-"))
+                            {
+                                int dashIndex = jobNumber.IndexOf("-");
+                                jobNumber = jobNumber.Substring(dashIndex + 1, jobNumber.Length - dashIndex - 1);
+                            }
+                            SearchHistory.Items.Add(jobNumber);
+                        }
+                    }
+                }
+            }
+
+            for (int row = 4; row < 100; row++)
+            {
+                if (dlmRange.Cells[row, 8].Value2 != null && dlmRange.Cells[row, 5].Value2 != null)
+                {
+                    string engineer = dlmRange.Cells[row, 8].Value2.ToString();
+                    string jobNumber = dlmRange.Cells[row, 5].Value2.ToString();
                     foreach (string username in Usernames)
                     {
                         if (engineer.Contains(username))

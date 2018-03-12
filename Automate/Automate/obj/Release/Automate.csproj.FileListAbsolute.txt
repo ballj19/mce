@@ -1,0 +1,14 @@
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\bin\Release\Automate.exe.config
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\bin\Release\Automate.exe
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\bin\Release\Automate.pdb
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\MainWindow.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\App.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate_MarkupCompile.cache
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate_MarkupCompile.lref
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\MainWindow.baml
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.g.resources
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.Properties.Resources.resources
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.csproj.GenerateResource.Cache
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.exe
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.pdb

@@ -59,7 +59,7 @@ namespace mods
             int ccelig_index = 858;
             int fhcelig_index = 988;
             int rhcelig_index = 1118;
-            //int hospelig_index = 1248;
+            int hospelig_index = 1248;
             int iox_index = 1555;
             int i4o_index = 1558;
             int aiox_index = 1561;
@@ -92,6 +92,8 @@ namespace mods
             Write_Front_Hall();
             Write_Intermediate(rhcelig_index);
             Write_Rear_Hall();
+            Write_Intermediate(hospelig_index);
+            Write_Hosp_Elig();
             Write_Intermediate(iox_index);
             Write_Line("Value = " + iox);
             Write_Intermediate(i4o_index);
@@ -153,32 +155,63 @@ namespace mods
 
         private void Write_CC_Elig()
         {
-            int top_landing = HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string front = "False";
             string rear = "False";
+            int floor;
 
-            for (int x = 1; x <= top_landing; x++)
+            for (int x = 0; x < 8; x++)
             {
-                if (content.Get_Bit("ELIGIV:", x, 0, 3) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    front = "True";
-                }
-                else
-                {
-                    front = "False";
+                    if (content.Get_Bit("ELIGI:", x + 1, 0, b) == "YES")
+                    {
+                        front = "True";
+                    }
+                    else
+                    {
+                        front = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGI:", x + 9, 0, b) == "YES")
+                    {
+                        rear = "True";
+                    }
+                    else
+                    {
+                        rear = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 1;
+
+                    Write_Line("Value " + floor + " F = " + front);
+                    Write_Line("Value " + floor + " R = " + rear);
                 }
 
-                if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    rear = "True";
+                    if (content.Get_Bit("ELIGI:", x + 1, 1, b) == "YES")
+                    {
+                        front = "True";
+                    }
+                    else
+                    {
+                        front = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGI:", x + 9, 1, b) == "YES")
+                    {
+                        rear = "True";
+                    }
+                    else
+                    {
+                        rear = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 5;
+
+                    Write_Line("Value " + floor + " F = " + front);
+                    Write_Line("Value " + floor + " R = " + rear);
                 }
-                else
-                {
-                    rear = "False";
-                }
-                
-                Write_Line("Value " + x + " F = " + front);
-                Write_Line("Value " + x + " R = " + rear);
             }
         }
 
@@ -207,63 +240,187 @@ namespace mods
 
         private void Write_Front_Hall()
         {
-            int top_landing = HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string up = "False";
             string down = "False";
+            int floor = 0;
 
-            for (int x = 1; x <= top_landing; x++)
+            for (int x = 0; x <= 8; x++)
             {
-                if (content.Get_Bit("ELIGIV:", x, 1, 1) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    up = "True";
-                }
-                else
-                {
-                    up = "False";
+                    if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
+                    {
+                        up = "True";
+                    }
+                    else
+                    {
+                        up = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
+                    {
+                        down = "True";
+                    }
+                    else
+                    {
+                        down = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 1;
+
+                    Write_Line("Value " + floor + " U = " + up);
+                    Write_Line("Value " + floor + " U = " + down);
                 }
 
-                if (content.Get_Bit("ELIGIV:", x, 1, 3) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    down = "True";
-                }
-                else
-                {
-                    down = "False";
-                }
+                    if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
+                    {
+                        up = "True";
+                    }
+                    else
+                    {
+                        up = "False";
+                    }
 
-                Write_Line("Value " + x + " U = " + up);
-                Write_Line("Value " + x + " D = " + down);
+                    if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
+                    {
+                        down = "True";
+                    }
+                    else
+                    {
+                        down = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 5;
+
+                    Write_Line("Value " + floor + " F = " + up);
+                    Write_Line("Value " + floor + " R = " + down);
+                }
             }
         }
 
         private void Write_Rear_Hall()
         {
-            int top_landing = HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string up = "False";
             string down = "False";
+            int floor = 0;
 
-            for (int x = 1; x <= top_landing; x++)
+            for (int x = 0; x <= 8; x++)
             {
-                if (content.Get_Bit("ELIGIV:", x, 1, 0) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    up = "True";
-                }
-                else
-                {
-                    up = "False";
+                    if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
+                    {
+                        up = "True";
+                    }
+                    else
+                    {
+                        up = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
+                    {
+                        down = "True";
+                    }
+                    else
+                    {
+                        down = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 1;
+
+                    Write_Line("Value " + floor + " U = " + up);
+                    Write_Line("Value " + floor + " U = " + down);
                 }
 
-                if (content.Get_Bit("ELIGIV:", x, 1, 2) == "YES")
+                for (int b = 3; b >= 0; b--)
                 {
-                    down = "True";
+                    if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
+                    {
+                        up = "True";
+                    }
+                    else
+                    {
+                        up = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
+                    {
+                        down = "True";
+                    }
+                    else
+                    {
+                        down = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 5;
+
+                    Write_Line("Value " + floor + " F = " + up);
+                    Write_Line("Value " + floor + " R = " + down);
                 }
-                else
+            }
+        }
+
+        private void Write_Hosp_Elig()
+        {
+            string front = "False";
+            string rear = "False";
+            int floor;
+
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
                 {
-                    down = "False";
+                    if (content.Get_Bit("HELIGI:", x + 1, 0, b) == "YES" || content.Get_Bit("CARDRF:", x + 1, 0, b) ==  "YES")
+                    {
+                        front = "True";
+                    }
+                    else
+                    {
+                        front = "False";
+                    }
+
+                    if (content.Get_Bit("HELIGI:", x + 9, 0, b) == "YES" || content.Get_Bit("CARDRR:", x + 1, 0, b) == "YES")
+                    {
+                        rear = "True";
+                    }
+                    else
+                    {
+                        rear = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 1;
+
+                    Write_Line("Value " + floor + " F = " + front);
+                    Write_Line("Value " + floor + " R = " + rear);
                 }
 
-                Write_Line("Value " + x + " U = " + up);
-                Write_Line("Value " + x + " D = " + down);
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("HELIGI:", x + 1, 1, b) == "YES" || content.Get_Bit("CARDRF:", x + 1, 1, b) == "YES")
+                    {
+                        front = "True";
+                    }
+                    else
+                    {
+                        front = "False";
+                    }
+
+                    if (content.Get_Bit("HELIGI:", x + 9, 1, b) == "YES" || content.Get_Bit("CARDRR:", x + 1, 1, b) == "YES")
+                    {
+                        rear = "True";
+                    }
+                    else
+                    {
+                        rear = "False";
+                    }
+
+                    floor = x * 8 + (3 - b) + 5;
+
+                    Write_Line("Value " + floor + " F = " + front);
+                    Write_Line("Value " + floor + " R = " + rear);
+                }
             }
         }
 

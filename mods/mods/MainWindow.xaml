@@ -7,21 +7,22 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="Modification Hub by Jake Ball" Height="800" Width="900">
-    <Grid Margin="0,0,0,0" Height="1080" VerticalAlignment="Top">
+
+    <Grid Margin="0,0,0,-310" Height="1080" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="SearchHistory" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="113,40,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="SearchHistory_SelectionChanged"/>
-        <Button Content="Search" HorizontalAlignment="Left" Margin="298,41,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
-        <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
-        <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,37,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
+        <ComboBox x:Name="SearchHistory" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="113,39,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="SearchHistory_SelectionChanged"/>
+        <Button Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
+        <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
+        <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
         <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="184" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
         <Button Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
         <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,175,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
         <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,255,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
         <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,228,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
-        <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,40,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
+        <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,39,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
         <Button x:Name="OpenFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="OpenFolder_Click"/>
         <Button x:Name="ShowPrints" Content="Job Folder" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
@@ -59,6 +60,8 @@
             </TabItem>
         </TabControl>
         <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
+        <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
     </Grid>
 </Window>
+    
 

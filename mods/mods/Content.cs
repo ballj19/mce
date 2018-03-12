@@ -329,7 +329,7 @@ namespace mods
                             {
                                 if (building)
                                 {
-                                    if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                    if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/' || comment_string[c] == '_' || comment_string[c] == '(' || comment_string[c] == ')')
                                     {
                                         ioCode.Append(comment_string[c]);
                                     }
@@ -397,15 +397,19 @@ namespace mods
             }
 
             string[] labelNumbers = { "", "2", "3", "4" };
+            
 
             foreach (string ioLabel in ioLabels)
             {
+                int labelNumberint = -1;
                 foreach (string labelNumber in labelNumbers)
                 {
-                    if (this.content.FindIndex(x => x.StartsWith(ioLabel + labelNumber + ":")) != -1)
+                    labelNumberint++;
+                    if (this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":")) != -1)
                     {
-                        int io_index = this.content.FindIndex(x => x.StartsWith(ioLabel + labelNumber + ":"));
-                        for (int x = 0; x < 8; x++)
+                        int io_index = this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":"));
+                        int x = 0;
+                        while (this.content[io_index + x + 1].Trim().StartsWith("DB"))
                         {
                             int iomap_index = io_index + x + 1;
                             string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
@@ -416,7 +420,7 @@ namespace mods
                                 {
                                     if (iomap_binary[7 - y] == '1')
                                     {
-                                        ios[io_x, io_y] = iomap[x, 7 - y];
+                                        ios[io_x, io_y] = iomap[labelNumberint * 8 + x, 7 - y];
                                         io_y--;
 
                                         if (io_y == -1)
@@ -430,7 +434,7 @@ namespace mods
                                 {
                                     if (iomap_binary[y] == '1')
                                     {
-                                        ios[io_x, io_y] = iomap[x, y];
+                                        ios[io_x, io_y] = iomap[labelNumberint * 8 + x, y];
                                         io_y--;
 
                                         if (io_y == -1)
@@ -441,6 +445,7 @@ namespace mods
                                     }
                                 }
                             }
+                            x++;
                         }
                     }
                 }
@@ -666,7 +671,7 @@ namespace mods
 
             return ncoutputs;
         }
-
+        
         public List<string> NC_Inputs(string file)
         {
             List<string> ncinputs = new List<string>();
@@ -717,6 +722,103 @@ namespace mods
             }
 
             return ncoutputs;
+        }
+
+        private List<string> INELIG_Input_Map(string file)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (string filepath in filepaths)
+            {
+                try
+                {
+                    string path = filepath + file;
+                    lines = System.IO.File.ReadAllLines(@path).ToList();
+                }
+                catch
+                {
+
+                }
+            }
+
+            List<string> inputs = new List<string>();
+
+            if (lines.FindIndex(x => x.StartsWith("INELIG:")) != -1)
+            {
+                int io_index = lines.FindIndex(i => i.StartsWith("INELIG:"));
+                int x = 0;
+                int iomap_index = io_index + x + 1;
+
+                while (lines[iomap_index].Trim().StartsWith("DB"))
+                {
+                    int comment_index = lines[iomap_index].IndexOf(';');
+                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                    bool building = false;
+                    StringBuilder ioCode = new StringBuilder();
+
+                    for (int c = 0; c < comment_string.Length; c++)
+                    {
+                        if (building)
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                            }
+                            else
+                            {
+                                inputs.Add(ioCode.ToString());
+                                ioCode.Clear();
+                                building = false;
+                            }
+                        }
+                        else
+                        {
+                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            {
+                                ioCode.Append(comment_string[c]);
+                                building = true;
+                            }
+                            else
+                            {
+                                //do nothing
+                            }
+                        }
+                    }
+                    inputs.Add(ioCode.ToString());
+                    ioCode.Clear();
+                    building = false;
+                    x++;
+                    iomap_index = io_index + x + 1;
+                }
+            }
+
+            return inputs;
+        }
+
+        public List<string> INELIG_Inputs(string file)
+        {
+            List<string> inputs = new List<string>();
+            List<string> inputsmap = INELIG_Input_Map(file);
+
+            if (this.content.FindIndex(x => x.StartsWith("INELIG:")) != -1)
+            {
+                int io_index = this.content.FindIndex(x => x.StartsWith("INELIG:"));
+                for (int x = 0; x < inputsmap.Count / 8; x++)
+                {
+                    int iomap_index = io_index + x + 1;
+                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (iomap_binary[7 - y] == '1')
+                        {
+                            inputs.Add(inputsmap[x * 8 + 7 - y]);
+                        }
+                    }
+                }
+            }
+
+            return inputs;
         }
 
         private static readonly Dictionary<string, string> LobbyConfig = new Dictionary<string, string> {
