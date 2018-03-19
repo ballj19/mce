@@ -8,9 +8,10 @@
         Title="Advanced Search" Height="600" Width="600" Closed="Close">
     <Grid>
         <Label Content="Any Option left blank will be ignored.  Enter a value for each option that you want to be filtered." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="16,53,0,0" VerticalAlignment="Top" Width="196"/>
         <Button x:Name="Search" Content="Search" HorizontalAlignment="Left" Margin="507,538,0,0" VerticalAlignment="Top" Width="75" Click="Search_Click"/>
-        <Label Content="Controller" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="ControllerCB" HorizontalAlignment="Left" Margin="91,49,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Controller" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="ControllerCB" HorizontalAlignment="Left" Margin="91,77,0,0" VerticalAlignment="Top" Width="62"/>
         <Label Content="Top Floor" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="TopFloorCB" HorizontalAlignment="Left" Margin="91,105,0,0" VerticalAlignment="Top" Width="62"/>
         <TextBox x:Name="TopFloorTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,104,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
@@ -49,6 +50,8 @@
         <ComboBox x:Name="NCBoardCB" HorizontalAlignment="Left" Margin="91,442,0,0" VerticalAlignment="Top" Width="62"/>
         <Label Content="FT Board" HorizontalAlignment="Left" Margin="10,467,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="FTBoardCB" HorizontalAlignment="Left" Margin="91,469,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="DLM Board" HorizontalAlignment="Left" Margin="10,496,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="DLMBoardCB" HorizontalAlignment="Left" Margin="91,498,0,0" VerticalAlignment="Top" Width="62"/>
         <StackPanel x:Name="SpareIOSP" Orientation="Vertical">
             <StackPanel x:Name="SpareInputSP" Orientation="Vertical">
                 <Button x:Name="AddSpareInput" Content="Add Spare Input" HorizontalAlignment="Left" Margin="388,46,0,10" VerticalAlignment="Top" Width="112" Click="AddSpareInput_Click"/>
@@ -59,7 +62,5 @@
         </StackPanel>
         <TextBlock x:Name="SearchFolderTB" Margin="221,514,10,32" TextWrapping="Wrap" Text=""/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="221,539,0,0" VerticalAlignment="Top" Width="274"/>
-        <Label Content="Custom" HorizontalAlignment="Left" Margin="10,76,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="CustomCB" HorizontalAlignment="Left" Margin="91,76,0,0" VerticalAlignment="Top" Width="62"/>
     </Grid>
 </Window>

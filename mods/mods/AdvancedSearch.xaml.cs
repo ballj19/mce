@@ -37,15 +37,12 @@ namespace mods
 
         private void Default_Values()
         {
+            CustomFoldersCheckBox.IsChecked = false;
+
             ControllerCB.Items.Add("");
             ControllerCB.Items.Add("MP");
             ControllerCB.Items.Add("MP2");
             ControllerCB.SelectedIndex = 0;
-
-            CustomCB.Items.Add("");
-            CustomCB.Items.Add("YES");
-            CustomCB.Items.Add("NO");
-            CustomCB.SelectedIndex = 0;
 
             TopFloorCB.Items.Add("");
             TopFloorCB.Items.Add("=");
@@ -132,6 +129,11 @@ namespace mods
             FTBoardCB.Items.Add("YES");
             FTBoardCB.Items.Add("NO");
             FTBoardCB.SelectedIndex = 0;
+
+            DLMBoardCB.Items.Add("");
+            DLMBoardCB.Items.Add("YES");
+            DLMBoardCB.Items.Add("NO");
+            DLMBoardCB.SelectedIndex = 0;
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
@@ -191,7 +193,7 @@ namespace mods
                     }
                 }
 
-                if (CustomCB.SelectedItem.ToString() != "NO")
+                if (CustomFoldersCheckBox.IsChecked == true)
                 {
                     foreach (string location in source2_locations)
                     {
@@ -305,7 +307,7 @@ namespace mods
                     }
                 }
 
-                if(CustomCB.SelectedItem.ToString() != "NO")
+                if(CustomFoldersCheckBox.IsChecked == true)
                 {
                     foreach (string location in source_locations)
                     {
@@ -404,6 +406,8 @@ namespace mods
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
             string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
+
             string bsi = "NO";
             string secrty = content.Get_Bit("LOBBY:", 31, 0, 3);
             string crtlok = content.Get_Bit("LOBBY:", 31, 0, 1);
@@ -462,7 +466,7 @@ namespace mods
 
                 if (BottomFloorCB.SelectedItem.ToString() == ">")
                 {
-                    if (Int32.Parse(BottomFloorTB.Text) <= Int32.Parse(botFloorDecimal))
+                    if (Int32.Parse(BottomFloorTB.Text) >= Int32.Parse(botFloorDecimal))
                     {
                         return;
                     }
@@ -470,7 +474,7 @@ namespace mods
 
                 if (BottomFloorCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(BottomFloorTB.Text) >= Int32.Parse(botFloorDecimal))
+                    if (Int32.Parse(BottomFloorTB.Text) <= Int32.Parse(botFloorDecimal))
                     {
                         return;
                     }
@@ -564,7 +568,7 @@ namespace mods
 
                 if (CallBoardsCB.SelectedItem.ToString() == ">")
                 {
-                    if (Int32.Parse(CallBoardsTB.Text) <= Int32.Parse(callbnu))
+                    if (Int32.Parse(CallBoardsTB.Text) >= Int32.Parse(callbnu))
                     {
                         return;
                     }
@@ -572,7 +576,7 @@ namespace mods
 
                 if (CallBoardsCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(CallBoardsTB.Text) >= Int32.Parse(callbnu))
+                    if (Int32.Parse(CallBoardsTB.Text) <= Int32.Parse(callbnu))
                     {
                         return;
                     }
@@ -592,7 +596,7 @@ namespace mods
 
                 if (IOXBoardsCB.SelectedItem.ToString() == ">")
                 {
-                    if (Int32.Parse(IOXBoardsTB.Text) <= Int32.Parse(iox))
+                    if (Int32.Parse(IOXBoardsTB.Text) >= Int32.Parse(iox))
                     {
                         return;
                     }
@@ -600,7 +604,7 @@ namespace mods
 
                 if (IOXBoardsCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(IOXBoardsTB.Text) >= Int32.Parse(iox))
+                    if (Int32.Parse(IOXBoardsTB.Text) <= Int32.Parse(iox))
                     {
                         return;
                     }
@@ -620,7 +624,7 @@ namespace mods
 
                 if (I4OBoardsCB.SelectedItem.ToString() == ">")
                 {
-                    if (Int32.Parse(I4OBoardsTB.Text) <= Int32.Parse(i4o))
+                    if (Int32.Parse(I4OBoardsTB.Text) >= Int32.Parse(i4o))
                     {
                         return;
                     }
@@ -628,7 +632,7 @@ namespace mods
 
                 if (I4OBoardsCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(I4OBoardsTB.Text) >= Int32.Parse(i4o))
+                    if (Int32.Parse(I4OBoardsTB.Text) <= Int32.Parse(i4o))
                     {
                         return;
                     }
@@ -648,7 +652,7 @@ namespace mods
 
                 if (AIOXBoardsCB.SelectedItem.ToString() == ">")
                 {
-                    if (Int32.Parse(AIOXBoardsTB.Text) <= Int32.Parse(aiox))
+                    if (Int32.Parse(AIOXBoardsTB.Text) >= Int32.Parse(aiox))
                     {
                         return;
                     }
@@ -656,7 +660,7 @@ namespace mods
 
                 if (AIOXBoardsCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(AIOXBoardsTB.Text) >= Int32.Parse(aiox))
+                    if (Int32.Parse(AIOXBoardsTB.Text) <= Int32.Parse(aiox))
                     {
                         return;
                     }
@@ -690,7 +694,17 @@ namespace mods
                 }
             }
 
-            foreach(var child in SpareInputSP.Children)
+            //DLM Board
+            if (DLMBoardCB.SelectedItem.ToString() != "")
+            {
+                if (DLMBoardCB.SelectedItem.ToString() != dlmBoard)
+                {
+                    return;
+                }
+            }
+
+            //Spare Inputs
+            foreach (var child in SpareInputSP.Children)
             {
                 if(child.GetType() == typeof(TextBox))
                 {
@@ -718,6 +732,7 @@ namespace mods
                 }
             }
 
+            //Spare Outputs
             foreach (var child in SpareOutputSP.Children)
             {
                 if (child.GetType() == typeof(TextBox))

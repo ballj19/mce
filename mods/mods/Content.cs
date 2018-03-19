@@ -8,21 +8,23 @@ namespace mods
 {
     public class Content
     {
-        List<string> content = new List<string>();
-        string[,] imap,omap;
-        public string[,] inputs,outputs;
-        List<string> inputLabels = new List<string>{ "IOINPE", "IOXINE", "IOIA", "IOELIG" };
-        List<string> outputLabels = new List<string>{ "IOOUTE", "IOXOUTE", "IOOA" };
+        public List<string> content = new List<string>();
+        string[,] imap, omap;
+        public string[,] inputs, outputs;
+        List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
+        List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
         List<string> filepaths = new List<string> { "G:\\Software\\" };
+        public string file;
 
 
         public Content(string file)
         {
             this.content = Get_Content(file);
-            this.imap = Build_IOmap(file,'I');
-            this.omap = Build_IOmap(file,'O');
+            this.imap = Build_IOmap(file, 'I');
+            this.omap = Build_IOmap(file, 'O');
             this.inputs = IO(this.imap, 'I');
-            this.outputs = IO(this.omap,'O');
+            this.outputs = IO(this.omap, 'O');
+            this.file = file;
         }
 
         private List<string> Get_Content(string file)
@@ -38,7 +40,7 @@ namespace mods
                 }
                 catch
                 {
-                    
+
                 }
             }
             int x = 0;
@@ -127,7 +129,7 @@ namespace mods
         private string Dec_To_Hex(string deci)
         {
             int dec = Int32.Parse(deci);
-            return dec.ToString("X").PadLeft(3,'0');
+            return dec.ToString("X").PadLeft(3, '0');
         }
 
         private static readonly Dictionary<char, string> hexCharacterToBinary = new Dictionary<char, string> {
@@ -149,7 +151,7 @@ namespace mods
             { 'f', "1111" }
         };
 
-        private string HexStringToBinary(string hex)
+        public string HexStringToBinary(string hex)
         {
             StringBuilder result = new StringBuilder();
             foreach (char c in hex)
@@ -162,69 +164,139 @@ namespace mods
 
         public string Get_Bit(string label, int offset, int nibble, int bit)
         {
-            int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
-
-            string value = Remove_Prefix(this.content[index],"DB").Trim();
-
-            if(!Is_Hex(value))
+            try
             {
-                value = Dec_To_Hex(value);
+                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+
+                string value = Remove_Prefix(this.content[index], "DB").Trim();
+
+                if (!Is_Hex(value))
+                {
+                    value = Dec_To_Hex(value);
+                }
+
+                string cleanString = Remove_Suffix(value, "H").Trim();
+
+                cleanString = cleanString.Substring(cleanString.Length - nibble - 1, 1); //High nibble = 1; Low nibble = 0
+
+                string binary = HexStringToBinary(cleanString);
+
+                if (binary[bit] == '1')
+                {
+                    return "YES";
+                }
+                else
+                {
+                    return "NO";
+                }
             }
-
-            string cleanString = Remove_Suffix(value, "H").Trim();
-
-            cleanString = cleanString.Substring(cleanString.Length - nibble - 1, 1); //High nibble = 1; Low nibble = 0
-
-            string binary = HexStringToBinary(cleanString);
-
-            if (binary[bit] == '1')
+            catch
             {
-                return "YES";
+                return "N/A";
             }
-            else
-            {
-                return "NO";
-            }
+            
         }
 
         public string Get_Nibble(string label, int offset, int nibble)
         {
-            int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
-
-            string value = Remove_Prefix(this.content[index], "DB").Trim();
-
-            if (!Is_Hex(value))
+            try
             {
-                value = Dec_To_Hex(value);
+                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+
+                string value = Remove_Prefix(this.content[index], "DB").Trim();
+
+                if (!Is_Hex(value))
+                {
+                    value = Dec_To_Hex(value);
+                }
+
+                string cleanString = Remove_Suffix(value, "H").Trim();
+
+                return cleanString.Substring(cleanString.Length - nibble - 1, 1);
             }
-
-            string cleanString = Remove_Suffix(value,"H").Trim();
-
-            return cleanString.Substring(cleanString.Length - nibble - 1, 1);
+            catch
+            {
+                return "N/A";
+            }
+            
         }
 
         public string Get_Byte(string label, int offset)
         {
-            int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
-
-            string value = Remove_Prefix(this.content[index], "DB").Trim();
-
-            if (!Is_Hex(value))
+            try
             {
-                value = Dec_To_Hex(value);
+                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+
+                string value = Remove_Prefix(this.content[index], "DB").Trim();
+
+                if (!Is_Hex(value))
+                {
+                    value = Dec_To_Hex(value);
+                }
+
+                string cleanString = Remove_Suffix(value, "H").Trim();
+
+                return cleanString.Substring(cleanString.Length - 2, 2);
             }
-
-            string cleanString = Remove_Suffix(value, "H").Trim();
-
-            return cleanString.Substring(cleanString.Length - 2, 2);
+            catch
+            {
+                return "N/A";
+            }
+            
         }
 
         public string Get_String(string label, int offset)
         {
-            int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
-            string cleanString = Remove_Suffix(Remove_Prefix(this.content[index], "DB"), "H").Trim();
+            try
+            {
+                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+                string cleanString = Remove_Suffix(Remove_Prefix(this.content[index], "DB"), "H").Trim();
 
-            return cleanString.Substring(1, cleanString.Length - 2);
+                return cleanString.Substring(1, cleanString.Length - 2);
+            }
+            catch
+            {
+                return "N/A";
+            }
+        }
+
+        public string Get_Comma_Separated_Byte(string label, int offset, int byteNum)
+        {
+            try
+            {
+                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+
+                string value = Remove_Prefix(this.content[index], "DB").Trim();
+
+                for (int b = 0; b < byteNum; b++)
+                {
+                    int commaIndex = value.IndexOf(",");
+                    value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
+                }
+
+                if (value.IndexOf(",") == -1)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    int commaIndex = value.IndexOf(",");
+                    value = value.Substring(0, commaIndex);
+                }
+
+                if (!Is_Hex(value))
+                {
+                    value = Dec_To_Hex(value);
+                }
+
+                string cleanString = Remove_Suffix(value, "H").Trim();
+
+                return cleanString.Substring(cleanString.Length - 2, 2);
+            }
+            catch
+            {
+                return "N/A";
+            }
         }
 
         private static readonly Dictionary<char, int> hexCharacterToDecimal = new Dictionary<char, int> {
@@ -248,28 +320,35 @@ namespace mods
 
         public int HexStringToDecimal(string hex)
         {
-            //Need to reverse the hex string for the math to work out better
-            hex = Remove_Suffix(hex, "H");
-
-            char[] charArray = hex.ToCharArray();
-            Array.Reverse(charArray);
-            hex = new string(charArray);
-
-            int dec_value = 0;
-            int x = 0;
-            foreach (char c in hex)
+            try
             {
-                if (x == 0)
+                //Need to reverse the hex string for the math to work out better
+                hex = Remove_Suffix(hex, "H");
+
+                char[] charArray = hex.ToCharArray();
+                Array.Reverse(charArray);
+                hex = new string(charArray);
+
+                int dec_value = 0;
+                int x = 0;
+                foreach (char c in hex)
                 {
-                    dec_value += hexCharacterToDecimal[char.ToLower(c)];
+                    if (x == 0)
+                    {
+                        dec_value += hexCharacterToDecimal[char.ToLower(c)];
+                    }
+                    else
+                    {
+                        dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
+                    }
+                    x++;
                 }
-                else
-                {
-                    dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
-                }
-                x++;
+                return dec_value;
             }
-            return dec_value;
+            catch
+            {
+                return 0;
+            }
         }
 
         private string[,] Build_IOmap(string file, char io)
@@ -821,6 +900,28 @@ namespace mods
             return inputs;
         }
 
+        public List<string> Get_PILabels()
+        {
+            int index = this.content.FindIndex(x => x.StartsWith("PILAB"));
+            string pilabelstring = "";
+            List<string> piLabels = new List<string>();
+            int c = 1;
+
+            while(this.content[index + c].StartsWith("DB"))
+            {
+                pilabelstring += this.Get_String("PILAB", c);
+                c++;
+            }
+
+            for (int i = 0; i < pilabelstring.Length / 2; i++)
+            {
+                string pilabel = pilabelstring.Substring(i * 2, 2);
+                piLabels.Add(pilabel);
+            }
+
+            return piLabels;
+        }
+
         private static readonly Dictionary<string, string> LobbyConfig = new Dictionary<string, string> {
             {"00","BB" },
             {"01","AC" },
@@ -885,5 +986,6 @@ namespace mods
             {"3C","" },
             {"3D","" },
         };
+        
     }
 }

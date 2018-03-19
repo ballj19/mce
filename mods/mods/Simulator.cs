@@ -126,30 +126,111 @@ namespace mods
             int top_landing = HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string front = "False";
             string rear = "False";
-            
-            for(int x = 1; x <= top_landing; x++)
+            string isFalseFloor = content.Get_Bit("CPVAR", 3, 0, 3);
+
+            if(isFalseFloor == "NO")
             {
-                if(content.Get_Bit("ELIGIV:", x, 0, 3) == "YES")
+                for (int x = 1; x <= top_landing; x++)
                 {
-                    front = "True";
+                    if (content.Get_Bit("ELIGIV:", x, 0, 3) == "YES" || content.Get_Bit("ALTMP:", x, 0, 3) == "YES")
+                    {
+                        front = "True";
+                    }
+                    else
+                    {
+                        front = "False";
+                    }
+
+                    if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES" || content.Get_Bit("ALTMP:", x, 0, 2) == "YES")
+                    {
+                        rear = "True";
+                    }
+                    else
+                    {
+                        rear = "False";
+                    }
+
+                    Write_Line("Value Height " + x + " = 10");
+                    Write_Line("Value " + x + " F = " + front);
+                    Write_Line("Value " + x + " R = " + rear);
                 }
-                else
+            }
+            else
+            {
+                int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
+                int x = 1;
+                List<int> falseFloors = new List<int>();
+                List<int> nonFalseFloors = new List<int>();
+                while(content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:", x) != "7F")
                 {
-                    front = "False";
+                    string floorHex = content.Get_Byte("PIX_TABLE:", x);
+                    string floorBinary = content.HexStringToBinary(floorHex);
+                    int floorDec = content.HexStringToDecimal(floorHex) + 1;
+                    if(floorBinary[0] == '0') //If False Floor
+                    {
+                        falseFloors.Add(floorDec);
+                    }
+                    else //Non False Floor
+                    {
+                        nonFalseFloors.Add(floorDec - 128);
+                    }
+                    x++;
                 }
 
-                if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES")
+                for (int f = 1; f <= top_landing; f++)
                 {
-                    rear = "True";
-                }
-                else
-                {
-                    rear = "False";
-                }
+                    if(nonFalseFloors.Contains(f))
+                    {
+                        if (content.Get_Bit("ELIGIV:", f, 0, 3) == "YES" || content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
+                        {
+                            front = "True";
+                        }
+                        else
+                        {
+                            front = "False";
+                        }
 
-                Write_Line("Value Height " + x + " = 10");
-                Write_Line("Value " + x + " F = " + front);
-                Write_Line("Value " + x + " R = " + rear);
+                        if (content.Get_Bit("ELIGIV:", f, 0, 2) == "YES" || content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                        {
+                            rear = "True";
+                        }
+                        else
+                        {
+                            rear = "False";
+                        }
+                    }
+                    else if(falseFloors.Contains(f))
+                    {
+                        int falseFloorIndex = falseFloors.IndexOf(f);
+                        int falseFloorNum = f;
+
+                        while(falseFloorIndex < falseFloors.Count - 1 && falseFloors[falseFloorIndex + 1] == falseFloorNum)
+                        {
+                            front = "True";
+                            rear = "False";
+
+                            Write_Line("Value Height " + f + " = 10");
+                            Write_Line("Value " + f + " F = " + front);
+                            Write_Line("Value " + f + " R = " + rear);
+
+                            f++;
+                            falseFloorIndex++;
+                        }
+
+                        front = "True";
+                        rear = "False";
+
+                    }
+                    else
+                    {
+                        front = "False";
+                        rear = "False";
+                    }
+
+                    Write_Line("Value Height " + f + " = 10");
+                    Write_Line("Value " + f + " F = " + front);
+                    Write_Line("Value " + f + " R = " + rear);
+                }
             }
         }
 
@@ -244,7 +325,7 @@ namespace mods
             string down = "False";
             int floor = 0;
 
-            for (int x = 0; x <= 8; x++)
+            for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
@@ -269,7 +350,7 @@ namespace mods
                     floor = x * 8 + (3 - b) + 1;
 
                     Write_Line("Value " + floor + " U = " + up);
-                    Write_Line("Value " + floor + " U = " + down);
+                    Write_Line("Value " + floor + " D = " + down);
                 }
 
                 for (int b = 3; b >= 0; b--)
@@ -294,8 +375,8 @@ namespace mods
 
                     floor = x * 8 + (3 - b) + 5;
 
-                    Write_Line("Value " + floor + " F = " + up);
-                    Write_Line("Value " + floor + " R = " + down);
+                    Write_Line("Value " + floor + " U = " + up);
+                    Write_Line("Value " + floor + " D = " + down);
                 }
             }
         }
@@ -306,7 +387,7 @@ namespace mods
             string down = "False";
             int floor = 0;
 
-            for (int x = 0; x <= 8; x++)
+            for (int x = 0; x < 8; x++)
             {
                 for (int b = 3; b >= 0; b--)
                 {
@@ -331,7 +412,7 @@ namespace mods
                     floor = x * 8 + (3 - b) + 1;
 
                     Write_Line("Value " + floor + " U = " + up);
-                    Write_Line("Value " + floor + " U = " + down);
+                    Write_Line("Value " + floor + " D = " + down);
                 }
 
                 for (int b = 3; b >= 0; b--)
@@ -356,8 +437,8 @@ namespace mods
 
                     floor = x * 8 + (3 - b) + 5;
 
-                    Write_Line("Value " + floor + " F = " + up);
-                    Write_Line("Value " + floor + " R = " + down);
+                    Write_Line("Value " + floor + " U = " + up);
+                    Write_Line("Value " + floor + " D = " + down);
                 }
             }
         }

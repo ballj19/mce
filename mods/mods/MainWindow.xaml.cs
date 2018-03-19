@@ -29,11 +29,33 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
+        string version = "V1.02.2";
+        List<string> admins = new List<string> { "jacob.ball" };
+        List<string> software = new List<string> { "David.Joyce", "pupadhyay", "vkapadia", "adosanjh" };
 
         public MainWindow()
         {
             InitializeComponent();
-            
+
+            this.Title = "Modification Hub by Jake Ball " + version;
+
+            if (Version_Check())
+            {
+                if (System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    //To get the location the assembly normally resides on disk or the install directory
+                    string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                    //once you have the path you get the directory with:
+                    string directory = System.IO.Path.GetDirectoryName(path);
+
+                    string updatepath = directory + "\\ModHubUpdater.exe";
+                    string cmd = "C:\\Windows\\explorer.exe";
+                    Process.Start(cmd, updatepath);
+                    System.Windows.Application.Current.Shutdown();
+                }
+            }
+
             Username.Text = Properties.Settings.Default.Username;
             CustomFoldersCheckBox.IsChecked = false;
             ListBox1.SelectionMode = SelectionMode.Extended;
@@ -41,6 +63,7 @@ namespace mods
             FileExtension.Items.Add(".old");
             FileExtension.Items.Add("All Files");
             FileExtension.SelectedIndex = 0;
+            Make_Controls_Invisible();
             Update_Search_History();
             try
             {
@@ -57,6 +80,8 @@ namespace mods
             {
 
             }
+
+            //Set_Privileges();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -141,6 +166,13 @@ namespace mods
             else
             {
                 SearchProgress.Maximum = 11;
+            }
+
+            using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(@"K:\\Jake Ball\\test.txt", true))
+            {
+                DateTime now = DateTime.Now;
+                file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
             }
 
             string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
@@ -314,12 +346,25 @@ namespace mods
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
             string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 2);
+            string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+            string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+            string versionBot = content.Get_String("CUSTOM:", 1);
+            if(versionTop[0] == '0' && versionTop.Length > 1)
+            {
+                versionTop = versionTop.Substring(1, 1);
+            }
+            if(versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+            {
+                versionBot = versionBot.Substring(1, 1);
+            }
 
             //Job Info
             JobInfo.Text = "";
             JobInfo.Text += file + "\n";
             JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
-            JobInfo.Text += jobName + "\n\n";
+            JobInfo.Text += jobName + "\n";
+            JobInfo.Text += "Version: " + versionTop + "." + versionMid + "." + versionBot + "\n\n";
             JobInfo.Text += "Top Floor: " + topFloorDecimal + "\n";
             JobInfo.Text += "Bottom Floor: " + botFloorDecimal + "\n\n";
             JobInfo.Text += "Independent Rear Doors: " + rearDoor + "\n";
@@ -335,16 +380,17 @@ namespace mods
             JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
             JobInfo.Text += "CE Board: " + ceBoard + "\n";
             JobInfo.Text += "NC Board: " + ncBoard + "\n";
-            JobInfo.Text += "FT Board: " + ftBoard + "\n\n";
+            JobInfo.Text += "FT Board: " + ftBoard + "\n";
+            JobInfo.Text += "DLM Board: " + dlmBoard + "\n\n";
 
             //Landings
             Draw_Landing_Preview(content);
 
             //Inputs and Outputs
-            Generate_IO(content,file);
+            Generate_IO(content);
 
             //Headers
-            Generate_Headers(content,file);
+            Generate_Headers(content);
         }
 
         private void MP2OGM_JobInfo(string file)
@@ -388,6 +434,7 @@ namespace mods
             IOInfo.Text = "";
             IOInfo.Text += "Spare Inputs:\n";
 
+            /*
             for (int x = 0; x < 8; x++)
             {
                 string inputLine = "";
@@ -476,7 +523,8 @@ namespace mods
                         IOInfo.Text += outputs[x, 7 - y] + hyphen;
                     }
                 }
-            }
+            }*/
+            Generate_IO(content,true);
         }
 
         private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -492,17 +540,20 @@ namespace mods
                     try
                     {
                         MP2OGM_JobInfo(file);
+                        Make_Controls_Visible();
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        using (System.IO.StreamWriter writefile =
+                        new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                        {
+                            DateTime now = DateTime.Now;
+                            writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                            writefile.WriteLine(file);
+                            writefile.WriteLine(ex.ToString() + "\n");
+                        }
                         JobInfo.Text = "Job Info could not be generated for this file.";
-                        IOInfo.Text = "";
-                        HeaderSP.Children.Clear();
-                        LandingAltConfig.Visibility = Visibility.Hidden;
-                        LandingAltHeader.Visibility = Visibility.Hidden;
-                        LandingNormalConfig.Visibility = Visibility.Hidden;
-                        LandingNormalHeader.Visibility = Visibility.Hidden;
-                        LandingLevels.Visibility = Visibility.Hidden;
+                        Make_Controls_Invisible();
                     }
                 }
                 else
@@ -510,17 +561,20 @@ namespace mods
                     try
                     {
                         MP2COC_JobInfo(file);
+                        Make_Controls_Visible();
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        using (System.IO.StreamWriter writefile =
+                        new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                        {
+                            DateTime now = DateTime.Now;
+                            writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                            writefile.WriteLine(file);
+                            writefile.WriteLine(ex.ToString() + "\n");
+                        }
                         JobInfo.Text = "Job Info could not be generated for this file.";
-                        IOInfo.Text = "";
-                        HeaderSP.Children.Clear();
-                        LandingAltConfig.Visibility = Visibility.Hidden;
-                        LandingAltHeader.Visibility = Visibility.Hidden;
-                        LandingNormalConfig.Visibility = Visibility.Hidden;
-                        LandingNormalHeader.Visibility = Visibility.Hidden;
-                        LandingLevels.Visibility = Visibility.Hidden;
+                        Make_Controls_Invisible();
                     }
                 }
             }
@@ -706,12 +760,20 @@ namespace mods
             LandingAltHeader.Visibility = Visibility.Hidden;
 
             int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
+
+            TogglePIs.Visibility = Visibility.Visible;
+
+            List<string> piLabels = content.Get_PILabels();
+            
             string front = "False";
             string rear = "False";
 
             LandingLevels.Text = "";
             LandingLevels.Height = 16 * top_landing + 10;
             LandingLevels.BorderThickness = new System.Windows.Thickness(2);
+            LandingPIs.Text = "";
+            LandingPIs.Height = 16 * top_landing + 10;
+            LandingPIs.BorderThickness = new System.Windows.Thickness(2);
 
             LandingNormalConfig.Text = "";
             LandingNormalConfig.Height = 16 * top_landing + 10;
@@ -719,75 +781,224 @@ namespace mods
 
             LandingNormalHeader.Visibility = Visibility.Visible;
 
-            for (int x = top_landing; x >= 1; x--)
+            string isFalseFloor = content.Get_Bit("CPVAR", 3, 0, 3);
+
+            if(isFalseFloor == "NO")
             {
-                if (content.Get_Bit("ELIGIV:", x, 0, 3) == "YES")
+                for (int x = top_landing; x >= 1; x--)
                 {
-                    front = "F";
-                }
-                else
-                {
-                    front = ".";
-                }
-
-                if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES")
-                {
-                    rear = "R";
-                }
-                else
-                {
-                    rear = ".";
-                }
-
-                LandingLevels.Text += x + "\n";
-                LandingNormalConfig.Text += front + " " + rear + "\n";
-            }
-
-            for(int i = 0; i < 8; i++)
-            {
-                for (int i2 = 0; i2 < 8; i2++)
-                {
-                    if (content.inputs[i,i2] == "ALT")
+                    if (content.Get_Bit("ELIGIV:", x, 0, 3) == "YES")
                     {
-                        LandingAltHeader.Visibility = Visibility.Visible;
-                        LandingAltConfig.Visibility = Visibility.Visible;
+                        front = "F";
+                    }
+                    else
+                    {
+                        front = ".";
+                    }
 
-                        LandingAltConfig.Text = "";
-                        LandingAltConfig.Height = 16 * top_landing + 10;
-                        LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+                    if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES")
+                    {
+                        rear = "R";
+                    }
+                    else
+                    {
+                        rear = ".";
+                    }
 
-                        for (int x = top_landing; x >= 1; x--)
+                    LandingPIs.Text += piLabels[x - 1] + "\n";
+                    LandingLevels.Text += x + "\n";
+                    LandingNormalConfig.Text += front + " " + rear + "\n";
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int i2 = 0; i2 < 8; i2++)
+                    {
+                        if (content.inputs[i, i2] == "ALT")
                         {
+                            LandingAltHeader.Visibility = Visibility.Visible;
+                            LandingAltConfig.Visibility = Visibility.Visible;
 
-                            if (content.Get_Bit("ALTMP:", x, 0, 3) == "YES")
-                            {
-                                front = "F";
-                            }
-                            else
-                            {
-                                front = ".";
-                            }
+                            LandingAltConfig.Text = "";
+                            LandingAltConfig.Height = 16 * top_landing + 10;
+                            LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
 
-                            if (content.Get_Bit("ALTMP:", x, 0, 2) == "YES")
+                            for (int x = top_landing; x >= 1; x--)
                             {
-                                rear = "R";
+
+                                if (content.Get_Bit("ALTMP:", x, 0, 3) == "YES")
+                                {
+                                    front = "F";
+                                }
+                                else
+                                {
+                                    front = ".";
+                                }
+
+                                if (content.Get_Bit("ALTMP:", x, 0, 2) == "YES")
+                                {
+                                    rear = "R";
+                                }
+                                else
+                                {
+                                    rear = ".";
+                                }
+                                LandingAltConfig.Text += front + " " + rear + "\n";
                             }
-                            else
-                            {
-                                rear = ".";
-                            }
-                            LandingAltConfig.Text += front + " " + rear + "\n";
                         }
                     }
                 }
             }
+            else
+            {
+                int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
+                int x = 1;
+                List<int> falseFloors = new List<int>();
+                List<int> nonFalseFloors = new List<int>();
+                while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:",x) != "7F")
+                {
+                    string floorHex = content.Get_Byte("PIX_TABLE:", x);
+                    string floorBinary = content.HexStringToBinary(floorHex);
+                    int floorDec = content.HexStringToDecimal(floorHex) + 1;
+                    if (floorBinary[0] == '0') //If False Floor
+                    {
+                        falseFloors.Add(floorDec);
+                    }
+                    else //Non False Floor
+                    {
+                        nonFalseFloors.Add(floorDec - 128);
+                    }
+                    x++;
+                }
 
-            
+                for (int f = 1; f <= top_landing; f++)
+                {
+                    if (nonFalseFloors.Contains(f))
+                    {
+                        if (content.Get_Bit("ELIGIV:", f, 0, 3) == "YES")
+                        {
+                            front = "F";
+                        }
+                        else
+                        {
+                            front = ".";
+                        }
+
+                        if (content.Get_Bit("ELIGIV:", f, 0, 2) == "YES")
+                        {
+                            rear = "R";
+                        }
+                        else
+                        {
+                            rear = ".";
+                        }
+                    }
+                    else if (falseFloors.Contains(f))
+                    {
+                        int falseFloorIndex = falseFloors.IndexOf(f);
+                        int falseFloorNum = f;
+
+                        while (falseFloorIndex < falseFloors.Count - 1 && falseFloors[falseFloorIndex + 1] == falseFloorNum)
+                        {
+                            front = " X";
+                            rear = "";
+
+                            LandingPIs.Text = piLabels[f - 1] + "\n" + LandingPIs.Text;
+                            LandingLevels.Text = f + "\n" + LandingLevels.Text;
+                            LandingNormalConfig.Text = front + " " + rear + "\n" + LandingNormalConfig.Text;
+
+                            f++;
+                            falseFloorIndex++;
+                        }
+
+                        front = " X";
+                        rear = "";
+
+                    }
+                    else
+                    {
+                        front = ".";
+                        rear = ".";
+                    }
+
+                    LandingPIs.Text = piLabels[f - 1] + "\n" + LandingPIs.Text;
+                    LandingLevels.Text = f + "\n" + LandingLevels.Text;
+                    LandingNormalConfig.Text = front + " " + rear + "\n" + LandingNormalConfig.Text;
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int i2 = 0; i2 < 8; i2++)
+                    {
+                        if (content.inputs[i, i2] == "ALT")
+                        {
+                            LandingAltHeader.Visibility = Visibility.Visible;
+                            LandingAltConfig.Visibility = Visibility.Visible;
+
+                            LandingAltConfig.Text = "";
+                            LandingAltConfig.Height = 16 * top_landing + 10;
+                            LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
+                            for (int f = 1; f <= top_landing; f++)
+                            {
+                                if (nonFalseFloors.Contains(f))
+                                {
+                                    if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
+                                    {
+                                        front = "F";
+                                    }
+                                    else
+                                    {
+                                        front = ".";
+                                    }
+
+                                    if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                                    {
+                                        rear = "R";
+                                    }
+                                    else
+                                    {
+                                        rear = ".";
+                                    }
+                                }
+                                else if (falseFloors.Contains(f))
+                                {
+                                    int falseFloorIndex = falseFloors.IndexOf(f);
+                                    int falseFloorNum = f;
+
+                                    while (falseFloorIndex < falseFloors.Count - 1 && falseFloors[falseFloorIndex + 1] == falseFloorNum)
+                                    {
+                                        front = " X";
+                                        rear = "";
+                                        
+                                        LandingAltConfig.Text = front + " " + rear + "\n" + LandingAltConfig.Text;
+
+                                        f++;
+                                        falseFloorIndex++;
+                                    }
+
+                                    front = " X";
+                                    rear = "";
+
+                                }
+                                else
+                                {
+                                    front = ".";
+                                    rear = ".";
+                                }
+
+                                LandingAltConfig.Text = front + " " + rear + "\n" + LandingAltConfig.Text;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void Draw_Group_Landing_Preview(Content content)
         {
             int group_top_landing = content.Get_Group_Top_Level();
+            List<string> piLabels = content.Get_PILabels();
             string front = "False";
             string rear = "False";
             string tab = "";
@@ -795,6 +1006,9 @@ namespace mods
             LandingLevels.Text = "";
             LandingLevels.Height = 16 * group_top_landing + 26;
             LandingLevels.BorderThickness = new System.Windows.Thickness(2);
+            LandingPIs.Text = "";
+            LandingPIs.Height = 16 * group_top_landing + 26;
+            LandingPIs.BorderThickness = new System.Windows.Thickness(2);
 
             LandingNormalConfig.Text = "";
             LandingNormalConfig.Height = 16 * group_top_landing + 26;
@@ -848,15 +1062,17 @@ namespace mods
                 }
                 LandingNormalConfig.Text += "\n";
                 LandingLevels.Text += x + "\n";
+                LandingPIs.Text += piLabels[x - 1] + "\n";
             }
         }
 
-        private void Generate_Headers(Content content, string file)
+        private void Generate_Headers(Content content)
         {
             HeaderSP.Children.Clear();
 
             List<string> calls = new List<string>();
-            
+
+            string file = content.file;
             string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
 
             if (ncBoard == "NO") //Exclude ELIGI: if NC board is set
@@ -987,262 +1203,287 @@ namespace mods
                     }
                 }
             }
-            
-            //XELIGI: Front Car Calls
-            for (int x = 0; x < 8; x++)
+
+            if (content.content.IndexOf("XELIGI:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+
+
+                //XELIGI: Front Car Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 1, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 100 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "X");
+                        if (content.Get_Bit("XELIGI:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "X");
+                        }
                     }
                 }
-                for (int b = 3; b >= 0; b--)
+
+                //XELIGI: Rear Car Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 1, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 100 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "X");
+                        if (content.Get_Bit("XELIGI:", x + 9, 0, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 9, 1, b) == "YES")
+                        {
+                            int callNum = 100 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
+                    }
+                }
+
+                //XELIGI: Front Down Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 17, 0, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 17, 1, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                }
+
+                //XELIGI: Rear Down Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 25, 0, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 25, 1, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
+                    }
+                }
+
+                //XELIGI: Front Up Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 33, 0, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 33, 1, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                }
+
+                //XELIGI: Rear Up Hall Calls
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 41, 0, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("XELIGI:", x + 41, 1, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 5;
+                            calls.Add(callNum.ToString() + "R" + "X");
+                        }
                     }
                 }
             }
 
-            //XELIGI: Rear Car Calls
-            for (int x = 0; x < 8; x++)
+            if (content.content.IndexOf("HELIGI:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+                //HELIGI: Front Car Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 9, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 100 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R" + "X");
+                        if (content.Get_Bit("HELIGI:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("EC" + callNum.ToString());
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("HELIGI:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("EC" + callNum.ToString());
+                        }
                     }
                 }
-                for (int b = 3; b >= 0; b--)
+
+                //HELIGI: Rear Car Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 9, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 100 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R" + "X");
+                        if (content.Get_Bit("HELIGI:", x + 9, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("EC" + callNum.ToString() + "R");
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("HELIGI:", x + 9, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("EC" + callNum.ToString() + "R");
+                        }
                     }
                 }
             }
 
-            //XELIGI: Front Down Hall Calls
-            for (int x = 0; x < 8; x++)
+            if (content.content.IndexOf("INELIG:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+                //INELIG: System Input Eligibility Map
+                List<string> inelig = content.INELIG_Inputs(file);
+                foreach (string input in inelig)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 17, 0, b) == "YES")
-                    {
-                        int callNum = 500 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "X");
-                    }
+                    calls.Add(input);
                 }
-                for (int b = 3; b >= 0; b--)
+            }
+
+            if (content.content.IndexOf("FSECUR") != -1)
+            {
+
+
+                //FSECUR: Per Opening Security Input Eligibility Map
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 17, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 500 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "X");
+                        if (content.Get_Bit("FSECUR:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("S" + callNum.ToString());
+                        }
+                    }
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("FSECUR:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("S" + callNum.ToString());
+                        }
                     }
                 }
             }
 
-            //XELIGI: Rear Down Hall Calls
-            for (int x = 0; x < 8; x++)
+            if (content.content.IndexOf("RSECUR:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+                //RSECUR: Per Opening Security Input Eligibility Map
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 25, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 500 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R" + "X");
+                        if (content.Get_Bit("RSECUR:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("S" + callNum.ToString() + "R");
+                        }
                     }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("XELIGI:", x + 25, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 500 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R" + "X");
+                        if (content.Get_Bit("RSECUR:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("S" + callNum.ToString() + "R");
+                        }
                     }
                 }
             }
 
-            //XELIGI: Front Up Hall Calls
-            for (int x = 0; x < 8; x++)
+            if (content.content.IndexOf("CARDRF:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+                //CARDRF: Front Card Reader Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 33, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 600 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "X");
+                        if (content.Get_Bit("CARDRF:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("CR" + callNum.ToString());
+                        }
                     }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("XELIGI:", x + 33, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 600 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "X");
+                        if (content.Get_Bit("CARDRF:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("CR" + callNum.ToString());
+                        }
                     }
                 }
             }
 
-            //XELIGI: Rear Up Hall Calls
-            for (int x = 0; x < 8; x++)
+            if (content.content.IndexOf("CARDRR:") != -1)
             {
-                for (int b = 3; b >= 0; b--)
+                //CARDRR: Rear Card Reader Calls
+                for (int x = 0; x < 8; x++)
                 {
-                    if (content.Get_Bit("XELIGI:", x + 41, 0, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 600 + x * 8 + (3 - b) + 1;
-                        calls.Add(callNum.ToString() + "R" + "X");
+                        if (content.Get_Bit("CARDRR:", x + 1, 0, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1;
+                            calls.Add("CR" + callNum.ToString() + "R");
+                        }
                     }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("XELIGI:", x + 41, 1, b) == "YES")
+                    for (int b = 3; b >= 0; b--)
                     {
-                        int callNum = 600 + x * 8 + (3 - b) + 5;
-                        calls.Add(callNum.ToString() + "R" + "X");
-                    }
-                }
-            }
-
-            //HELIGI: Front Car Calls
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("HELIGI:", x + 1, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("EC" + callNum.ToString());
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("HELIGI:", x + 1, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("EC" + callNum.ToString());
-                    }
-                }
-            }
-
-            //HELIGI: Rear Car Calls
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("HELIGI:", x + 9, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("EC" + callNum.ToString() + "R");
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("HELIGI:", x + 9, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("EC" + callNum.ToString() + "R");
-                    }
-                }
-            }
-
-            //INELIG: System Input Eligibility Map
-            List<string> inelig = content.INELIG_Inputs(file);
-            foreach(string input in inelig)
-            {
-                calls.Add(input);
-            }
-
-            //FSECUR: Per Opening Security Input Eligibility Map
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("FSECUR:", x + 1, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("S" + callNum.ToString());
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("FSECUR:", x + 1, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("S" + callNum.ToString());
-                    }
-                }
-            }
-
-            //RSECUR: Per Opening Security Input Eligibility Map
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("RSECUR:", x + 1, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("S" + callNum.ToString() + "R");
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("RSECUR:", x + 1, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("S" + callNum.ToString() + "R");
-                    }
-                }
-            }
-
-            //CARDRF: Front Card Reader Calls
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("CARDRF:", x + 1, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("CR" + callNum.ToString());
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("CARDRF:", x + 1, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("CR" + callNum.ToString());
-                    }
-                }
-            }
-
-            //CARDRR: Rear Card Reader Calls
-            for (int x = 0; x < 8; x++)
-            {
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("CARDRR:", x + 1, 0, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 1;
-                        calls.Add("CR" + callNum.ToString() + "R");
-                    }
-                }
-                for (int b = 3; b >= 0; b--)
-                {
-                    if (content.Get_Bit("CARDRR:", x + 1, 1, b) == "YES")
-                    {
-                        int callNum = x * 8 + (3 - b) + 5;
-                        calls.Add("CR" + callNum.ToString() + "R");
+                        if (content.Get_Bit("CARDRR:", x + 1, 1, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 5;
+                            calls.Add("CR" + callNum.ToString() + "R");
+                        }
                     }
                 }
             }
@@ -1284,13 +1525,13 @@ namespace mods
             } while (numOfCalls > 0);
         }
 
-        private void Generate_IO(Content content, string file)
+        private void Generate_IO(Content content, bool group = false)
         {
             IOInfo.Text = "";
 
+            string file = content.file;
             string[,] inputs = content.inputs;
             string[,] outputs = content.outputs;
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
 
             IOInfo.Text += "Spare Inputs:\n";
 
@@ -1388,106 +1629,429 @@ namespace mods
                 }
             }
 
-            if(ncBoard == "YES")
+            if (!group)
             {
-                List<string> ncinputs = content.NC_Inputs(file);
-                List<string> ncoutputs = content.NC_Outputs(file);
+                string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
 
-                IOInfo.Text += "\nNC Board Inputs:\n";
-
-                for (int x = 0; x < 8; x++)
+                if (ncBoard == "YES")
                 {
-                    string inputLine = "";
+                    List<string> ncinputs = content.NC_Inputs(file);
+                    List<string> ncoutputs = content.NC_Outputs(file);
 
-                    for (int y = 0; y < 8; y++)
+                    IOInfo.Text += "\nNC Board Inputs:\n";
+
+                    for (int x = 0; x < 8; x++)
                     {
-                        string hyphen = "";
-                        if (y == 0)
+                        string inputLine = "";
+
+                        for (int y = 0; y < 8; y++)
                         {
-                            if (x == 3)
+                            string hyphen = "";
+                            if (y == 0)
                             {
-                                hyphen = "\n\n";
+                                if (x == 3)
+                                {
+                                    hyphen = "\n\n";
+                                }
+                                else
+                                {
+                                    hyphen = "\n";
+                                }
+                            }
+                            else if (y == 4)
+                            {
+                                hyphen = "-||-";
                             }
                             else
                             {
-                                hyphen = "\n";
+                                hyphen = "-";
                             }
-                        }
-                        else if (y == 4)
-                        {
-                            hyphen = "-||-";
-                        }
-                        else
-                        {
-                            hyphen = "-";
-                        }
-                        if (x*8 + y >= ncinputs.Count || ncinputs[x*8 + y] == null)
-                        {
-                            inputLine = "XXXX" + hyphen + inputLine;
-                        }
-                        else
-                        {
-                            inputLine = ncinputs[x*8 + y] + hyphen + inputLine;
-                        }
-                    }
-
-                    if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        IOInfo.Text += inputLine;
-                    }
-                }
-
-                IOInfo.Text += "\nNC Board Outputs:\n";
-
-                for (int x = 0; x < 8; x++)
-                {
-                    string outputLine = "";
-
-                    for (int y = 0; y < 8; y++)
-                    {
-                        string hyphen = "";
-                        if (y == 0)
-                        {
-                            if (x == 3)
+                            if (x * 8 + y >= ncinputs.Count || ncinputs[x * 8 + y] == null)
                             {
-                                hyphen = "\n\n";
+                                inputLine = "XXXX" + hyphen + inputLine;
                             }
                             else
                             {
-                                hyphen = "\n";
+                                inputLine = ncinputs[x * 8 + y] + hyphen + inputLine;
                             }
                         }
-                        else if (y == 4)
+
+                        if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
                         {
-                            hyphen = "-||-";
+                            break;
                         }
                         else
                         {
-                            hyphen = "-";
-                        }
-                        if (x * 8 + y >= ncoutputs.Count || ncoutputs[x * 8 + y] == null)
-                        {
-                            outputLine = "XXXX" + hyphen + outputLine;
-                        }
-                        else
-                        {
-                            outputLine = ncoutputs[x * 8 + y] + hyphen + outputLine;
+                            IOInfo.Text += inputLine;
                         }
                     }
 
-                    if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                    IOInfo.Text += "\nNC Board Outputs:\n";
+
+                    for (int x = 0; x < 8; x++)
                     {
-                        break;
-                    }
-                    else
-                    {
-                        IOInfo.Text += outputLine;
+                        string outputLine = "";
+
+                        for (int y = 0; y < 8; y++)
+                        {
+                            string hyphen = "";
+                            if (y == 0)
+                            {
+                                if (x == 3)
+                                {
+                                    hyphen = "\n\n";
+                                }
+                                else
+                                {
+                                    hyphen = "\n";
+                                }
+                            }
+                            else if (y == 4)
+                            {
+                                hyphen = "-||-";
+                            }
+                            else
+                            {
+                                hyphen = "-";
+                            }
+                            if (x * 8 + y >= ncoutputs.Count || ncoutputs[x * 8 + y] == null)
+                            {
+                                outputLine = "XXXX" + hyphen + outputLine;
+                            }
+                            else
+                            {
+                                outputLine = ncoutputs[x * 8 + y] + hyphen + outputLine;
+                            }
+                        }
+
+                        if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            IOInfo.Text += outputLine;
+                        }
                     }
                 }
+            }
+
+            Draw_Boards(content,group);
+        }
+
+        private void Draw_Boards(Content content, bool group = false)
+        {
+            BoardSP.Children.Clear();
+
+            int iox = 0;
+            int i4o = 0;
+            int aiox = 0;
+
+            if (group)
+            {
+                iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
+                i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+
+            }
+            else
+            {
+                i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
+                iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
+                aiox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
+            }
+
+            string[,] inputs = content.inputs;
+            string[,] outputs = content.outputs;
+
+            int inputRow = 0;
+            int outputRow = 0;
+            int inputCol = 0;
+            int outputCol = 0;
+
+            //IOX
+            for(int b = 0; b < iox; b++)
+            {
+
+                Border border = new Border {
+                    BorderBrush = System.Windows.Media.Brushes.Black,
+                    BorderThickness = new Thickness(2),
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                StackPanel ioxsp = new StackPanel {
+                    Name = "ioxsp" + b,
+                    Orientation = Orientation.Vertical,
+                    Width = 500, Margin = new Thickness(43,0,0,0)
+                };
+
+                Label boardLabel = new Label { Content = "IOX Board # " + (b + 1) };
+                Label inputLabel = new Label { Content = "Inputs:" };
+                Label outputLabel = new Label { Content = "Outputs:" };
+
+                StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
+                StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0,0,0,10)};
+
+                for(int i = 0; i < 8; i++)
+                {
+                    string input = inputs[inputRow, inputCol];
+                    inputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = input,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+                    inputCol++;
+                }
+
+                inputCol = 0;
+                inputRow++;
+
+                for(int o = 0; o < 8; o ++)
+                {
+                    string output = outputs[outputRow, 7 - outputCol];
+                    outputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = output,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+                    outputCol++;
+                }
+
+                outputCol = 0;
+                outputRow++;
+
+                ioxsp.Children.Add(boardLabel);
+
+                ioxsp.Children.Add(inputLabel);
+                ioxsp.Children.Add(inputsp1);
+
+                ioxsp.Children.Add(outputLabel);
+                ioxsp.Children.Add(outputsp1);
+
+                border.Child = ioxsp;
+                BoardSP.Children.Add(border);
+            }
+
+            //I4O
+            for (int b = 0; b < i4o; b++)
+            {
+                Border border = new Border
+                {
+                    BorderBrush = System.Windows.Media.Brushes.Black,
+                    BorderThickness = new Thickness(2),
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                StackPanel i4osp = new StackPanel
+                {
+                    Name = "i4osp" + b,
+                    Orientation = Orientation.Vertical,
+                    Width = 500,
+                    Margin = new Thickness(43, 0, 0, 0)
+                };
+
+                Label boardLabel = new Label { Content = "I4O Board # " + (b + 1) };
+                Label inputLabel = new Label { Content = "Inputs:" };
+                Label outputLabel = new Label { Content = "Outputs:" };
+
+                StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
+                StackPanel inputsp2 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0,-2,0,0) };
+                StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string input = inputs[inputRow, inputCol];
+                    inputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = input,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+
+                    inputCol++;
+
+                    if(inputCol == 8)
+                    {
+                        inputCol = 0;
+                        inputRow++;
+                    }
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string input = inputs[inputRow, inputCol];
+                    inputsp2.Children.Add(
+                        new TextBox
+                        {
+                            Text = input,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+
+                    inputCol++;
+
+                    if (inputCol == 8)
+                    {
+                        inputCol = 0;
+                        inputRow++;
+                    }
+                }
+                
+                for (int o = 0; o < 4; o++)
+                {
+                    string output = outputs[outputRow, 7 - outputCol];
+                    outputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = output,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+
+                    outputCol++;
+
+                    if(outputCol == 8)
+                    {
+                        outputCol = 0;
+                        outputRow++;
+                    }
+                }
+
+                i4osp.Children.Add(boardLabel);
+
+                i4osp.Children.Add(inputLabel);
+                i4osp.Children.Add(inputsp1);
+                i4osp.Children.Add(inputsp2);
+
+                i4osp.Children.Add(outputLabel);
+                i4osp.Children.Add(outputsp1);
+
+                border.Child = i4osp;
+                BoardSP.Children.Add(border);
+            }
+
+            //AIOX
+            for (int b = 0; b < aiox; b++)
+            {
+
+                Border border = new Border
+                {
+                    BorderBrush = System.Windows.Media.Brushes.Black,
+                    BorderThickness = new Thickness(2),
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                StackPanel aioxsp = new StackPanel
+                {
+                    Name = "aioxsp" + b,
+                    Orientation = Orientation.Vertical,
+                    Width = 500,
+                    Margin = new Thickness(43, 0, 0, 0)
+                };
+
+                Label boardLabel = new Label { Content = "AIOX Board # " + (b + 1) };
+                Label inputLabel = new Label { Content = "Inputs:" };
+                Label outputLabel = new Label { Content = "Outputs:" };
+
+                StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
+                StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string input = inputs[inputRow, inputCol];
+                    inputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = input,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+                    inputCol++;
+                }
+
+                inputCol = 0;
+                inputRow++;
+
+                for (int o = 0; o < 8; o++)
+                {
+                    string output = outputs[outputRow, 7 - outputCol];
+                    outputsp1.Children.Add(
+                        new TextBox
+                        {
+                            Text = output,
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 0, -2, 0)
+                        });
+                    outputCol++;
+
+                    if (outputCol == 8)
+                    {
+                        outputCol = 0;
+                        outputRow++;
+                    }
+                }
+                
+                outputRow++;
+
+                aioxsp.Children.Add(boardLabel);
+
+                aioxsp.Children.Add(inputLabel);
+                aioxsp.Children.Add(inputsp1);
+
+                aioxsp.Children.Add(outputLabel);
+                aioxsp.Children.Add(outputsp1);
+
+                border.Child = aioxsp;
+                BoardSP.Children.Add(border);
             }
         }
 
@@ -1611,6 +2175,135 @@ namespace mods
         {
             Properties.Settings.Default.Username = Username.Text;
             Update_Search_History();
+        }
+
+        private void ToggleIOView_Click(object sender, RoutedEventArgs e)
+        {
+            if(IOInfo.Visibility == Visibility.Visible)
+            {
+                IOInfo.Visibility = Visibility.Hidden;
+                BoardSP.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                IOInfo.Visibility = Visibility.Visible;
+                BoardSP.Visibility = Visibility.Hidden;
+            }
+        }
+        
+        private void TogglePIs_Click(object sender, RoutedEventArgs e)
+        {
+            if (LandingPIs.Visibility == Visibility.Visible)
+            {
+                LandingPIs.Visibility = Visibility.Hidden;
+                LandingLevels.Visibility = Visibility.Visible;
+                TogglePIs.Content = "PI";
+            }
+            else
+            {
+                LandingPIs.Visibility = Visibility.Visible;
+                LandingLevels.Visibility = Visibility.Hidden;
+                TogglePIs.Content = "#";
+            }
+        }
+
+        private void Make_Controls_Visible()
+        {
+            LandingNormalConfig.Visibility = Visibility.Visible;
+            LandingNormalHeader.Visibility = Visibility.Visible;
+            LandingPIs.Visibility = Visibility.Hidden;
+            LandingLevels.Visibility = Visibility.Visible;
+            TogglePIs.Content = "PI";
+            TogglePIs.Visibility = Visibility.Visible;
+            ToggleIOView.Visibility = Visibility.Visible;
+            IOInfo.Visibility = Visibility.Visible;
+            BoardSP.Visibility = Visibility.Hidden;
+        }
+
+        private void Make_Controls_Invisible()
+        {
+            IOInfo.Text = "";
+            HeaderSP.Children.Clear();
+            LandingAltConfig.Visibility = Visibility.Hidden;
+            LandingAltHeader.Visibility = Visibility.Hidden;
+            LandingNormalConfig.Visibility = Visibility.Hidden;
+            LandingNormalHeader.Visibility = Visibility.Hidden;
+            LandingLevels.Visibility = Visibility.Hidden;
+            BoardSP.Children.Clear();
+            LandingPIs.Visibility = Visibility.Hidden;
+            TogglePIs.Visibility = Visibility.Hidden;
+            ToggleIOView.Visibility = Visibility.Hidden;
+        }
+
+        private bool Version_Check()
+        {
+            string versionPath = "";
+            string newVersion = "";
+
+            List<string> versions = new List<string>();
+            versions = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Versions.txt").ToList();
+
+            foreach (string version in versions)
+            {
+                if (version.StartsWith("ModHub"))
+                {
+                    int colonIndex = version.IndexOf(":");
+                    versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
+                    int semicolonIndex = versionPath.IndexOf(";");
+                    newVersion = versionPath.Substring(semicolonIndex + 1, versionPath.Length - semicolonIndex - 1);
+                    versionPath = versionPath.Substring(0, semicolonIndex);
+                }
+            }
+
+            if (newVersion != this.version)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {
+            if(Version_Check())
+            {
+                if(System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Some Title", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    //To get the location the assembly normally resides on disk or the install directory
+                    string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                    //once you have the path you get the directory with:
+                    string directory = System.IO.Path.GetDirectoryName(path);
+
+                    string updatepath = directory + "\\ModHubUpdater.exe";
+                    string cmd = "C:\\Windows\\explorer.exe";
+                    Process.Start(cmd, updatepath);
+                    System.Windows.Application.Current.Shutdown();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Your version is up to date");
+            }
+        }
+
+        private void Set_Privileges()
+        {
+            string username = Environment.UserName;
+
+            if (!admins.Contains(username))
+            {
+
+            }
+            if(!admins.Contains(username) && !software.Contains(username))
+            {
+                Mp2link.Visibility = Visibility.Hidden;
+                Emulink.Visibility = Visibility.Hidden;
+                OpenSim.Visibility = Visibility.Hidden;
+            }
         }
     }
 }
