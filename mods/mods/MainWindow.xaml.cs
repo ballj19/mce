@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media;
+using System.Printing;
 
 namespace mods
 {
@@ -29,14 +30,16 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.02.2";
-        List<string> admins = new List<string> { "jacob.ball" };
-        List<string> software = new List<string> { "David.Joyce", "pupadhyay", "vkapadia", "adosanjh" };
+        string version = "V1.02.3";
+        int permission = 1000;
+        int searchProgress = 0;
 
         public MainWindow()
         {
             InitializeComponent();
-
+            
+            Set_Permissions();
+            
             this.Title = "Modification Hub by Jake Ball " + version;
 
             if (Version_Check())
@@ -57,7 +60,7 @@ namespace mods
             }
 
             Username.Text = Properties.Settings.Default.Username;
-            CustomFoldersCheckBox.IsChecked = false;
+            CustomFoldersCheckBox.IsChecked = true;
             ListBox1.SelectionMode = SelectionMode.Extended;
             FileExtension.Items.Add(".asm");
             FileExtension.Items.Add(".old");
@@ -80,8 +83,6 @@ namespace mods
             {
 
             }
-
-            //Set_Privileges();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -150,6 +151,8 @@ namespace mods
 
         private void SearchFiles()
         {
+            Make_Controls_Invisible();
+
             ListBox1.Items.Clear();
 
             if(TextBox1.Text == "")
@@ -158,7 +161,7 @@ namespace mods
                 return;
             }
 
-            int progress = 0;
+            searchProgress = 0;
             if(CustomFoldersCheckBox.IsChecked == true)
             {
                 SearchProgress.Maximum = 29;
@@ -168,11 +171,14 @@ namespace mods
                 SearchProgress.Maximum = 11;
             }
 
-            using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(@"K:\\Jake Ball\\test.txt", true))
+            if (Environment.UserName != "jacob.ball")
             {
-                DateTime now = DateTime.Now;
-                file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
+                using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(@"K:\\Jake Ball\\test.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
+                }
             }
 
             string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
@@ -180,6 +186,20 @@ namespace mods
             string[] custom_locations = new string[] { "MC-MP\\MPODH\\" + TextBox1.Text, "MC-MP\\MPODT\\" + TextBox1.Text, "MC-MP\\MPOGD\\" + TextBox1.Text, "MC-MP\\MPOGM\\" + TextBox1.Text, "MC-MP\\MPOLHD\\" + TextBox1.Text, "MC-MP\\MPOLHM\\" + TextBox1.Text, "MC-MP\\MPOLOM\\" + TextBox1.Text, "MC-MP\\MPOLTD\\" + TextBox1.Text, "MC-MP\\MPOLTM\\" + TextBox1.Text };
             string[] custom2_locations = new string[] { TextBox1.Text };
 
+            SearchLocation(locations, "Product");
+            SearchLocation(source_locations, "Source");
+            SearchLocation(custom_locations, "Custom");
+            SearchLocation(custom2_locations, "Custom2");
+
+            if(ListBox1.Items.Count < 1)
+            {
+                JobInfo.Visibility = Visibility.Visible;
+                JobInfo.Text = "No preview available for this job";
+            }
+        }
+
+        private void SearchLocation(string[] locations, string subfolder)
+        {
             string fileExtension = "";
             if (FileExtension.SelectedIndex == 0)
             {
@@ -199,96 +219,31 @@ namespace mods
                 try
                 {
                     string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "G:\\Software\\Product\\" + location;
+                    string folder = "G:\\Software\\" + subfolder + "\\" + location;
                     string[] files = Directory.GetFiles(@folder, jobNumber);
                     foreach (string file in files)
                     {
-                        //int locationIndex = file.IndexOf(location);
                         int locationIndex = 12;
                         string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                        ListBox1.Items.Add(jobFile);
+                        if (permission < 2)
+                        {
+                            ListBox1.Items.Add(jobFile);
+                        }
+                        else
+                        {
+                            if(Generate_JobInfo(jobFile))
+                            {
+                                ListBox1.Items.Add(jobFile);
+                            }
+                        }
                     }
                 }
                 catch
                 {
 
                 }
-                progress++;
-                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-            }
-
-            if (CustomFoldersCheckBox.IsChecked == true)
-            {
-                foreach (string location in source_locations)
-                {
-                    try
-                    {
-                        string jobNumber = "*" + TextBox1.Text + fileExtension;
-                        string folder = "G:\\Software\\Source\\" + location;
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        foreach (string file in files)
-                        {
-                            //int locationIndex = file.IndexOf(location);
-                            int locationIndex = 12; //index after G:\Software
-                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                            ListBox1.Items.Add(jobFile);
-                        }
-
-                    }
-                    catch
-                    {
-
-                    }
-                    progress++;
-                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                }
-
-                foreach (string location in custom_locations)
-                {
-                    try
-                    {
-                        string jobNumber = "*" + TextBox1.Text + fileExtension;
-                        string folder = "G:\\Software\\Custom\\" + location;
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        foreach (string file in files)
-                        {
-                            //int locationIndex = file.IndexOf(location);
-                            int locationIndex = 12;
-                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                            ListBox1.Items.Add(jobFile);
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-                    progress++;
-                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                }
-
-                foreach (string location in custom2_locations)
-                {
-                    try
-                    {
-                        string jobNumber = "*" + TextBox1.Text + fileExtension;
-                        string folder = "G:\\Software\\Custom2\\" + location;
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        foreach (string file in files)
-                        {
-                            //int locationIndex = file.IndexOf(location);
-                            int locationIndex = 12;
-                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                            ListBox1.Items.Add(jobFile);
-                        }
-
-                    }
-                    catch
-                    {
-
-                    }
-                    progress++;
-                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                }
+                searchProgress++;
+                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = searchProgress, DispatcherPriority.Background);
             }
         }
 
@@ -346,7 +301,7 @@ namespace mods
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
             string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
-            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 2);
+            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
             string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
             string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
             string versionBot = content.Get_String("CUSTOM:", 1);
@@ -527,6 +482,53 @@ namespace mods
             Generate_IO(content,true);
         }
 
+        private bool Generate_JobInfo(string file)
+        {
+            if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
+            {
+                try
+                {
+                    MP2OGM_JobInfo(file);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                    {
+                        DateTime now = DateTime.Now;
+                        writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                        writefile.WriteLine(file);
+                        writefile.WriteLine(ex.ToString() + "\n");
+                    }
+
+                    JobInfo.Text = "Job Info could not be generated for this file.";
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    MP2COC_JobInfo(file);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                    {
+                        DateTime now = DateTime.Now;
+                        writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                        writefile.WriteLine(file);
+                        writefile.WriteLine(ex.ToString() + "\n");
+                    }
+                    JobInfo.Text = "Job Info could not be generated for this file.";
+                    return false;
+                }
+            }
+        }    
+
         private void ListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var addedItem = e.AddedItems;
@@ -535,47 +537,14 @@ namespace mods
             {
                 string file = addedItem[0].ToString();
 
-                if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
+                if(Generate_JobInfo(file))
                 {
-                    try
-                    {
-                        MP2OGM_JobInfo(file);
-                        Make_Controls_Visible();
-                    }
-                    catch(Exception ex)
-                    {
-                        using (System.IO.StreamWriter writefile =
-                        new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
-                        {
-                            DateTime now = DateTime.Now;
-                            writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                            writefile.WriteLine(file);
-                            writefile.WriteLine(ex.ToString() + "\n");
-                        }
-                        JobInfo.Text = "Job Info could not be generated for this file.";
-                        Make_Controls_Invisible();
-                    }
+                    Make_Controls_Visible();
                 }
                 else
                 {
-                    try
-                    {
-                        MP2COC_JobInfo(file);
-                        Make_Controls_Visible();
-                    }
-                    catch(Exception ex)
-                    {
-                        using (System.IO.StreamWriter writefile =
-                        new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
-                        {
-                            DateTime now = DateTime.Now;
-                            writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                            writefile.WriteLine(file);
-                            writefile.WriteLine(ex.ToString() + "\n");
-                        }
-                        JobInfo.Text = "Job Info could not be generated for this file.";
-                        Make_Controls_Invisible();
-                    }
+                    Make_Controls_Invisible();
+                    JobInfo.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -756,12 +725,7 @@ namespace mods
             LandingAltConfig.Height = 0;
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
 
-            LandingNormalHeader.Visibility = Visibility.Hidden;
-            LandingAltHeader.Visibility = Visibility.Hidden;
-
             int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
-
-            TogglePIs.Visibility = Visibility.Visible;
 
             List<string> piLabels = content.Get_PILabels();
             
@@ -779,216 +743,113 @@ namespace mods
             LandingNormalConfig.Height = 16 * top_landing + 10;
             LandingNormalConfig.BorderThickness = new System.Windows.Thickness(2);
 
-            LandingNormalHeader.Visibility = Visibility.Visible;
-
-            string isFalseFloor = content.Get_Bit("CPVAR", 3, 0, 3);
-
-            if(isFalseFloor == "NO")
+            int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
+            int x = 1;
+            List<int> falseFloors = new List<int>();
+            List<int> nonFalseFloors = new List<int>();
+            while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:", x) != "7F")
             {
-                for (int x = top_landing; x >= 1; x--)
+                string floorHex = content.Get_Byte("PIX_TABLE:", x);
+                string floorBinary = content.HexStringToBinary(floorHex);
+                int floorDec = content.HexStringToDecimal(floorHex) + 1;
+                if (floorBinary[0] == '0') //If False Floor
                 {
-                    if (content.Get_Bit("ELIGIV:", x, 0, 3) == "YES")
-                    {
-                        front = "F";
-                    }
-                    else
-                    {
-                        front = ".";
-                    }
-
-                    if (content.Get_Bit("ELIGIV:", x, 0, 2) == "YES")
-                    {
-                        rear = "R";
-                    }
-                    else
-                    {
-                        rear = ".";
-                    }
-
-                    LandingPIs.Text += piLabels[x - 1] + "\n";
-                    LandingLevels.Text += x + "\n";
-                    LandingNormalConfig.Text += front + " " + rear + "\n";
+                    falseFloors.Add(floorDec);
                 }
-
-                for (int i = 0; i < 8; i++)
+                else //Non False Floor
                 {
-                    for (int i2 = 0; i2 < 8; i2++)
-                    {
-                        if (content.inputs[i, i2] == "ALT")
-                        {
-                            LandingAltHeader.Visibility = Visibility.Visible;
-                            LandingAltConfig.Visibility = Visibility.Visible;
-
-                            LandingAltConfig.Text = "";
-                            LandingAltConfig.Height = 16 * top_landing + 10;
-                            LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
-
-                            for (int x = top_landing; x >= 1; x--)
-                            {
-
-                                if (content.Get_Bit("ALTMP:", x, 0, 3) == "YES")
-                                {
-                                    front = "F";
-                                }
-                                else
-                                {
-                                    front = ".";
-                                }
-
-                                if (content.Get_Bit("ALTMP:", x, 0, 2) == "YES")
-                                {
-                                    rear = "R";
-                                }
-                                else
-                                {
-                                    rear = ".";
-                                }
-                                LandingAltConfig.Text += front + " " + rear + "\n";
-                            }
-                        }
-                    }
+                    nonFalseFloors.Add(floorDec - 128);
                 }
+                x++;
             }
-            else
+
+            for (int f = top_landing; f >= 1; f--)
             {
-                int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
-                int x = 1;
-                List<int> falseFloors = new List<int>();
-                List<int> nonFalseFloors = new List<int>();
-                while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:",x) != "7F")
+                if (content.Get_Bit("ELIGIV:", f, 0, 3) == "YES")
                 {
-                    string floorHex = content.Get_Byte("PIX_TABLE:", x);
-                    string floorBinary = content.HexStringToBinary(floorHex);
-                    int floorDec = content.HexStringToDecimal(floorHex) + 1;
-                    if (floorBinary[0] == '0') //If False Floor
-                    {
-                        falseFloors.Add(floorDec);
-                    }
-                    else //Non False Floor
-                    {
-                        nonFalseFloors.Add(floorDec - 128);
-                    }
-                    x++;
+                    front = "F";
                 }
-
-                for (int f = 1; f <= top_landing; f++)
+                else
                 {
-                    if (nonFalseFloors.Contains(f))
+                    if(falseFloors.Contains(f))
                     {
-                        if (content.Get_Bit("ELIGIV:", f, 0, 3) == "YES")
-                        {
-                            front = "F";
-                        }
-                        else
-                        {
-                            front = ".";
-                        }
-
-                        if (content.Get_Bit("ELIGIV:", f, 0, 2) == "YES")
-                        {
-                            rear = "R";
-                        }
-                        else
-                        {
-                            rear = ".";
-                        }
-                    }
-                    else if (falseFloors.Contains(f))
-                    {
-                        int falseFloorIndex = falseFloors.IndexOf(f);
-                        int falseFloorNum = f;
-
-                        while (falseFloorIndex < falseFloors.Count - 1 && falseFloors[falseFloorIndex + 1] == falseFloorNum)
-                        {
-                            front = " X";
-                            rear = "";
-
-                            LandingPIs.Text = piLabels[f - 1] + "\n" + LandingPIs.Text;
-                            LandingLevels.Text = f + "\n" + LandingLevels.Text;
-                            LandingNormalConfig.Text = front + " " + rear + "\n" + LandingNormalConfig.Text;
-
-                            f++;
-                            falseFloorIndex++;
-                        }
-
                         front = " X";
-                        rear = "";
-
                     }
                     else
                     {
                         front = ".";
-                        rear = ".";
                     }
-
-                    LandingPIs.Text = piLabels[f - 1] + "\n" + LandingPIs.Text;
-                    LandingLevels.Text = f + "\n" + LandingLevels.Text;
-                    LandingNormalConfig.Text = front + " " + rear + "\n" + LandingNormalConfig.Text;
                 }
 
-                for (int i = 0; i < 8; i++)
+                if (content.Get_Bit("ELIGIV:", f, 0, 2) == "YES")
                 {
-                    for (int i2 = 0; i2 < 8; i2++)
+                    rear = "R";
+                }
+                else
+                {
+                    if (falseFloors.Contains(f))
                     {
-                        if (content.inputs[i, i2] == "ALT")
+                        rear = "";
+                    }
+                    else
+                    {
+                        rear = ".";
+                    }
+                }
+
+                LandingPIs.Text += piLabels[f - 1] + "\n";
+                LandingLevels.Text += f + "\n";
+                LandingNormalConfig.Text += front + " " + rear + "\n";
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int i2 = 0; i2 < 8; i2++)
+                {
+                    if (content.inputs[i, i2] == "ALT")
+                    {
+                        LandingAltHeader.Visibility = Visibility.Visible;
+                        LandingAltConfig.Visibility = Visibility.Visible;
+
+                        LandingAltConfig.Text = "";
+                        LandingAltConfig.Height = 16 * top_landing + 10;
+                        LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
+                        for (int f = top_landing; f >= 1; f--)
                         {
-                            LandingAltHeader.Visibility = Visibility.Visible;
-                            LandingAltConfig.Visibility = Visibility.Visible;
 
-                            LandingAltConfig.Text = "";
-                            LandingAltConfig.Height = 16 * top_landing + 10;
-                            LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
-
-                            for (int f = 1; f <= top_landing; f++)
+                            if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
                             {
-                                if (nonFalseFloors.Contains(f))
+                                front = "F";
+                            }
+                            else
+                            {
+                                if (falseFloors.Contains(f))
                                 {
-                                    if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
-                                    {
-                                        front = "F";
-                                    }
-                                    else
-                                    {
-                                        front = ".";
-                                    }
-
-                                    if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
-                                    {
-                                        rear = "R";
-                                    }
-                                    else
-                                    {
-                                        rear = ".";
-                                    }
-                                }
-                                else if (falseFloors.Contains(f))
-                                {
-                                    int falseFloorIndex = falseFloors.IndexOf(f);
-                                    int falseFloorNum = f;
-
-                                    while (falseFloorIndex < falseFloors.Count - 1 && falseFloors[falseFloorIndex + 1] == falseFloorNum)
-                                    {
-                                        front = " X";
-                                        rear = "";
-                                        
-                                        LandingAltConfig.Text = front + " " + rear + "\n" + LandingAltConfig.Text;
-
-                                        f++;
-                                        falseFloorIndex++;
-                                    }
-
                                     front = " X";
-                                    rear = "";
-
                                 }
                                 else
                                 {
                                     front = ".";
+                                }
+                            }
+
+                            if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                            {
+                                rear = "R";
+                            }
+                            else
+                            {
+                                if (falseFloors.Contains(f))
+                                {
+                                    rear = "";
+                                }
+                                else
+                                {
                                     rear = ".";
                                 }
-
-                                LandingAltConfig.Text = front + " " + rear + "\n" + LandingAltConfig.Text;
                             }
+                            LandingAltConfig.Text += front + " " + rear + "\n";
                         }
                     }
                 }
@@ -1017,10 +878,6 @@ namespace mods
             LandingAltConfig.Text = "";
             LandingAltConfig.Height = 16 * group_top_landing + 26;
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
-
-            LandingNormalHeader.Visibility = Visibility.Visible;
-            LandingAltHeader.Visibility = Visibility.Hidden;
-            LandingAltConfig.Visibility = Visibility.Hidden;
 
             string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
 
@@ -2218,6 +2075,7 @@ namespace mods
             ToggleIOView.Visibility = Visibility.Visible;
             IOInfo.Visibility = Visibility.Visible;
             BoardSP.Visibility = Visibility.Hidden;
+            JobInfo.Visibility = Visibility.Visible;
         }
 
         private void Make_Controls_Invisible()
@@ -2233,6 +2091,7 @@ namespace mods
             LandingPIs.Visibility = Visibility.Hidden;
             TogglePIs.Visibility = Visibility.Hidden;
             ToggleIOView.Visibility = Visibility.Hidden;
+            JobInfo.Visibility = Visibility.Hidden;
         }
 
         private bool Version_Check()
@@ -2290,20 +2149,38 @@ namespace mods
             }
         }
 
-        private void Set_Privileges()
+        private void Set_Permissions()
         {
-            string username = Environment.UserName;
+            List<string> users = new List<string>();
+            users = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Permissions.txt").ToList();
+            string environmentName = Environment.UserName;
 
-            if (!admins.Contains(username))
+            foreach (string user in users)
             {
-
+                int equalIndex = user.IndexOf("=");
+                string userName = user.Substring(0, equalIndex);
+                if(userName == environmentName)
+                {
+                    this.permission = Int32.Parse(user.Substring(equalIndex + 1, user.Length - equalIndex - 1));
+                }
             }
-            if(!admins.Contains(username) && !software.Contains(username))
+
+            if(permission > 1)
             {
+                OpenFile.Visibility = Visibility.Hidden;
+                OpenFolder.Visibility = Visibility.Hidden;
+                ModDocs.Visibility = Visibility.Hidden;
+                OpenSim.Visibility = Visibility.Hidden;
                 Mp2link.Visibility = Visibility.Hidden;
                 Emulink.Visibility = Visibility.Hidden;
-                OpenSim.Visibility = Visibility.Hidden;
+                SettingsTab.Visibility = Visibility.Hidden;
             }
+        }
+
+        private void PrintPage_Click(object sender, RoutedEventArgs e)
+        {
+            PrintPreview printPreview = new PrintPreview(this);
+            printPreview.Show();
         }
     }
 }

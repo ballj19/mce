@@ -36,4 +36,5 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.exe
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.pdb
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.baml
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\PrintPreview.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\PrintPreview.baml

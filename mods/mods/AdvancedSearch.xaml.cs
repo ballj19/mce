@@ -438,7 +438,7 @@ namespace mods
 
                 if(TopFloorCB.SelectedItem.ToString() == ">")
                 {
-                    if(Int32.Parse(TopFloorTB.Text) <= Int32.Parse(topFloorDecimal))
+                    if(Int32.Parse(TopFloorTB.Text) >= Int32.Parse(topFloorDecimal))
                     {
                         return;
                     }
@@ -446,7 +446,7 @@ namespace mods
 
                 if (TopFloorCB.SelectedItem.ToString() == "<")
                 {
-                    if (Int32.Parse(TopFloorTB.Text) >= Int32.Parse(topFloorDecimal))
+                    if (Int32.Parse(TopFloorTB.Text) <= Int32.Parse(topFloorDecimal))
                     {
                         return;
                     }
