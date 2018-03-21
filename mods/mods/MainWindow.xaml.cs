@@ -726,6 +726,7 @@ namespace mods
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
 
             int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
+            string isFalseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
 
             List<string> piLabels = content.Get_PILabels();
             
@@ -743,24 +744,29 @@ namespace mods
             LandingNormalConfig.Height = 16 * top_landing + 10;
             LandingNormalConfig.BorderThickness = new System.Windows.Thickness(2);
 
-            int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
-            int x = 1;
             List<int> falseFloors = new List<int>();
             List<int> nonFalseFloors = new List<int>();
-            while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:", x) != "7F")
+
+            if (isFalseFloors == "YES")
             {
-                string floorHex = content.Get_Byte("PIX_TABLE:", x);
-                string floorBinary = content.HexStringToBinary(floorHex);
-                int floorDec = content.HexStringToDecimal(floorHex) + 1;
-                if (floorBinary[0] == '0') //If False Floor
+                int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
+                int x = 1;
+                
+                while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:", x) != "7F")
                 {
-                    falseFloors.Add(floorDec);
+                    string floorHex = content.Get_Byte("PIX_TABLE:", x);
+                    string floorBinary = content.HexStringToBinary(floorHex);
+                    int floorDec = content.HexStringToDecimal(floorHex) + 1;
+                    if (floorBinary[0] == '0') //If False Floor
+                    {
+                        falseFloors.Add(floorDec);
+                    }
+                    else //Non False Floor
+                    {
+                        nonFalseFloors.Add(floorDec - 128);
+                    }
+                    x++;
                 }
-                else //Non False Floor
-                {
-                    nonFalseFloors.Add(floorDec - 128);
-                }
-                x++;
             }
 
             for (int f = top_landing; f >= 1; f--)
@@ -1358,7 +1364,7 @@ namespace mods
                     }
                 }
 
-                StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin=new Thickness(30,50,0,0) };
+                StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin=new Thickness(10,15,10,0) };
                 for (int x = 15; x >= 0; x--)
                 {
                     sp.Children.Add(
@@ -1600,6 +1606,10 @@ namespace mods
         {
             BoardSP.Children.Clear();
 
+            int bWidth = 384;
+            int spWidth = 379;
+            int tbWidth = 48;
+
             int iox = 0;
             int i4o = 0;
             int aiox = 0;
@@ -1633,18 +1643,21 @@ namespace mods
                     BorderBrush = System.Windows.Media.Brushes.Black,
                     BorderThickness = new Thickness(2),
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Margin = new Thickness(0, 0, 0, 10)
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Width = bWidth,
+                    HorizontalAlignment = HorizontalAlignment.Left
                 };
 
                 StackPanel ioxsp = new StackPanel {
                     Name = "ioxsp" + b,
                     Orientation = Orientation.Vertical,
-                    Width = 500, Margin = new Thickness(43,0,0,0)
+                    Width = spWidth,
+                    Margin = new Thickness(5,0,0,0)
                 };
 
                 Label boardLabel = new Label { Content = "IOX Board # " + (b + 1) };
                 Label inputLabel = new Label { Content = "Inputs:" };
-                Label outputLabel = new Label { Content = "Outputs:" };
+                Label outputLabel = new Label { Content = "Outputs:", Margin = new Thickness(0,23,0,0) };
 
                 StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
                 StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0,0,0,10)};
@@ -1656,7 +1669,7 @@ namespace mods
                         new TextBox
                         {
                             Text = input,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1678,7 +1691,7 @@ namespace mods
                         new TextBox
                         {
                             Text = output,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1713,15 +1726,17 @@ namespace mods
                     BorderBrush = System.Windows.Media.Brushes.Black,
                     BorderThickness = new Thickness(2),
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Margin = new Thickness(0, 0, 0, 10)
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Width = bWidth,
+                    HorizontalAlignment = HorizontalAlignment.Left
                 };
 
                 StackPanel i4osp = new StackPanel
                 {
                     Name = "i4osp" + b,
                     Orientation = Orientation.Vertical,
-                    Width = 500,
-                    Margin = new Thickness(43, 0, 0, 0)
+                    Width = spWidth,
+                    Margin = new Thickness(5, 0, 0, 0)
                 };
 
                 Label boardLabel = new Label { Content = "I4O Board # " + (b + 1) };
@@ -1739,7 +1754,7 @@ namespace mods
                         new TextBox
                         {
                             Text = input,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1765,7 +1780,7 @@ namespace mods
                         new TextBox
                         {
                             Text = input,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1791,7 +1806,7 @@ namespace mods
                         new TextBox
                         {
                             Text = output,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1832,20 +1847,22 @@ namespace mods
                     BorderBrush = System.Windows.Media.Brushes.Black,
                     BorderThickness = new Thickness(2),
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Margin = new Thickness(0, 0, 0, 10)
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Width = bWidth,
+                    HorizontalAlignment = HorizontalAlignment.Left
                 };
 
                 StackPanel aioxsp = new StackPanel
                 {
                     Name = "aioxsp" + b,
                     Orientation = Orientation.Vertical,
-                    Width = 500,
-                    Margin = new Thickness(43, 0, 0, 0)
+                    Width = spWidth,
+                    Margin = new Thickness(5, 0, 0, 0)
                 };
 
                 Label boardLabel = new Label { Content = "AIOX Board # " + (b + 1) };
                 Label inputLabel = new Label { Content = "Inputs:" };
-                Label outputLabel = new Label { Content = "Outputs:" };
+                Label outputLabel = new Label { Content = "Outputs:", Margin = new Thickness(0, 23, 0, 0) };
 
                 StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
                 StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
@@ -1857,7 +1874,7 @@ namespace mods
                         new TextBox
                         {
                             Text = input,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,
@@ -1879,7 +1896,7 @@ namespace mods
                         new TextBox
                         {
                             Text = output,
-                            Width = 50,
+                            Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
                             BorderBrush = System.Windows.Media.Brushes.Black,

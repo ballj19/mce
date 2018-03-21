@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
-        Title="PrintPreview" Height="450" Width="800">
+        Title="PrintPreview" Height="1056" Width="1632">
     <Grid>
-        
-        <StackPanel Orientation="Vertical" x:Name="LandingConfig">
+        <StackPanel Orientation="Vertical" x:Name="LandingConfig" Margin="14,8,-14,-8">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="TogglePIs" Content="PI" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="46" Click="TogglePIs_Click" Height="28" Visibility="Visible"/>
                 <Label x:Name="LandingNormalHeader" Margin="0,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Normal" Visibility="Visible"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
@@ -21,6 +20,24 @@
                 <TextBox x:Name="LandingAltConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
             </StackPanel>
         </StackPanel>
-        <Button x:Name="Print" Content="Print" HorizontalAlignment="Left" Margin="707,388,0,0" VerticalAlignment="Top" Width="75" Click="Print_Click"/>
+        <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="410" Margin="16,25,0,0"></TextBlock>
+        <TextBlock x:Name="JobInfoDummy" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="410" Margin="822,25,0,0"></TextBlock>
+        <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="822,440,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
+        <TextBlock x:Name="IOInfoDummy" HorizontalAlignment="Left" Margin="822,462,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="554"/>
+        <StackPanel x:Name="BoardSPDummy" Orientation="Horizontal" Margin="822,462,0,-33">
+            <StackPanel x:Name="BoardSPDummy1" Orientation="Vertical"  Visibility="Hidden"/>
+            <StackPanel x:Name="BoardSPDummy2" Orientation="Vertical" Margin="8,0,0,0" Visibility="Hidden"/>
+        </StackPanel>
+        <StackPanel Name="HeaderSP" Margin="230,5,802,-5" Orientation="Vertical" HorizontalAlignment="Left">
+            <StackPanel Name="HeaderSP1" Orientation="Horizontal"/>
+            <StackPanel Name="HeaderSP2" Orientation="Horizontal"/>
+        </StackPanel>
+        <TextBlock x:Name="IOInfo" HorizontalAlignment="Left" Margin="16,462,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="554"/>
+        <StackPanel x:Name="BoardSP" Margin="16,467,0,-5" Orientation="Horizontal">
+            <StackPanel x:Name="BoardSP1" Orientation="Vertical" Visibility="Hidden"/>
+            <StackPanel x:Name="BoardSP2" Orientation="Vertical" Margin="8,0,0,0" Visibility="Hidden"/>
+        </StackPanel>
+        <Button x:Name="Print" Content="Print" HorizontalAlignment="Left" Margin="1483,25,0,0" VerticalAlignment="Top" Width="116" Click="Print_Click" Height="54"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1008" Margin="816,8,0,0" VerticalAlignment="Top" Width="1"/>
     </Grid>
 </Window>

@@ -164,6 +164,8 @@ namespace mods
 
         public string Get_Bit(string label, int offset, int nibble, int bit)
         {
+            List<string> bytes = new List<string>();
+
             try
             {
                 int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
