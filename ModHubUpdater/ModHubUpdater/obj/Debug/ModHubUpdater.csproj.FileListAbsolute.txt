@@ -1,0 +1,7 @@
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\bin\Debug\ModHubUpdater.exe.config
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\bin\Debug\ModHubUpdater.exe
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\bin\Debug\ModHubUpdater.pdb
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\obj\Debug\ModHubUpdater.csprojResolveAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\obj\Debug\ModHubUpdater.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\obj\Debug\ModHubUpdater.exe
+C:\Users\Jacob.Ball\source\repos\ModHubUpdater\ModHubUpdater\obj\Debug\ModHubUpdater.pdb

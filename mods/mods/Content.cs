@@ -162,20 +162,44 @@ namespace mods
             return result.ToString();
         }
 
-        public string Get_Bit(string label, int offset, int nibble, int bit)
+        private List<string> Get_Bytes_List(string label)
         {
             List<string> bytes = new List<string>();
 
-            try
-            {
-                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+            bytes.Add(label);
 
-                string value = Remove_Prefix(this.content[index], "DB").Trim();
+            int index = this.content.FindIndex(x => x.StartsWith(label));
+            int offset = 1;
+
+            while(content[index + offset].StartsWith("DB"))
+            {
+                string value = Remove_Prefix(this.content[index + offset], "DB").Trim();
 
                 if (!Is_Hex(value))
                 {
                     value = Dec_To_Hex(value);
                 }
+
+                while(value.IndexOf(',') != -1)
+                {
+                    int commaIndex = value.IndexOf(',');
+                    bytes.Add(value.Substring(0, value.Length - commaIndex));
+                    value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
+                }
+                bytes.Add(value);
+
+                offset++;
+            }
+            return bytes;
+        }
+
+        public string Get_Bit(string label, int offset, int nibble, int bit)
+        {
+            try
+            {
+                List<string> bytes = Get_Bytes_List(label);
+
+                string value = bytes[offset];
 
                 string cleanString = Remove_Suffix(value, "H").Trim();
 
@@ -203,14 +227,9 @@ namespace mods
         {
             try
             {
-                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+                List<string> bytes = Get_Bytes_List(label);
 
-                string value = Remove_Prefix(this.content[index], "DB").Trim();
-
-                if (!Is_Hex(value))
-                {
-                    value = Dec_To_Hex(value);
-                }
+                string value = bytes[offset];
 
                 string cleanString = Remove_Suffix(value, "H").Trim();
 
@@ -227,14 +246,9 @@ namespace mods
         {
             try
             {
-                int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
+                List<string> bytes = Get_Bytes_List(label);
 
-                string value = Remove_Prefix(this.content[index], "DB").Trim();
-
-                if (!Is_Hex(value))
-                {
-                    value = Dec_To_Hex(value);
-                }
+                string value = bytes[offset];
 
                 string cleanString = Remove_Suffix(value, "H").Trim();
 
@@ -569,7 +583,7 @@ namespace mods
         {
             int number_of_cars = 0;
 
-            for (int i = 1; i < 13; i += 3)
+            for (int i = 1; i < 36; i += 3)
             {
                 if (this.Get_Byte("CARVAR", i) != "00")
                 {

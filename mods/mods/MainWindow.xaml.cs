@@ -33,6 +33,7 @@ namespace mods
         string version = "V1.02.3";
         int permission = 1000;
         int searchProgress = 0;
+        List<string> Trac_Mod_Jobs = new List<string>();
 
         public MainWindow()
         {
@@ -68,6 +69,7 @@ namespace mods
             FileExtension.SelectedIndex = 0;
             Make_Controls_Invisible();
             Update_Search_History();
+            Track_Mod();
             try
             {
                 if(SearchHistory.Items[1].ToString().StartsWith("-"))
@@ -187,9 +189,12 @@ namespace mods
             string[] custom2_locations = new string[] { TextBox1.Text };
 
             SearchLocation(locations, "Product");
-            SearchLocation(source_locations, "Source");
-            SearchLocation(custom_locations, "Custom");
-            SearchLocation(custom2_locations, "Custom2");
+            if (CustomFoldersCheckBox.IsChecked == true)
+            {
+                SearchLocation(source_locations, "Source");
+                SearchLocation(custom_locations, "Custom");
+                SearchLocation(custom2_locations, "Custom2");
+            }
 
             if(ListBox1.Items.Count < 1)
             {
@@ -220,7 +225,7 @@ namespace mods
                 {
                     string jobNumber = "*" + TextBox1.Text + fileExtension;
                     string folder = "G:\\Software\\" + subfolder + "\\" + location;
-                    string[] files = Directory.GetFiles(@folder, jobNumber);
+                    string[] files = Directory.GetFiles(@folder, jobNumber,SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
                         int locationIndex = 12;
@@ -571,16 +576,17 @@ namespace mods
 
         public void Update_Search_History()
         {
-            foreach (string search in Properties.Settings.Default.SearchHistory)
-            {
-                SearchHistory.Items.Add(search);
-            }
-
             List<string> tempSearchHistory = new List<string>();
 
+            int i = 0;
             foreach (string search in Properties.Settings.Default.SearchHistory)
             {
                 tempSearchHistory.Add(search);
+                i++;
+                if(i == 3)
+                {
+                    break;
+                }
             }
 
             tempSearchHistory.Reverse();  //We need to reverse the list so the Add/Remove functions
@@ -597,7 +603,7 @@ namespace mods
                 {
                     if (tempSearchHistory.Count >= 3)
                     {
-                        tempSearchHistory.Remove(tempSearchHistory[1]);
+                        tempSearchHistory.Remove(tempSearchHistory[0]);
                     }
                     tempSearchHistory.Add(TextBox1.Text);
                 }
@@ -615,7 +621,10 @@ namespace mods
                 SearchHistory.Items.Add(search);
             }
 
-            Track_Mod();
+            foreach(string job in Trac_Mod_Jobs)
+            {
+                SearchHistory.Items.Add(job);
+            }
         }
 
         private void SearchHistory_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -725,6 +734,8 @@ namespace mods
             LandingAltConfig.Height = 0;
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
 
+            LandingAltHeader.Visibility = Visibility.Hidden;
+
             int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string isFalseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
 
@@ -746,7 +757,7 @@ namespace mods
 
             List<int> falseFloors = new List<int>();
             List<int> nonFalseFloors = new List<int>();
-
+            
             if (isFalseFloors == "YES")
             {
                 int pix_tableIndex = content.content.IndexOf("PIX_TABLE:");
@@ -885,6 +896,9 @@ namespace mods
             LandingAltConfig.Height = 16 * group_top_landing + 26;
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
 
+            LandingAltHeader.Visibility = Visibility.Hidden;
+            LandingAltConfig.Visibility = Visibility.Hidden;
+
             string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
 
             int number_of_cars = content.Get_Group_Num_Of_Cars();
@@ -892,11 +906,29 @@ namespace mods
             LandingNormalHeader.Width = 48 + 48 * number_of_cars;
             LandingNormalConfig.Width = 48 + 48 * number_of_cars;
 
+            LandingLevels.Text += "Car\n";
+            LandingPIs.Text += "Car\n";
+
+            for(int c = 0; c < number_of_cars; c++)
+            {
+                if (c < number_of_cars - 1)
+                {
+                    tab = "\t";
+                }
+                else
+                {
+                    tab = "";
+                }
+                LandingNormalConfig.Text += cars[c] + tab;
+            }
+
+            LandingNormalConfig.Text += "\n";
+
             for (int x = group_top_landing; x >= 1; x--)
             {
                 for (int c = 0; c < number_of_cars; c++)
                 {
-                    if (content.Get_Bit("ELIGIV" + cars[c], x, 1, 1) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 1, 3) == "YES")
+                    if (content.Get_Bit("ELIGIV" + cars[c], x, 1, 1) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 1, 3) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 0, 1) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 0, 3) == "YES")
                     {
                         front = "F";
                     }
@@ -905,7 +937,7 @@ namespace mods
                         front = ".";
                     }
 
-                    if (content.Get_Bit("ELIGIV" + cars[c], x, 1, 0) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 1, 2) == "YES")
+                    if (content.Get_Bit("ELIGIV" + cars[c], x, 1, 0) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 1, 2) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 0, 0) == "YES" || content.Get_Bit("ELIGIV" + cars[c], x, 0, 2) == "YES")
                     {
                         rear = "R";
                     }
@@ -1931,6 +1963,7 @@ namespace mods
 
         private void Track_Mod()
         {
+            //OPEN EXCEL
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm",0,true);
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
@@ -1938,7 +1971,8 @@ namespace mods
             Excel.Range xlRange = xlWorksheet.UsedRange;
             Excel.Range dlmRange = dlmWorksheet.UsedRange;
 
-            SearchHistory.Items.Add("---Active Mods---");
+            //ADD ITEMS TO DROP DOWN
+            Trac_Mod_Jobs.Add("---Active Mods---");
 
             List<string> Usernames = new List<string>();
 
@@ -1968,7 +2002,7 @@ namespace mods
                                 int dashIndex = jobNumber.IndexOf("-");
                                 jobNumber = jobNumber.Substring(dashIndex + 1, jobNumber.Length - dashIndex - 1);
                             }
-                            SearchHistory.Items.Add(jobNumber);
+                            Trac_Mod_Jobs.Add(jobNumber);
                         }
                     }
                 }
@@ -1989,11 +2023,210 @@ namespace mods
                                 int dashIndex = jobNumber.IndexOf("-");
                                 jobNumber = jobNumber.Substring(dashIndex + 1, jobNumber.Length - dashIndex - 1);
                             }
-                            SearchHistory.Items.Add(jobNumber);
+                            Trac_Mod_Jobs.Add(jobNumber);
                         }
                     }
                 }
             }
+
+            foreach (string job in Trac_Mod_Jobs)
+            {
+                Properties.Settings.Default.SearchHistory.Add(job);
+                SearchHistory.Items.Add(job);
+            }
+
+            //GENERATE TRAC_MOD TAB
+            Label mainTracModLabel = new Label
+            {
+                Content = "Main"
+            };
+
+            TracModSP.Children.Add(mainTracModLabel);
+
+            for (int row = 4; row < 100; row++)
+            {
+                string dateReceived         =  "";
+                string shipDate             =  "";
+                string notificationNumber   =  "";
+                string jobNumber            =  "";
+                string type                 =  "";
+                string custom               =  "";
+                string engineer             =  "";
+                string notes                = "";
+
+                if (xlRange.Cells[row, 8].Value2 != null)
+                {
+                    StackPanel sp = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+
+                    try
+                    {
+                        dateReceived = xlRange.Cells[row, 1].Value2.ToString();
+                    }
+                    catch
+                    {
+                        
+                    }
+                    try
+                    {
+                        shipDate = xlRange.Cells[row, 2].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        notificationNumber = xlRange.Cells[row, 4].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        jobNumber = xlRange.Cells[row, 5].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        type = xlRange.Cells[row, 6].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        custom = xlRange.Cells[row, 7].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        engineer = xlRange.Cells[row, 8].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        notes = xlRange.Cells[row, 9].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    TextBox receivedDateTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = dateReceived,
+                        Width = 50,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox shipDateTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = shipDate,
+                        Width = 50,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox notificationTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = notificationNumber,
+                        Width = 75,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox jobNumberTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = jobNumber,
+                        Width = 75,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox typeTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = type,
+                        Width = 50,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox customTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = custom,
+                        Width = 50,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox engineerTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = engineer,
+                        Width = 60,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    TextBox notesTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        Margin = new Thickness(0, 0, 5, 10),
+                        Text = notes,
+                        Width = 400,
+                        VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
+                        TextWrapping = TextWrapping.Wrap,
+                        Height = 50,
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+
+                    sp.Children.Add(receivedDateTB);
+                    sp.Children.Add(shipDateTB);
+                    sp.Children.Add(notificationTB);
+                    sp.Children.Add(jobNumberTB);
+                    sp.Children.Add(typeTB);
+                    sp.Children.Add(customTB);
+                    sp.Children.Add(engineerTB);
+                    sp.Children.Add(notesTB);
+
+                    TracModSP.Children.Add(sp);
+                }
+            }
+
+            Label dlmTracModLabel = new Label
+            {
+                Content = "DLM"
+            };
+
+            TracModSP.Children.Add(dlmTracModLabel);
 
             //cleanup
             GC.Collect();
@@ -2191,6 +2424,9 @@ namespace mods
                 Mp2link.Visibility = Visibility.Hidden;
                 Emulink.Visibility = Visibility.Hidden;
                 SettingsTab.Visibility = Visibility.Hidden;
+
+                ShowPrints.Margin = new Thickness(ShowPrints.Margin.Left, ShowPrints.Margin.Top - 51, ShowPrints.Margin.Right, ShowPrints.Margin.Bottom);
+                PrintPage.Margin = new Thickness(PrintPage.Margin.Left, PrintPage.Margin.Top - 51, PrintPage.Margin.Right, PrintPage.Margin.Bottom);
             }
         }
 

@@ -28,21 +28,23 @@
         <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
         <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,227,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="378" Height="456" Margin="19,308,0,0"></TextBlock>
-        <TabControl Margin="413,41,0,-564">
+        <TabControl Margin="413,41,0,0">
             <TabItem Name="LandingsTab" Header="Landings">
-                <StackPanel Orientation="Vertical" x:Name="LandingConfig">
-                    <StackPanel Orientation="Horizontal">
-                        <Button x:Name="TogglePIs" Content="PI" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="46" Click="TogglePIs_Click" Height="28" Visibility="Hidden"/>
-                        <Label x:Name="LandingNormalHeader" Margin="0,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Normal" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
-                        <Label x:Name="LandingAltHeader" Margin="-2,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Alternate" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical" x:Name="LandingConfig">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="TogglePIs" Content="PI" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="46" Click="TogglePIs_Click" Height="28" Visibility="Hidden"/>
+                            <Label x:Name="LandingNormalHeader" Margin="0,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Normal" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
+                            <Label x:Name="LandingAltHeader" Margin="-2,10,0,0" FontWeight="Bold" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Content="Alternate" Visibility="Hidden"  VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Width="96" Height="30"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="LandingLevels" Margin="10,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="48" Height="18"/>
+                            <TextBox x:Name="LandingPIs" Margin="-48,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="48" Height="18" Visibility="Hidden"/>
+                            <TextBox x:Name="LandingNormalConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
+                            <TextBox x:Name="LandingAltConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox x:Name="LandingLevels" Margin="10,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="48" Height="18"/>
-                        <TextBox x:Name="LandingPIs" Margin="-48,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="48" Height="18" Visibility="Hidden"/>
-                        <TextBox x:Name="LandingNormalConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
-                        <TextBox x:Name="LandingAltConfig" Margin="-2,-2,0,0" Text="" IsReadOnly="True" Background="Transparent" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Width="96" Height="18"/>
-                    </StackPanel>
-                </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Name="IOTab" Header="Inputs/Outputs">
                 <Grid>
@@ -55,6 +57,11 @@
                 <StackPanel Name="HeaderSP" Orientation="Horizontal">
 
                 </StackPanel>
+            </TabItem>
+            <TabItem Name="TracModTab" Header="Trac Mod">
+                <ScrollViewer>
+                    <StackPanel x:Name="TracModSP" Orientation="Vertical"></StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Name="SettingsTab" Header="Settings">
                 <StackPanel Orientation="Vertical">
