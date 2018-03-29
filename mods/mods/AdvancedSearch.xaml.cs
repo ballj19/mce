@@ -144,7 +144,7 @@ namespace mods
             {
                 if (window.GetType() == typeof(MainWindow))
                 {
-                    (window as MainWindow).ListBox1.Items.Clear();
+                    (window as MainWindow).FilesListBox.Items.Clear();
                 }
             }
 
@@ -766,7 +766,7 @@ namespace mods
             {
                 if(window.GetType() == typeof(MainWindow))
                 {
-                    (window as MainWindow).ListBox1.Items.Add(file);
+                    (window as MainWindow).FilesListBox.Items.Add(file);
                 }
             }
         }

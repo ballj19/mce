@@ -41,8 +41,6 @@ namespace ModUpgrade
 
             SourceFile.Text = "F:\\Software\\Source\\MC-MP2\\MP2COC\\V8_06\\V8_06_1\\Mp2cocvar.ASM";
             
-            CommentBox.Text = "Upgraded Software to version 8.06.1 for NYC DLM";
-
             CarType.Items.Add("Local");
             CarType.Items.Add("Group");
             CarType.SelectedIndex = 0;
@@ -82,12 +80,10 @@ namespace ModUpgrade
             {
                 if(CarType.SelectedItem.ToString() == "Group")
                 {
-                    Group_CRTLOCK();
                     Group_PerCarHallCallSecurity();
                 }
                 else
                 {
-                    Local_CRTLOCK();
                     Local_PerCarHallCallSecurity();
                 }
             }
@@ -268,17 +264,23 @@ namespace ModUpgrade
             upgrade.Modify_Value("LOBBY:", "17", "OR", "30H");
             upgrade.Modify_Value("LOBBY:", "26", "OR", "03H");
             upgrade.Modify_Value("LOBBY:", "31", "REPLACE", "001H");
+
+            CommentBox.Text += "Upgraded Software to version 8.06.1 for NYC DLM\n";
         }
 
         public void Group_CRTLOCK()
         {
             upgrade.Modify_Value("CPVAR:", "06", "OR", "01H");
             upgrade.Modify_Value("CPVAR:", "05", "OR", "80H");
+
+            CommentBox.Text += "Enabled CRTLOCK Security Options\n";
         }
 
         public void Group_PerCarHallCallSecurity()
         {
             upgrade.Modify_Value("CPVAR:", "06", "OR", "08H");
+
+            CommentBox.Text += "Enabled options for Per Car Hall Call Security";
         }
 
         public void Local_CRTLOCK()
@@ -323,11 +325,49 @@ namespace ModUpgrade
             {
                 //do nothing
             }
+
+            CommentBox.Text += "Enabled CRTLOCK Security Options\n";
         }
 
         public void Local_PerCarHallCallSecurity()
         {
             //Nothing to add
+        }
+        
+        private void Checkbox_Validator_Check(object sender, RoutedEventArgs e)
+        {
+            bool? security = Security.IsChecked;
+            bool? crtlock = CRTLOCK.IsChecked;
+            bool? pchcs = PCHCSUpgrade.IsChecked;
+
+            if (crtlock == true)
+            {
+                Security.IsChecked = true;
+            }
+
+            if(pchcs == true)
+            {
+                Security.IsChecked = true;
+                CRTLOCK.IsChecked = true;
+            }
+        }
+        
+        private void Checkbox_Validator_UnCheck(object sender, RoutedEventArgs e)
+        {
+            bool? security = Security.IsChecked;
+            bool? crtlock = CRTLOCK.IsChecked;
+            bool? pchcs = PCHCSUpgrade.IsChecked;
+            
+            if(crtlock == false)
+            {
+                PCHCSUpgrade.IsChecked = false;
+            }
+
+            if (security == false)
+            {
+                CRTLOCK.IsChecked = false;
+                PCHCSUpgrade.IsChecked = false;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="Modification Hub by Jake Ball" Height="800" Width="900">
+        Title="Modification Hub by Jake Ball" Height="800" Width="1500">
 
     <Grid Height="770" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
@@ -17,7 +17,7 @@
         <Button Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
         <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
-        <ListBox x:Name="ListBox1" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="ListBox1_SelectionChanged"/>
+        <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged"/>
         <Button x:Name="OpenFile" Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
         <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
         <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,281,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
@@ -30,7 +30,7 @@
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="378" Height="456" Margin="19,308,0,0"></TextBlock>
         <TabControl Margin="413,41,0,0">
             <TabItem Name="LandingsTab" Header="Landings">
-                <ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Orientation="Vertical" x:Name="LandingConfig">
                         <StackPanel Orientation="Horizontal">
                             <Button x:Name="TogglePIs" Content="PI" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="46" Click="TogglePIs_Click" Height="28" Visibility="Hidden"/>
@@ -59,9 +59,15 @@
                 </StackPanel>
             </TabItem>
             <TabItem Name="TracModTab" Header="Trac Mod">
-                <ScrollViewer>
-                    <StackPanel x:Name="TracModSP" Orientation="Vertical"></StackPanel>
-                </ScrollViewer>
+                <Grid>
+                    <TextBox x:Name="TracModFilter" HorizontalAlignment="Left" Height="23" Margin="5,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150" TextChanged="TracModFilter_TextChanged"/>
+                    <Label Content="Filter" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50" Margin="160,7,0,0" VerticalContentAlignment="Center"/>
+                    <Button x:Name="TracModRefresh" Content="Refresh" Height="23" Width="76" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="958,10,0,0" Click="TracModRefresh_Click"/>
+                    <StackPanel x:Name="TracModLabelSP" Orientation="Horizontal" Margin="0,40,0,0"></StackPanel>
+                    <ScrollViewer Margin="0,65,0,0">
+                        <StackPanel x:Name="TracModContentSP" Orientation="Vertical"></StackPanel>
+                    </ScrollViewer>
+                </Grid>
             </TabItem>
             <TabItem Name="SettingsTab" Header="Settings">
                 <StackPanel Orientation="Vertical">

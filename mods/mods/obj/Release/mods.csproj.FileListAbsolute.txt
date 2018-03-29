@@ -34,3 +34,5 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods.exe
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods.pdb
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\AdvancedSearch.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\AdvancedSearch.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\PrintPreview.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\PrintPreview.baml

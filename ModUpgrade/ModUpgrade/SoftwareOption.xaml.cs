@@ -30,7 +30,6 @@ namespace ModUpgrade
             this.Width = width;
             this.Height = height;
             this.Title = title;
-            SkipButton.Margin = new Thickness(Width - SkipButton.Width - SubmitButton.Width - 25 - 5, Height - SkipButton.ActualHeight - 70, 0, 0);
             SubmitButton.Margin = new Thickness(Width - SubmitButton.Width - 25, Height - SubmitButton.ActualHeight - 70, 0, 0);
 
         }

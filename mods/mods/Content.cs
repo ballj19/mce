@@ -174,18 +174,26 @@ namespace mods
             while(content[index + offset].StartsWith("DB"))
             {
                 string value = Remove_Prefix(this.content[index + offset], "DB").Trim();
+                
+                while (value.IndexOf(',') != -1)
+                {
+                    int commaIndex = value.IndexOf(',');
+                    string commaValue = value.Substring(0, commaIndex);
+
+                    if (!Is_Hex(commaValue))
+                    {
+                        commaValue = Dec_To_Hex(commaValue);
+                    }
+
+                    bytes.Add(commaValue);
+                    value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
+                }
 
                 if (!Is_Hex(value))
                 {
                     value = Dec_To_Hex(value);
                 }
 
-                while(value.IndexOf(',') != -1)
-                {
-                    int commaIndex = value.IndexOf(',');
-                    bytes.Add(value.Substring(0, value.Length - commaIndex));
-                    value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
-                }
                 bytes.Add(value);
 
                 offset++;
