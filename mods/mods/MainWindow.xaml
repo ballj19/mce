@@ -78,6 +78,11 @@
                     <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="257,20,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
                 </StackPanel>
             </TabItem>
+            <TabItem Name="AdminTab" Header="Admin">
+                <Grid>
+                    <Button x:Name="ModUpgrade" Content="Upgrade" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Click="ModUpgrade_Click" />
+                </Grid>
+            </TabItem>
         </TabControl>
         <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
         <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>

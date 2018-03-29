@@ -2717,6 +2717,11 @@ namespace mods
                 ShowPrints.Margin = new Thickness(ShowPrints.Margin.Left, ShowPrints.Margin.Top - 51, ShowPrints.Margin.Right, ShowPrints.Margin.Bottom);
                 PrintPage.Margin = new Thickness(PrintPage.Margin.Left, PrintPage.Margin.Top - 51, PrintPage.Margin.Right, PrintPage.Margin.Bottom);
             }
+
+            if(permission > 0)
+            {
+                AdminTab.Visibility = Visibility.Hidden;
+            }
         }
 
         private void PrintPage_Click(object sender, RoutedEventArgs e)
@@ -2759,6 +2764,21 @@ namespace mods
             TracModContentSP.Children.Clear();
             TracModLabelSP.Children.Clear();
             Track_Mod();
+        }
+
+        private void ModUpgrade_Click(object sender, RoutedEventArgs e)
+        {
+            UpgradeWindow uw = new UpgradeWindow();
+
+            try
+            {
+                uw.JobFile.Text =  "G:\\Software\\" + FilesListBox.SelectedItem.ToString();
+            }
+            catch
+            {
+
+            }
+            uw.ShowDialog();            
         }
     }
 }

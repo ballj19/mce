@@ -38,3 +38,7 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\AdvancedSearch.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\PrintPreview.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\PrintPreview.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\SoftwareOption.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\UpgradeWindow.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\SoftwareOption.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\UpgradeWindow.baml
