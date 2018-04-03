@@ -85,83 +85,7 @@ namespace mods
 
             return content;
         }
-
-        private string Remove_Prefix(string text, string prefix)
-        {
-            if (text.StartsWith(prefix))
-            {
-                return text.Substring(prefix.Length, text.Length - prefix.Length);
-            }
-            else
-            {
-                return text;
-            }
-        }
-
-        private string Remove_Suffix(string text, string suffix)
-        {
-            if (text.EndsWith(suffix))
-            {
-                return text.Substring(0, text.Length - suffix.Length);
-            }
-            else
-            {
-                return text;
-            }
-        }
-
-        private bool Is_Hex(string text)
-        {
-            if (text.IndexOf("H") == -1)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private string Hex_To_Bin(string hex)
-        {
-            string strippedHex = Remove_Suffix(Remove_Prefix(hex, "DB"), "H").Trim();
-            strippedHex = strippedHex.Substring(strippedHex.Length - 2, 2);
-            return HexStringToBinary(strippedHex);
-        }
-
-        private string Dec_To_Hex(string deci)
-        {
-            int dec = Int32.Parse(deci);
-            return dec.ToString("X").PadLeft(3, '0');
-        }
-
-        private static readonly Dictionary<char, string> hexCharacterToBinary = new Dictionary<char, string> {
-            { '0', "0000" },
-            { '1', "0001" },
-            { '2', "0010" },
-            { '3', "0011" },
-            { '4', "0100" },
-            { '5', "0101" },
-            { '6', "0110" },
-            { '7', "0111" },
-            { '8', "1000" },
-            { '9', "1001" },
-            { 'a', "1010" },
-            { 'b', "1011" },
-            { 'c', "1100" },
-            { 'd', "1101" },
-            { 'e', "1110" },
-            { 'f', "1111" }
-        };
-
-        public string HexStringToBinary(string hex)
-        {
-            StringBuilder result = new StringBuilder();
-            foreach (char c in hex)
-            {
-                // This will crash for non-hex characters. You might want to handle that differently.
-                result.Append(hexCharacterToBinary[char.ToLower(c)]);
-            }
-            return result.ToString();
-        }
-
+        
         private List<string> Get_Bytes_List(string label)
         {
             List<string> bytes = new List<string>();
@@ -173,25 +97,25 @@ namespace mods
 
             while(content[index + offset].StartsWith("DB"))
             {
-                string value = Remove_Prefix(this.content[index + offset], "DB").Trim();
+                string value = General.Remove_Prefix(this.content[index + offset], "DB").Trim();
                 
                 while (value.IndexOf(',') != -1)
                 {
                     int commaIndex = value.IndexOf(',');
                     string commaValue = value.Substring(0, commaIndex);
 
-                    if (!Is_Hex(commaValue))
+                    if (!General.Is_Hex(commaValue))
                     {
-                        commaValue = Dec_To_Hex(commaValue);
+                        commaValue = General.Dec_To_Hex(commaValue);
                     }
 
                     bytes.Add(commaValue);
                     value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
                 }
 
-                if (!Is_Hex(value))
+                if (!General.Is_Hex(value))
                 {
-                    value = Dec_To_Hex(value);
+                    value = General.Dec_To_Hex(value);
                 }
 
                 bytes.Add(value);
@@ -209,11 +133,11 @@ namespace mods
 
                 string value = bytes[offset];
 
-                string cleanString = Remove_Suffix(value, "H").Trim();
+                string cleanString = General.Remove_Suffix(value, "H").Trim();
 
                 cleanString = cleanString.Substring(cleanString.Length - nibble - 1, 1); //High nibble = 1; Low nibble = 0
 
-                string binary = HexStringToBinary(cleanString);
+                string binary = General.HexStringToBinary(cleanString);
 
                 if (binary[bit] == '1')
                 {
@@ -239,7 +163,7 @@ namespace mods
 
                 string value = bytes[offset];
 
-                string cleanString = Remove_Suffix(value, "H").Trim();
+                string cleanString = General.Remove_Suffix(value, "H").Trim();
 
                 return cleanString.Substring(cleanString.Length - nibble - 1, 1);
             }
@@ -258,7 +182,7 @@ namespace mods
 
                 string value = bytes[offset];
 
-                string cleanString = Remove_Suffix(value, "H").Trim();
+                string cleanString = General.Remove_Suffix(value, "H").Trim();
 
                 return cleanString.Substring(cleanString.Length - 2, 2);
             }
@@ -274,7 +198,7 @@ namespace mods
             try
             {
                 int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
-                string cleanString = Remove_Suffix(Remove_Prefix(this.content[index], "DB"), "H").Trim();
+                string cleanString = General.Remove_Suffix(General.Remove_Prefix(this.content[index], "DB"), "H").Trim();
 
                 return cleanString.Substring(1, cleanString.Length - 2);
             }
@@ -290,7 +214,7 @@ namespace mods
             {
                 int index = this.content.FindIndex(x => x.StartsWith(label)) + offset;
 
-                string value = Remove_Prefix(this.content[index], "DB").Trim();
+                string value = General.Remove_Prefix(this.content[index], "DB").Trim();
 
                 for (int b = 0; b < byteNum; b++)
                 {
@@ -308,12 +232,12 @@ namespace mods
                     value = value.Substring(0, commaIndex);
                 }
 
-                if (!Is_Hex(value))
+                if (!General.Is_Hex(value))
                 {
-                    value = Dec_To_Hex(value);
+                    value = General.Dec_To_Hex(value);
                 }
 
-                string cleanString = Remove_Suffix(value, "H").Trim();
+                string cleanString = General.Remove_Suffix(value, "H").Trim();
 
                 return cleanString.Substring(cleanString.Length - 2, 2);
             }
@@ -322,59 +246,7 @@ namespace mods
                 return "N/A";
             }
         }
-
-        private static readonly Dictionary<char, int> hexCharacterToDecimal = new Dictionary<char, int> {
-            { '0', 0 },
-            { '1', 1 },
-            { '2', 2 },
-            { '3', 3 },
-            { '4', 4 },
-            { '5', 5 },
-            { '6', 6 },
-            { '7', 7 },
-            { '8', 8 },
-            { '9', 9 },
-            { 'a', 10 },
-            { 'b', 11 },
-            { 'c', 12 },
-            { 'd', 13 },
-            { 'e', 14 },
-            { 'f', 15 }
-        };
-
-        public int HexStringToDecimal(string hex)
-        {
-            try
-            {
-                //Need to reverse the hex string for the math to work out better
-                hex = Remove_Suffix(hex, "H");
-
-                char[] charArray = hex.ToCharArray();
-                Array.Reverse(charArray);
-                hex = new string(charArray);
-
-                int dec_value = 0;
-                int x = 0;
-                foreach (char c in hex)
-                {
-                    if (x == 0)
-                    {
-                        dec_value += hexCharacterToDecimal[char.ToLower(c)];
-                    }
-                    else
-                    {
-                        dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
-                    }
-                    x++;
-                }
-                return dec_value;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
+        
         private string[,] Build_IOmap(string file, char io)
         {
             List<string> lines = new List<string>();
@@ -515,7 +387,7 @@ namespace mods
                         while (this.content[io_index + x + 1].Trim().StartsWith("DB"))
                         {
                             int iomap_index = io_index + x + 1;
-                            string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+                            string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
 
                             for (int y = 0; y < 8; y++)
                             {
@@ -661,41 +533,51 @@ namespace mods
                 while (lines[iomap_index].Trim().StartsWith("DB"))
                 {
                     int comment_index = lines[iomap_index].IndexOf(';');
-                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                    bool building = false;
-                    StringBuilder ioCode = new StringBuilder();
-
-                    for (int c = 0; c < comment_string.Length; c++)
+                    if(comment_index != -1)
                     {
-                        if (building)
+                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                        bool building = false;
+                        StringBuilder ioCode = new StringBuilder();
+
+                        for (int c = 0; c < comment_string.Length; c++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            if (building)
                             {
-                                ioCode.Append(comment_string[c]);
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                }
+                                else
+                                {
+                                    ncinputs.Add(ioCode.ToString());
+                                    ioCode.Clear();
+                                    building = false;
+                                }
                             }
                             else
                             {
-                                ncinputs.Add(ioCode.ToString());
-                                ioCode.Clear();
-                                building = false;
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                    building = true;
+                                }
+                                else
+                                {
+                                    //do nothing
+                                }
                             }
                         }
-                        else
+                        ncinputs.Add(ioCode.ToString());
+                        ioCode.Clear();
+                        building = false;
+                    }
+                    else //This is for the case where there is no comment to go with the byte
+                    {
+                        for (int i = 0; i < 8; i++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                            {
-                                ioCode.Append(comment_string[c]);
-                                building = true;
-                            }
-                            else
-                            {
-                                //do nothing
-                            }
+                            ncinputs.Add("XXXX");
                         }
                     }
-                    ncinputs.Add(ioCode.ToString());
-                    ioCode.Clear();
-                    building = false;
                     x++;
                     iomap_index = io_index + x + 1;
                 }
@@ -732,41 +614,51 @@ namespace mods
                 while (lines[iomap_index].Trim().StartsWith("DB"))
                 {
                     int comment_index = lines[iomap_index].IndexOf(';');
-                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                    bool building = false;
-                    StringBuilder ioCode = new StringBuilder();
-
-                    for (int c = 0; c < comment_string.Length; c++)
+                    if(comment_index != -1)
                     {
-                        if (building)
+                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                        bool building = false;
+                        StringBuilder ioCode = new StringBuilder();
+
+                        for (int c = 0; c < comment_string.Length; c++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            if (building)
                             {
-                                ioCode.Append(comment_string[c]);
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                }
+                                else
+                                {
+                                    ncoutputs.Add(ioCode.ToString());
+                                    ioCode.Clear();
+                                    building = false;
+                                }
                             }
                             else
                             {
-                                ncoutputs.Add(ioCode.ToString());
-                                ioCode.Clear();
-                                building = false;
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                    building = true;
+                                }
+                                else
+                                {
+                                    //do nothing
+                                }
                             }
                         }
-                        else
+                        ncoutputs.Add(ioCode.ToString());
+                        ioCode.Clear();
+                        building = false;
+                    }
+                    else //This is for the case where there is no comment to go with the byte
+                    {
+                        for (int i = 0; i < 8; i++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                            {
-                                ioCode.Append(comment_string[c]);
-                                building = true;
-                            }
-                            else
-                            {
-                                //do nothing
-                            }
+                           ncoutputs.Add("XXXX");
                         }
                     }
-                    ncoutputs.Add(ioCode.ToString());
-                    ioCode.Clear();
-                    building = false;
                     x++;
                     iomap_index = io_index + x + 1;
                 }
@@ -786,7 +678,7 @@ namespace mods
                 for (int x = 0; x < ncinputsmap.Count/8; x++)
                 {
                     int iomap_index = io_index + x + 1;
-                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
 
                     for (int y = 0; y < 8; y++)
                     {
@@ -812,7 +704,7 @@ namespace mods
                 for (int x = 0; x < ncoutputsmap.Count / 8; x++)
                 {
                     int iomap_index = io_index + x + 1;
-                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
 
                     for (int y = 0; y < 8; y++)
                     {
@@ -855,41 +747,51 @@ namespace mods
                 while (lines[iomap_index].Trim().StartsWith("DB"))
                 {
                     int comment_index = lines[iomap_index].IndexOf(';');
-                    string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                    bool building = false;
-                    StringBuilder ioCode = new StringBuilder();
-
-                    for (int c = 0; c < comment_string.Length; c++)
+                    if(comment_index != -1)
                     {
-                        if (building)
+                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                        bool building = false;
+                        StringBuilder ioCode = new StringBuilder();
+
+                        for (int c = 0; c < comment_string.Length; c++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                            if (building)
                             {
-                                ioCode.Append(comment_string[c]);
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                }
+                                else
+                                {
+                                    inputs.Add(ioCode.ToString());
+                                    ioCode.Clear();
+                                    building = false;
+                                }
                             }
                             else
                             {
-                                inputs.Add(ioCode.ToString());
-                                ioCode.Clear();
-                                building = false;
+                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
+                                {
+                                    ioCode.Append(comment_string[c]);
+                                    building = true;
+                                }
+                                else
+                                {
+                                    //do nothing
+                                }
                             }
                         }
-                        else
+                        inputs.Add(ioCode.ToString());
+                        ioCode.Clear();
+                        building = false;
+                    }
+                    else //This is for the case where there is no comment to go with the byte
+                    {
+                        for(int i = 0; i < 8; i++)
                         {
-                            if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                            {
-                                ioCode.Append(comment_string[c]);
-                                building = true;
-                            }
-                            else
-                            {
-                                //do nothing
-                            }
+                            inputs.Add("XXXX");
                         }
                     }
-                    inputs.Add(ioCode.ToString());
-                    ioCode.Clear();
-                    building = false;
                     x++;
                     iomap_index = io_index + x + 1;
                 }
@@ -909,7 +811,7 @@ namespace mods
                 for (int x = 0; x < inputsmap.Count / 8; x++)
                 {
                     int iomap_index = io_index + x + 1;
-                    string iomap_binary = Hex_To_Bin(this.content[iomap_index]);
+                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
 
                     for (int y = 0; y < 8; y++)
                     {

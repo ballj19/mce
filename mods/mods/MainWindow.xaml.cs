@@ -293,15 +293,15 @@ namespace mods
             DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
             string jobName = content.Get_String("JBNAME:", 1);
             string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
-            string topFloorDecimal = (content.HexStringToDecimal(topFloor) + 1).ToString();
+            string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
             string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
-            string botFloorDecimal = (content.HexStringToDecimal(botFloor) + 1).ToString();
+            string botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
             string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
             string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
-            int i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
-            int iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
-            int aiox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
-            int callbnu = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 41, 1));
+            int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
+            int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
+            int aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
+            int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 41, 1));
             string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
             string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
             string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
@@ -359,9 +359,9 @@ namespace mods
             
             DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
             string jobName = content.Get_String("JBNAME:", 1);
-            int iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
-            int i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
-            int callbnu = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
+            int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
+            int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+            int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
             string[,] inputs = content.inputs;
             string[,] outputs = content.outputs;
 
@@ -390,100 +390,6 @@ namespace mods
             JobInfo.Text += "# of I4O Boards: " + i4o + "\n\n";
 
             HeaderSP.Children.Clear();
-
-            IOInfo.Text = "";
-            IOInfo.Text += "Spare Inputs:\n";
-
-            /*
-            for (int x = 0; x < 8; x++)
-            {
-                string inputLine = "";
-
-                for (int y = 0; y < 8; y++)
-                {
-                    string hyphen = "";
-                    if (y == 7)
-                    {
-                        if (x == 3)
-                        {
-                            hyphen = "\n\n";
-                        }
-                        else
-                        {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (inputs[x, y] == null)
-                    {
-                        inputLine += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        inputLine += inputs[x, y] + hyphen;
-                    }
-                }
-
-                if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
-                {
-                    if (x == 4)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        IOInfo.Text += inputLine;
-                    }
-                }
-                else
-                {
-                    IOInfo.Text += inputLine;
-                }
-            }
-
-            IOInfo.Text += "Spare Outputs:\n";
-
-            for (int x = 0; x < 4; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    string hyphen = "";
-                    if (y == 7)
-                    {
-                        if (x == 3)
-                        {
-                            hyphen = "\n\n";
-                        }
-                        else
-                        {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (outputs[x, 7 - y] == null)
-                    {
-                        IOInfo.Text += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        IOInfo.Text += outputs[x, 7 - y] + hyphen;
-                    }
-                }
-            }*/
             Generate_IO(content,true);
         }
 
@@ -736,7 +642,7 @@ namespace mods
 
             LandingAltHeader.Visibility = Visibility.Hidden;
 
-            int top_landing = content.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
+            int top_landing = General.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string isFalseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
 
             List<string> piLabels = content.Get_PILabels();
@@ -766,8 +672,8 @@ namespace mods
                 while (content.content[pix_tableIndex + x].StartsWith("DB") && content.Get_Byte("PIX_TABLE:", x) != "7F")
                 {
                     string floorHex = content.Get_Byte("PIX_TABLE:", x);
-                    string floorBinary = content.HexStringToBinary(floorHex);
-                    int floorDec = content.HexStringToDecimal(floorHex) + 1;
+                    string floorBinary = General.HexStringToBinary(floorHex);
+                    int floorDec = General.HexStringToDecimal(floorHex) + 1;
                     if (floorBinary[0] == '0') //If False Floor
                     {
                         falseFloors.Add(floorDec);
@@ -1422,216 +1328,406 @@ namespace mods
 
         private void Generate_IO(Content content, bool group = false)
         {
-            IOInfo.Text = "";
+            IOInfoSP.Children.Clear();
 
-            string file = content.file;
             string[,] inputs = content.inputs;
             string[,] outputs = content.outputs;
 
-            IOInfo.Text += "Spare Inputs:\n";
-
-            for (int x = 0; x < 8; x++)
+            Label inputLabel = new Label
             {
-                string inputLine = "";
+                Content = "Spare Inputs",
+            };
 
-                for (int y = 0; y < 8; y++)
+            IOInfoSP.Children.Add(inputLabel);
+
+            for(int row = 0; row < 8; row++)
+            {
+                StackPanel rowSP = new StackPanel
                 {
-                    string hyphen = "";
-                    if (y == 7)
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(20, 0, 0, 0),
+                };
+
+                if (row == 3)
+                {
+                    rowSP.Margin = new Thickness(20, 0, 0, 20);
+                }
+
+                for (int column = 0; column < 8; column ++)
+                {
+                    string ioText = inputs[row, column];
+
+                    if(ioText == null)
                     {
-                        if (x == 3)
+                        ioText = "XXXX";
+                    }
+
+                    TextBox io = new TextBox
+                    {
+                        Text = ioText,
+                        Width = 48,
+                        Height = 25,
+                        BorderThickness = new Thickness(0),
+                        IsReadOnly = true,
+                        Background = System.Windows.Media.Brushes.Transparent,
+                        TextAlignment = TextAlignment.Center,
+                        Tag = "IO",
+                    };
+
+                    rowSP.Children.Add(io);
+
+                    if (column == 3)
+                    {
+                        TextBox hyphen = new TextBox
                         {
-                            hyphen = "\n\n";
-                        }
-                        else
+                            Text = "---",
+                            Width = 20,
+                            Height = 25,
+                            BorderThickness = new Thickness(0),
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Tag = "hyphen",
+                        };
+
+                        rowSP.Children.Add(hyphen);
+                    }
+                    else if(column < 7) // dont want to add hyphen for last column
+                    {
+                        TextBox hyphen = new TextBox
                         {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (inputs[x, y] == null)
-                    {
-                        inputLine += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        inputLine += inputs[x, y] + hyphen;
+                            Text = "-",
+                            Width = 7,
+                            Height = 25,
+                            BorderThickness = new Thickness(0),
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Tag = "hyphen",
+                        };
+
+                        rowSP.Children.Add(hyphen);
                     }
                 }
 
-                if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                bool rowIsEmpty = true;
+
+                foreach(var child in rowSP.Children)
                 {
-                    break;
+                    if(child.GetType() == typeof(TextBox))
+                    {
+                        TextBox tb = child as TextBox;
+
+                        if(tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
+                        {
+                            rowIsEmpty = false;
+                        }
+                    }
                 }
-                else
+
+                if(!rowIsEmpty)
                 {
-                    IOInfo.Text += inputLine;
+                    IOInfoSP.Children.Add(rowSP);
                 }
             }
 
-            IOInfo.Text += "\nSpare Outputs:\n";
-
-            for (int x = 0; x < 4; x++)
+            Label outputLabel = new Label
             {
-                string outputLine = "";
+                Content = "Spare Outputs",
+            };
 
-                for (int y = 0; y < 8; y++)
+            IOInfoSP.Children.Add(outputLabel);
+
+            for (int row = 0; row < 8; row++)
+            {
+                StackPanel rowSP = new StackPanel
                 {
-                    string hyphen = "";
-                    if (y == 7)
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(20, 0, 0, 0),
+                };
+
+                for (int column = 0; column < 8; column++)
+                {
+                    string ioText = outputs[row, 7 - column];
+
+                    if (ioText == null)
                     {
-                        if (x == 3)
+                        ioText = "XXXX";
+                    }
+
+                    TextBox io = new TextBox
+                    {
+                        Text = ioText,
+                        Width = 48,
+                        Height = 25,
+                        BorderThickness = new Thickness(0),
+                        IsReadOnly = true,
+                        Background = System.Windows.Media.Brushes.Transparent,
+                        TextAlignment = TextAlignment.Center,
+                        Tag = "IO",
+                    };
+
+                    rowSP.Children.Add(io);
+
+                    if (column == 3)
+                    {
+                        TextBox hyphen = new TextBox
                         {
-                            hyphen = "\n\n";
-                        }
-                        else
+                            Text = "---",
+                            Width = 20,
+                            Height = 25,
+                            BorderThickness = new Thickness(0),
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Tag = "hyphen",
+                        };
+
+                        rowSP.Children.Add(hyphen);
+                    }
+                    else if (column < 7) // dont want to add hyphen for last column
+                    {
+                        TextBox hyphen = new TextBox
                         {
-                            hyphen = "\n";
-                        }
-                    }
-                    else if (y == 3)
-                    {
-                        hyphen = "-||-";
-                    }
-                    else
-                    {
-                        hyphen = "-";
-                    }
-                    if (outputs[x, 7 - y] == null)
-                    {
-                        outputLine += "XXXX" + hyphen;
-                    }
-                    else
-                    {
-                        outputLine += outputs[x, 7 - y] + hyphen;
+                            Text = "-",
+                            Width = 7,
+                            Height = 25,
+                            BorderThickness = new Thickness(0),
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Tag = "hyphen",
+                        };
+
+                        rowSP.Children.Add(hyphen);
                     }
                 }
 
-                if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                bool rowIsEmpty = true;
+
+                foreach (var child in rowSP.Children)
                 {
-                    break;
+                    if (child.GetType() == typeof(TextBox))
+                    {
+                        TextBox tb = child as TextBox;
+
+                        if (tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
+                        {
+                            rowIsEmpty = false;
+                        }
+                    }
                 }
-                else
+
+                if (!rowIsEmpty)
                 {
-                    IOInfo.Text += outputLine;
+                    IOInfoSP.Children.Add(rowSP);
                 }
             }
 
             if (!group)
             {
                 string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
-
+                
                 if (ncBoard == "YES")
                 {
-                    List<string> ncinputs = content.NC_Inputs(file);
-                    List<string> ncoutputs = content.NC_Outputs(file);
+                    List<string> ncinputs = content.NC_Inputs(content.file);
+                    List<string> ncoutputs = content.NC_Outputs(content.file);
 
-                    IOInfo.Text += "\nNC Board Inputs:\n";
-
-                    for (int x = 0; x < 8; x++)
+                    Label ncInputLabel = new Label
                     {
-                        string inputLine = "";
+                        Content = "NC Inputs",
+                    };
 
-                        for (int y = 0; y < 8; y++)
+                    IOInfoSP.Children.Add(ncInputLabel);
+
+                    for (int row = 0; row < 8; row++)
+                    {
+                        StackPanel rowSP = new StackPanel
                         {
-                            string hyphen = "";
-                            if (y == 0)
+                            Orientation = Orientation.Horizontal,
+                            Margin = new Thickness(20, 0, 0, 0),
+                        };
+
+                        for (int column = 0; column < 8; column++)
+                        {
+                            string ioText = "";
+                            if (row * 8 + (7 - column) >= ncinputs.Count)
                             {
-                                if (x == 3)
-                                {
-                                    hyphen = "\n\n";
-                                }
-                                else
-                                {
-                                    hyphen = "\n";
-                                }
-                            }
-                            else if (y == 4)
-                            {
-                                hyphen = "-||-";
+                                ioText = "XXXX";
                             }
                             else
                             {
-                                hyphen = "-";
+                                ioText = ncinputs[row * 8 + (7 - column)];
                             }
-                            if (x * 8 + y >= ncinputs.Count || ncinputs[x * 8 + y] == null)
+
+                            TextBox io = new TextBox
                             {
-                                inputLine = "XXXX" + hyphen + inputLine;
+                                Text = ioText,
+                                Width = 48,
+                                Height = 25,
+                                BorderThickness = new Thickness(0),
+                                IsReadOnly = true,
+                                Background = System.Windows.Media.Brushes.Transparent,
+                                TextAlignment = TextAlignment.Center,
+                                Tag = "IO",
+                            };
+
+                            rowSP.Children.Add(io);
+
+                            if (column == 3)
+                            {
+                                TextBox hyphen = new TextBox
+                                {
+                                    Text = "---",
+                                    Width = 20,
+                                    Height = 25,
+                                    BorderThickness = new Thickness(0),
+                                    IsReadOnly = true,
+                                    Background = System.Windows.Media.Brushes.Transparent,
+                                    TextAlignment = TextAlignment.Center,
+                                    Tag = "hyphen",
+                                };
+
+                                rowSP.Children.Add(hyphen);
                             }
-                            else
+                            else if (column < 7) // dont want to add hyphen for last column
                             {
-                                inputLine = ncinputs[x * 8 + y] + hyphen + inputLine;
+                                TextBox hyphen = new TextBox
+                                {
+                                    Text = "-",
+                                    Width = 7,
+                                    Height = 25,
+                                    BorderThickness = new Thickness(0),
+                                    IsReadOnly = true,
+                                    Background = System.Windows.Media.Brushes.Transparent,
+                                    TextAlignment = TextAlignment.Center,
+                                    Tag = "hyphen",
+                                };
+
+                                rowSP.Children.Add(hyphen);
                             }
                         }
 
-                        if (inputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                        bool rowIsEmpty = true;
+
+                        foreach (var child in rowSP.Children)
                         {
-                            break;
+                            if (child.GetType() == typeof(TextBox))
+                            {
+                                TextBox tb = child as TextBox;
+
+                                if (tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
+                                {
+                                    rowIsEmpty = false;
+                                }
+                            }
                         }
-                        else
+
+                        if (!rowIsEmpty)
                         {
-                            IOInfo.Text += inputLine;
+                            IOInfoSP.Children.Add(rowSP);
                         }
                     }
 
-                    IOInfo.Text += "\nNC Board Outputs:\n";
-
-                    for (int x = 0; x < 8; x++)
+                    Label ncOutputLabel = new Label
                     {
-                        string outputLine = "";
+                        Content = "NC Outputs",
+                    };
 
-                        for (int y = 0; y < 8; y++)
+                    IOInfoSP.Children.Add(ncOutputLabel);
+
+                    for (int row = 0; row < 8; row++)
+                    {
+                        StackPanel rowSP = new StackPanel
                         {
-                            string hyphen = "";
-                            if (y == 0)
+                            Orientation = Orientation.Horizontal,
+                            Margin = new Thickness(20, 0, 0, 0),
+                        };
+
+                        for (int column = 0; column < 8; column++)
+                        {
+                            string ioText = "";
+                            if (row * 8 + column >= ncoutputs.Count)
                             {
-                                if (x == 3)
-                                {
-                                    hyphen = "\n\n";
-                                }
-                                else
-                                {
-                                    hyphen = "\n";
-                                }
-                            }
-                            else if (y == 4)
-                            {
-                                hyphen = "-||-";
+                                ioText = "XXXX";
                             }
                             else
                             {
-                                hyphen = "-";
+                                ioText = ncoutputs[row * 8 + column];
                             }
-                            if (x * 8 + y >= ncoutputs.Count || ncoutputs[x * 8 + y] == null)
+
+                            TextBox io = new TextBox
                             {
-                                outputLine = "XXXX" + hyphen + outputLine;
+                                Text = ioText,
+                                Width = 48,
+                                Height = 25,
+                                BorderThickness = new Thickness(0),
+                                IsReadOnly = true,
+                                Background = System.Windows.Media.Brushes.Transparent,
+                                TextAlignment = TextAlignment.Center,
+                                Tag = "IO",
+                            };
+
+                            rowSP.Children.Add(io);
+
+                            if (column == 3)
+                            {
+                                TextBox hyphen = new TextBox
+                                {
+                                    Text = "---",
+                                    Width = 20,
+                                    Height = 25,
+                                    BorderThickness = new Thickness(0),
+                                    IsReadOnly = true,
+                                    Background = System.Windows.Media.Brushes.Transparent,
+                                    TextAlignment = TextAlignment.Center,
+                                    Tag = "hyphen",
+                                };
+
+                                rowSP.Children.Add(hyphen);
                             }
-                            else
+                            else if (column < 7) // dont want to add hyphen for last column
                             {
-                                outputLine = ncoutputs[x * 8 + y] + hyphen + outputLine;
+                                TextBox hyphen = new TextBox
+                                {
+                                    Text = "-",
+                                    Width = 7,
+                                    Height = 25,
+                                    BorderThickness = new Thickness(0),
+                                    IsReadOnly = true,
+                                    Background = System.Windows.Media.Brushes.Transparent,
+                                    TextAlignment = TextAlignment.Center,
+                                    Tag = "hyphen",
+                                };
+
+                                rowSP.Children.Add(hyphen);
                             }
                         }
 
-                        if (outputLine.StartsWith("XXXX-XXXX-XXXX-XXXX-||-XXXX-XXXX-XXXX-XXXX"))
+                        bool rowIsEmpty = true;
+
+                        foreach (var child in rowSP.Children)
                         {
-                            break;
+                            if (child.GetType() == typeof(TextBox))
+                            {
+                                TextBox tb = child as TextBox;
+
+                                if (tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
+                                {
+                                    rowIsEmpty = false;
+                                }
+                            }
                         }
-                        else
+
+                        if (!rowIsEmpty)
                         {
-                            IOInfo.Text += outputLine;
+                            IOInfoSP.Children.Add(rowSP);
                         }
                     }
                 }
             }
 
-            Draw_Boards(content,group);
+            Draw_Boards(content, group);
         }
 
         private void Draw_Boards(Content content, bool group = false)
@@ -1648,15 +1744,15 @@ namespace mods
 
             if (group)
             {
-                iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
-                i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+                iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
+                i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
 
             }
             else
             {
-                i4o = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
-                iox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
-                aiox = content.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
+                i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
+                iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
+                aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
             }
 
             string[,] inputs = content.inputs;
@@ -2515,6 +2611,8 @@ namespace mods
         
         private void TracModSearch_Click(object sender, RoutedEventArgs e)
         {
+            InfoTabControl.SelectedIndex = 0;
+
             string jobNumber = ((Button)sender).Tag.ToString();
 
             if (jobNumber.Contains("-"))
@@ -2575,14 +2673,14 @@ namespace mods
 
         private void ToggleIOView_Click(object sender, RoutedEventArgs e)
         {
-            if(IOInfo.Visibility == Visibility.Visible)
+            if(IOInfoSP.Visibility == Visibility.Visible)
             {
-                IOInfo.Visibility = Visibility.Hidden;
+                IOInfoSP.Visibility = Visibility.Hidden;
                 BoardSP.Visibility = Visibility.Visible;
             }
             else
             {
-                IOInfo.Visibility = Visibility.Visible;
+                IOInfoSP.Visibility = Visibility.Visible;
                 BoardSP.Visibility = Visibility.Hidden;
             }
         }
@@ -2612,14 +2710,14 @@ namespace mods
             TogglePIs.Content = "PI";
             TogglePIs.Visibility = Visibility.Visible;
             ToggleIOView.Visibility = Visibility.Visible;
-            IOInfo.Visibility = Visibility.Visible;
+            IOInfoSP.Visibility = Visibility.Visible;
             BoardSP.Visibility = Visibility.Hidden;
             JobInfo.Visibility = Visibility.Visible;
         }
 
         private void Make_Controls_Invisible()
         {
-            IOInfo.Text = "";
+            IOInfoSP.Children.Clear();
             HeaderSP.Children.Clear();
             LandingAltConfig.Visibility = Visibility.Hidden;
             LandingAltHeader.Visibility = Visibility.Hidden;
@@ -2779,6 +2877,27 @@ namespace mods
 
             }
             uw.ShowDialog();            
+        }
+
+        private void InfoTabControl_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if(InfoTabControl.SelectedIndex == 3)
+            {
+                InfoTabControl.Margin = new Thickness(0, 18, 0, 0);
+
+                CustomFoldersCheckBox.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                InfoTabControl.Margin = new Thickness(413, 18, 0, 0);
+                CustomFoldersCheckBox.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ArchiveButton_Click(object sender, RoutedEventArgs e)
+        {
+            ArchiveWindow aw = new ArchiveWindow("G:\\Software\\" + FilesListBox.SelectedItem.ToString());
+            aw.ShowDialog();
         }
     }
 }

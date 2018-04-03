@@ -29,7 +29,7 @@ namespace mods
             IO_Info();
             Header_Info();
 
-            IOInfo.Visibility = Visibility.Hidden;
+            IOInfoSP.Visibility = Visibility.Hidden;
             BoardSP1.Visibility = Visibility.Hidden;
             BoardSP2.Visibility = Visibility.Hidden;
             JobInfo.Visibility = Visibility.Hidden;
@@ -72,15 +72,15 @@ namespace mods
 
         private void ToggleIOView_Click(object sender, RoutedEventArgs e)
         {
-            if (IOInfoDummy.Visibility == Visibility.Visible)
+            if (IOInfoSPDummy.Visibility == Visibility.Visible)
             {
-                IOInfoDummy.Visibility = Visibility.Hidden;
+                IOInfoSPDummy.Visibility = Visibility.Hidden;
                 BoardSPDummy1.Visibility = Visibility.Visible;
                 BoardSPDummy2.Visibility = Visibility.Visible;
             }
             else
             {
-                IOInfoDummy.Visibility = Visibility.Visible;
+                IOInfoSPDummy.Visibility = Visibility.Visible;
                 BoardSPDummy1.Visibility = Visibility.Hidden;
                 BoardSPDummy2.Visibility = Visibility.Hidden;
             }
@@ -124,8 +124,6 @@ namespace mods
         private void IO_Info()
         {
             bool alternate = true;
-            IOInfoDummy.Text = mainWindow.IOInfo.Text;
-            IOInfo.Text = IOInfoDummy.Text;
             foreach(System.Windows.UIElement child in mainWindow.BoardSP.Children)
             {
                 string childXaml = XamlWriter.Save(child);
@@ -151,6 +149,39 @@ namespace mods
                     BoardSP2.Children.Add(border);
                 }
                 alternate = !alternate;
+            }
+
+            foreach (System.Windows.UIElement child in mainWindow.IOInfoSP.Children)
+            {
+                string childXaml = XamlWriter.Save(child);
+                string childXamlDummy = XamlWriter.Save(child);
+
+                if(child.GetType() == typeof(StackPanel))
+                {
+                    StringReader stringReader = new StringReader(childXaml);
+                    XmlReader xmlReader = XmlReader.Create(stringReader);
+                    StackPanel sp = (StackPanel)XamlReader.Load(xmlReader);
+
+                    StringReader stringReaderDummy = new StringReader(childXamlDummy);
+                    XmlReader xmlReaderDummy = XmlReader.Create(stringReaderDummy);
+                    StackPanel spDummy = (StackPanel)XamlReader.Load(xmlReaderDummy);
+
+                    IOInfoSP.Children.Add(sp);
+                    IOInfoSPDummy.Children.Add(spDummy);
+                }
+                else if(child.GetType() == typeof(Label))
+                {
+                    StringReader stringReader = new StringReader(childXaml);
+                    XmlReader xmlReader = XmlReader.Create(stringReader);
+                    Label lb = (Label)XamlReader.Load(xmlReader);
+
+                    StringReader stringReaderDummy = new StringReader(childXamlDummy);
+                    XmlReader xmlReaderDummy = XmlReader.Create(stringReaderDummy);
+                    Label lbDummy = (Label)XamlReader.Load(xmlReaderDummy);
+
+                    IOInfoSP.Children.Add(lb);
+                    IOInfoSPDummy.Children.Add(lbDummy);
+                }                
             }
         }
 
@@ -200,7 +231,7 @@ namespace mods
         {
             BoardSP1.Visibility = BoardSPDummy1.Visibility;
             BoardSP2.Visibility = BoardSPDummy2.Visibility;
-            IOInfo.Visibility = IOInfoDummy.Visibility;
+            IOInfoSP.Visibility = IOInfoSPDummy.Visibility;
             JobInfo.Visibility = Visibility.Visible;
 
             LandingNormalConfig.Visibility = Visibility.Hidden;

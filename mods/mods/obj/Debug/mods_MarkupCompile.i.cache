@@ -9,12 +9,12 @@ mods
 none
 false
 DEBUG;TRACE
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\App.xaml
-3-1058793763
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\App\App.xaml
+6-471236805
 
-13-1466454244
+19986618525
 1932641073
-AdvancedSearch.xaml;MainWindow.xaml;PrintPreview.xaml;
+Windows\ArchiveWindow.xaml;Windows\AdvancedSearch.xaml;MainWindow.xaml;Windows\PrintPreview.xaml;Windows\SoftwareOption.xaml;Windows\UpgradeWindow.xaml;
 
-False
+True
 

@@ -83,7 +83,7 @@ namespace mods
             string[,] inputs = content.inputs;
 
             Write_Intermediate(number_of_landings_index);
-            Write_Line("Value = " + (HexStringToDecimal(topFloor)));
+            Write_Line("Value = " + (General.HexStringToDecimal(topFloor)));
             Write_Intermediate(landing_config_index);
             Write_Landing_Config();
             Write_Intermediate(ccelig_index);
@@ -123,7 +123,7 @@ namespace mods
 
         private void Write_Landing_Config()
         {
-            int top_landing = HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
+            int top_landing = General.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1;
             string front = "False";
             string rear = "False";
             
@@ -458,49 +458,6 @@ namespace mods
             {
                 Write_Line("Value = No");
             }
-        }
-
-        private static readonly Dictionary<char, int> hexCharacterToDecimal = new Dictionary<char, int> {
-            { '0', 0 },
-            { '1', 1 },
-            { '2', 2 },
-            { '3', 3 },
-            { '4', 4 },
-            { '5', 5 },
-            { '6', 6 },
-            { '7', 7 },
-            { '8', 8 },
-            { '9', 9 },
-            { 'a', 10 },
-            { 'b', 11 },
-            { 'c', 12 },
-            { 'd', 13 },
-            { 'e', 14 },
-            { 'f', 15 }
-        };
-
-        public int HexStringToDecimal(string hex)
-        {         
-            //Need to reverse the hex string for the math to work out better
-            char[] charArray = hex.ToCharArray();
-            Array.Reverse(charArray);
-            hex = new string(charArray);
-
-            int dec_value = 0;
-            int x = 0;
-            foreach (char c in hex)
-            {
-                if (x == 0)
-                {
-                    dec_value += hexCharacterToDecimal[char.ToLower(c)];
-                }
-                else
-                {
-                    dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
-                }
-                x++;
-            }
-            return dec_value;
         }
     }
 }

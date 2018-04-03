@@ -53,19 +53,27 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="App\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="SoftwareOption.xaml.cs">
+    <Compile Include="Classes\General.cs" />
+    <Compile Include="Windows\ArchiveWindow.xaml.cs">
+      <DependentUpon>ArchiveWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SoftwareOption.xaml.cs">
       <DependentUpon>SoftwareOption.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Upgrade.cs" />
-    <Compile Include="UpgradeContent.cs" />
-    <Compile Include="UpgradeWindow.xaml.cs">
+    <Compile Include="Classes\Upgrade.cs" />
+    <Compile Include="Classes\UpgradeContent.cs" />
+    <Compile Include="Windows\UpgradeWindow.xaml.cs">
       <DependentUpon>UpgradeWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="AdvancedSearch.xaml">
+    <Page Include="Windows\ArchiveWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\AdvancedSearch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -73,31 +81,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="AdvancedSearch.xaml.cs">
+    <Compile Include="Windows\AdvancedSearch.xaml.cs">
       <DependentUpon>AdvancedSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="App\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PrintPreview.xaml.cs">
+    <Compile Include="Windows\PrintPreview.xaml.cs">
       <DependentUpon>PrintPreview.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Simulator.cs" />
-    <Compile Include="Content.cs" />
+    <Compile Include="Classes\Simulator.cs" />
+    <Compile Include="Classes\Content.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PrintPreview.xaml">
+    <Page Include="Windows\PrintPreview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SoftwareOption.xaml">
+    <Page Include="Windows\SoftwareOption.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UpgradeWindow.xaml">
+    <Page Include="Windows\UpgradeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -126,7 +134,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App\App.config" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

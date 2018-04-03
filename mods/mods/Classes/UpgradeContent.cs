@@ -48,28 +48,11 @@ namespace mods
                 {
                     //Need this logic because sometimes the first byte is defined on the same line as the label - inconsistently
                     //So we force the defined byte onto the next line always
-                    if (Value(line).Contains(":") && Value(line).Trim().EndsWith(":") == false)
+                    if (General.Value(line).Contains(":") && (!General.Value(line).EndsWith(":") || !General.Comment(line).Equals("")))
                     {
-                        int commentIndex = line.IndexOf(";");
                         int colonIndex = line.IndexOf(":");
-
-                        if(commentIndex == -1)
-                        {
-                            lines.Add(line.Substring(0, colonIndex + 1).Trim());
-                            lines.Add(line.Substring(colonIndex + 1, line.Length - colonIndex - 1));
-                        }
-                        else
-                        {
-                            if(commentIndex > colonIndex)
-                            {
-                                lines.Add(line.Substring(0, colonIndex + 1).Trim());
-                                lines.Add(line.Substring(colonIndex + 1, line.Length - colonIndex - 1));
-                            }
-                            else
-                            {
-                                lines.Add(line);
-                            }
-                        }
+                        lines.Add(line.Substring(0, colonIndex + 1).Trim());
+                        lines.Add("\t" + line.Substring(colonIndex + 1, line.Length - colonIndex - 1).Trim());
                     }
                     else
                     {
@@ -96,39 +79,13 @@ namespace mods
             int l = 0;
             foreach (string line in lines)
             {
-                if(line.StartsWith("PUBLIC"))
+                if(General.Value(line).EndsWith(":"))
                 {
-                    string label = line.Substring(6, line.Length - 6);
+                    string label = line.Substring(0, line.Length - 1);
                     labels.Add(label.Trim());
                     labelsInt.Add(l);
                 }
                 l++;
-            }
-        }
-
-        private string Value(string line)
-        {
-            if (line.IndexOf(";") == -1) //indexOf returns -1 if string not found
-            {
-                return line;
-            }
-            else
-            {
-                int commentIndex = line.IndexOf(";");
-                return line.Substring(0, commentIndex).Trim();
-            }
-        }
-
-        private string Comment(string line)
-        {
-            if (line.IndexOf(";") == -1) //indexOf returns -1 if string not found
-            {
-                return "";
-            }
-            else
-            {
-                int commentIndex = line.IndexOf(";");
-                return line.Substring(commentIndex, line.Length - commentIndex).Trim();
             }
         }
     }

@@ -48,14 +48,14 @@ namespace mods
 
         private void Upgrade_Click(object sender, RoutedEventArgs e)
         {
+            ArchiveWindow aw = new ArchiveWindow(JobFile.Text);
+            aw.ShowDialog();
+
             this.upgrade = new Upgrade(JobFile.Text);
-            if (System.Windows.Forms.MessageBox.Show("Archive File?", "Archive?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-            {
-                upgrade.Archive();
-            }
+            
             if (VersionUpgrade.IsChecked == true)
             {
-                upgrade.Version_Upgrade(SourceFile.Text);
+                Version_Upgrade();
             }
             else
             {
@@ -258,6 +258,13 @@ namespace mods
             }
         }
 
+        private void Version_Upgrade()
+        {
+            upgrade.Version_Upgrade(SourceFile.Text);
+
+            CommentBox.Text += "Upgraded Software to Version \n";
+        }
+
         public void NYC_DLM()
         {
             upgrade.Modify_Value("BOTTOM:", "10", "OR", "40H");
@@ -265,7 +272,7 @@ namespace mods
             upgrade.Modify_Value("LOBBY:", "26", "OR", "03H");
             upgrade.Modify_Value("LOBBY:", "31", "REPLACE", "001H");
 
-            CommentBox.Text += "Upgraded Software to version 8.06.1 for NYC DLM\n";
+            CommentBox.Text += "Enabled Options for NYC DLM\n";
         }
 
         public void Group_CRTLOCK()
@@ -280,7 +287,7 @@ namespace mods
         {
             upgrade.Modify_Value("CPVAR:", "06", "OR", "08H");
 
-            CommentBox.Text += "Enabled options for Per Car Hall Call Security";
+            CommentBox.Text += "Enabled options for Per Car Hall Call Security\n";
         }
 
         public void Local_CRTLOCK()

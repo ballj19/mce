@@ -122,7 +122,7 @@ namespace mods
                     {
                         original_content.labels.RemoveAt(1);
                         original_content.labels.Insert(1, upgrade_content.labels[1]);
-                        Replace_Label(label + ":");
+                        Insert_Upgraded_Lines(label + ":");
                     }
                 }
                 else if (combine_labels.Contains(label))
@@ -186,13 +186,11 @@ namespace mods
 
             int oLabelIndex = original_content.lines.IndexOf(label);
             int uLabelIndex = upgrade_content.lines.IndexOf(label);
-
-            Write_Line(original_content.lines[oLabelIndex - 1]); //Write PUBLIC "LABEL"
-            
+                        
             int o = oLabelIndex + 1;
-            while (!Value(original_content.lines[o]).StartsWith("PUBLIC") && !Value(original_content.lines[o]).Contains("'{'"))
+            while (!General.Value(original_content.lines[o]).EndsWith(":") && !General.Value(original_content.lines[o]).Contains("'{'"))
             {
-                if (Value(original_content.lines[o]).StartsWith("DB"))
+                if (General.Value(original_content.lines[o]).StartsWith("DB"))
                 {
                     tableCount++;
                 }
@@ -201,7 +199,7 @@ namespace mods
             }
 
             int u = uLabelIndex + 1;
-            while (!Value(upgrade_content.lines[u]).StartsWith("PUBLIC"))
+            while (!General.Value(upgrade_content.lines[u]).EndsWith(":"))
             {
                 uCount++;
                 u++;
@@ -227,10 +225,8 @@ namespace mods
 
             int uCount = 0;
 
-            Write_Line(upgrade_content.lines[uLabelIndex - 1]); //Write PUBLIC "LABEL"
-
-            int u = uLabelIndex;
-            while (!Value(upgrade_content.lines[u]).StartsWith("PUBLIC"))
+            int u = uLabelIndex + 1;
+            while (!General.Value(upgrade_content.lines[u]).EndsWith(":"))
             {
                 uCount++;
                 u++;
@@ -245,16 +241,14 @@ namespace mods
         private void Load_Label(string label)
         {
             int uload_labelIndex = upgrade_content.lines.IndexOf(label);
-
-            Write_Line(upgrade_content.lines[uload_labelIndex - 1]); //Write PUBLIC "LABEL"
-
+            
             int u = 0;
-            while (!Value(upgrade_content.lines[uload_labelIndex + u]).StartsWith("PUBLIC"))
+            while (!General.Value(upgrade_content.lines[uload_labelIndex + u]).EndsWith(":"))
             {
                 if(u == 1)
                 {
                     string value = "\tDB\t055H";
-                    string comment = Comment(upgrade_content.lines[uload_labelIndex + u]);
+                    string comment = General.Comment(upgrade_content.lines[uload_labelIndex + u]);
                     Write_Line(value + "\t" + comment);
                 }
                 else
@@ -269,7 +263,6 @@ namespace mods
         {
             int uSelect_labelIndex = upgrade_content.lines.IndexOf(label);
 
-            Write_Line(upgrade_content.lines[uSelect_labelIndex - 1]); //Write PUBLIC "LABEL"
             Write_Line(upgrade_content.lines[uSelect_labelIndex]); //Write "LABEL:"
 
             int byteCount = tableCount;
@@ -280,11 +273,11 @@ namespace mods
             }
 
             int b = 1;
-            while(!Value(upgrade_content.lines[uSelect_labelIndex + b]).StartsWith("PUBLIC"))
+            while(!General.Value(upgrade_content.lines[uSelect_labelIndex + b]).EndsWith(":"))
             {
-                if(Value(upgrade_content.lines[uSelect_labelIndex + b]).StartsWith("DB"))
+                if(General.Value(upgrade_content.lines[uSelect_labelIndex + b]).StartsWith("DB"))
                 {
-                    string comment = Comment(upgrade_content.lines[uSelect_labelIndex + b]);
+                    string comment = General.Comment(upgrade_content.lines[uSelect_labelIndex + b]);
                     string value = "";
 
                     if (byteCount >= 8)
@@ -336,100 +329,19 @@ namespace mods
                 }
                 else
                 {
-                    Write_Line(Comment(upgrade_content.lines[uSelect_labelIndex + b]));
+                    Write_Line(General.Comment(upgrade_content.lines[uSelect_labelIndex + b]));
                 }
                 b++;
             }
         }
 
-        private static readonly Dictionary<char, int> hexCharacterToDecimal = new Dictionary<char, int> {
-            { '0', 0 },
-            { '1', 1 },
-            { '2', 2 },
-            { '3', 3 },
-            { '4', 4 },
-            { '5', 5 },
-            { '6', 6 },
-            { '7', 7 },
-            { '8', 8 },
-            { '9', 9 },
-            { 'a', 10 },
-            { 'b', 11 },
-            { 'c', 12 },
-            { 'd', 13 },
-            { 'e', 14 },
-            { 'f', 15 }
-        };
-
-        private static readonly Dictionary<char, string> hexCharacterToBinary = new Dictionary<char, string> {
-            { '0', "0000" },
-            { '1', "0001" },
-            { '2', "0010" },
-            { '3', "0011" },
-            { '4', "0100" },
-            { '5', "0101" },
-            { '6', "0110" },
-            { '7', "0111" },
-            { '8', "1000" },
-            { '9', "1001" },
-            { 'a', "1010" },
-            { 'b', "1011" },
-            { 'c', "1100" },
-            { 'd', "1101" },
-            { 'e', "1110" },
-            { 'f', "1111" }
-        };
-
-        private static readonly Dictionary<string, char> binaryToHexCharacter = new Dictionary<string, char> {
-            { "0000", '0' },
-            { "0001", '1' },
-            { "0010", '2' },
-            { "0011", '3' },
-            { "0100", '4' },
-            { "0101", '5' },
-            { "0110", '6' },
-            { "0111", '7' },
-            { "1000", '8' },
-            { "1001", '9' },
-            { "1010", 'a' },
-            { "1011", 'b' },
-            { "1100", 'c' },
-            { "1101", 'd' },
-            { "1110", 'e' },
-            { "1111", 'f' }
-        };
-
-        public int HexStringToDecimal(string hex)
-        {         
-            //Need to reverse the hex string for the math to work out better
-            char[] charArray = hex.ToCharArray();
-            Array.Reverse(charArray);
-            hex = new string(charArray);
-
-            int dec_value = 0;
-            int x = 0;
-            foreach (char c in hex)
-            {
-                if (x == 0)
-                {
-                    dec_value += hexCharacterToDecimal[char.ToLower(c)];
-                }
-                else
-                {
-                    dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
-                }
-                x++;
-            }
-            return dec_value;
-        }
-        
         private void Replace_Comments(int oIndex, int uIndex, int length = 1)
         {
             //oIndex is the original index, uIndex is the upgrade index
             for (int x = 0; x < length; x++)
             {
-                string value = Value(original_content.lines[x + oIndex]);
-                string comment = Comment(upgrade_content.lines[x + uIndex]);
+                string value = General.Value(original_content.lines[x + oIndex]);
+                string comment = General.Comment(upgrade_content.lines[x + uIndex]);
 
                 Write_Line(value + comment);
             }
@@ -438,12 +350,11 @@ namespace mods
         private void Insert_Upgraded_Lines(string label)
         {
             int uIndex = upgrade_content.lines.IndexOf(label);
-            Write_Line(upgrade_content.lines[uIndex - 1]); //Write PUBLIC "LABEL"
             do
             {
                 Write_Line(upgrade_content.lines[uIndex]);
                 uIndex++;
-            } while (!Value(upgrade_content.lines[uIndex]).StartsWith("PUBLIC"));
+            } while (!General.Value(upgrade_content.lines[uIndex]).EndsWith(":"));
         }
 
         private void Replace_Values(string label)
@@ -455,19 +366,18 @@ namespace mods
 
             int oLabelIndex = original_content.lines.IndexOf(label);
             int uLabelIndex = upgrade_content.lines.IndexOf(label);
-
-            Write_Line(original_content.lines[oLabelIndex - 1]); //Write PUBLIC "LABEL"
+            
             Write_Line(original_content.lines[oLabelIndex]); //Write "LABEL:"
 
             int oEndIndex;
             int uEndIndex;
 
             int o = oLabelIndex + 1;
-            while (!Value(original_content.lines[o]).StartsWith("PUBLIC"))
+            while (!General.Value(original_content.lines[o]).EndsWith(":"))
             {
-                if (Value(original_content.lines[o]).StartsWith("DB"))
+                if (General.Value(original_content.lines[o]).StartsWith("DB"))
                 {
-                    oValues.Add(Value(original_content.lines[o]));
+                    oValues.Add(General.Value(original_content.lines[o]));
                     oValuesIndex.Add(o);
                 }
                 o++;
@@ -475,11 +385,11 @@ namespace mods
             oEndIndex = o;
 
             int u = uLabelIndex + 1;
-            while (!Value(upgrade_content.lines[u]).StartsWith("PUBLIC"))
+            while (!General.Value(upgrade_content.lines[u]).EndsWith(":"))
             {
-                if (Value(upgrade_content.lines[u]).StartsWith("DB"))
+                if (General.Value(upgrade_content.lines[u]).StartsWith("DB"))
                 {
-                    uValues.Add(Value(upgrade_content.lines[u]));
+                    uValues.Add(General.Value(upgrade_content.lines[u]));
                     uValuesIndex.Add(u);
                 }
                 u++;
@@ -494,13 +404,13 @@ namespace mods
                     string value = "";
                     if(valueNumber >= oValues.Count)
                     {
-                        value = Value(uValues[valueNumber]); //This is for when there is a new option added in the upgraded version
+                        value = General.Value(uValues[valueNumber]); //This is for when there is a new option added in the upgraded version
                     }
                     else
                     {
-                        value = Value(oValues[valueNumber]);
+                        value = General.Value(oValues[valueNumber]);
                     }
-                    string comment = Comment(upgrade_content.lines[x]);
+                    string comment = General.Comment(upgrade_content.lines[x]);
                     Write_Line("\t" + value + "\t" + comment);
                 }
                 else
@@ -510,33 +420,7 @@ namespace mods
             }
         }
 
-        private string Value(string line)
-        {
-            if (line.IndexOf(";") == -1) //indexOf returns -1 if string not found
-            {
-                return line;
-            }
-            else
-            {
-                int commentIndex = line.IndexOf(";");
-                return line.Substring(0, commentIndex).Trim();
-            }
-        }
-
-        private string Comment(string line)
-        {
-            if (line.IndexOf(";") == -1) //indexOf returns -1 if string not found
-            {
-                return "";
-            }
-            else
-            {
-                int commentIndex = line.IndexOf(";");
-                return line.Substring(commentIndex, line.Length - commentIndex).Trim();
-            }
-        }
-
-        public void Archive()
+        public void Archive() //Not used
         {
             string jobNumber = filename + ".*";
             string folder = filepath.Substring(0, filepath.IndexOf(filename));
@@ -611,20 +495,20 @@ namespace mods
         {
             int labelIndex = new_lines.IndexOf(label);
 
-            int byteNum = HexStringToDecimal(db);
+            int byteNum = General.HexStringToDecimal(db);
 
             int b = -1;
             while(b != byteNum)
             {
                 labelIndex++;
-                if (Value(new_lines[labelIndex]).StartsWith("DB"))
+                if (General.Value(new_lines[labelIndex]).StartsWith("DB"))
                 {
                     b++;
                 }
             }
 
-            string sourceValue = Value(new_lines[labelIndex]);
-            string sourceComment = Comment(new_lines[labelIndex]);
+            string sourceValue = General.Value(new_lines[labelIndex]);
+            string sourceComment = General.Comment(new_lines[labelIndex]);
 
             string modifiedValue = "";
 
@@ -645,9 +529,9 @@ namespace mods
 
         private string OR_Byte(string source, string operand)
         {
-            source = Remove_Prefix(source, "DB").Trim();
-            source = Remove_Suffix(source, "H").Trim();
-            operand = Remove_Suffix(operand,"H").Trim();
+            source = General.Remove_Prefix(source, "DB").Trim();
+            source = General.Remove_Suffix(source, "H").Trim();
+            operand = General.Remove_Suffix(operand,"H").Trim();
 
             //Make sure source is only 1 byte
             source = source.Substring(source.Length - 2, 2);
@@ -658,14 +542,14 @@ namespace mods
 
             foreach(char nibble in source)
             {
-                sourceBinary += hexCharacterToBinary[nibble];
+                sourceBinary += General.hexCharacterToBinary[nibble];
             }
 
             string operandBinary = "";
 
             foreach (char nibble in operand)
             {
-                operandBinary += hexCharacterToBinary[nibble];
+                operandBinary += General.hexCharacterToBinary[nibble];
             }
 
             string resultBinary = "";
@@ -682,17 +566,17 @@ namespace mods
                 }
             }
 
-            char upperNibble = binaryToHexCharacter[resultBinary.Substring(0, 4)];
-            char lowerNibble = binaryToHexCharacter[resultBinary.Substring(4, 4)];
+            char upperNibble = General.binaryToHexCharacter[resultBinary.Substring(0, 4)];
+            char lowerNibble = General.binaryToHexCharacter[resultBinary.Substring(4, 4)];
 
             return ("0" + upperNibble + lowerNibble + "H").ToUpper();
         }
 
         private string AND_Byte(string source, string operand)
         {
-            source = Remove_Prefix(source, "DB").Trim();
-            source = Remove_Suffix(source, "H").Trim();
-            operand = Remove_Suffix(operand, "H").Trim();
+            source = General.Remove_Prefix(source, "DB").Trim();
+            source = General.Remove_Suffix(source, "H").Trim();
+            operand = General.Remove_Suffix(operand, "H").Trim();
 
             //Make sure source is only 1 byte
             source = source.Substring(source.Length - 2, 2);
@@ -703,14 +587,14 @@ namespace mods
 
             foreach (char nibble in source)
             {
-                sourceBinary += hexCharacterToBinary[nibble];
+                sourceBinary += General.hexCharacterToBinary[nibble];
             }
 
             string operandBinary = "";
 
             foreach (char nibble in operand)
             {
-                operandBinary += hexCharacterToBinary[nibble];
+                operandBinary += General.hexCharacterToBinary[nibble];
             }
 
             string resultBinary = "";
@@ -727,34 +611,10 @@ namespace mods
                 }
             }
 
-            char upperNibble = binaryToHexCharacter[resultBinary.Substring(0, 4)];
-            char lowerNibble = binaryToHexCharacter[resultBinary.Substring(4, 4)];
+            char upperNibble = General.binaryToHexCharacter[resultBinary.Substring(0, 4)];
+            char lowerNibble = General.binaryToHexCharacter[resultBinary.Substring(4, 4)];
 
             return ("0" + upperNibble + lowerNibble + "H").ToUpper();
-        }
-
-        private string Remove_Prefix(string text, string prefix)
-        {
-            if (text.StartsWith(prefix))
-            {
-                return text.Substring(prefix.Length, text.Length - prefix.Length);
-            }
-            else
-            {
-                return text;
-            }
-        }
-
-        private string Remove_Suffix(string text, string suffix)
-        {
-            if (text.EndsWith(suffix))
-            {
-                return text.Substring(0, text.Length - suffix.Length);
-            }
-            else
-            {
-                return text;
-            }
         }
     }
 }

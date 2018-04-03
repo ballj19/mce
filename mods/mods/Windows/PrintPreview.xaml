@@ -23,7 +23,7 @@
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="410" Margin="16,25,0,0"></TextBlock>
         <TextBlock x:Name="JobInfoDummy" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="410" Margin="822,25,0,0"></TextBlock>
         <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="822,440,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
-        <TextBlock x:Name="IOInfoDummy" HorizontalAlignment="Left" Margin="822,462,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="554"/>
+        <StackPanel x:Name="IOInfoSPDummy" Orientation="Vertical" HorizontalAlignment="Left" Margin="822,462,0,0" VerticalAlignment="Top" Width="532" Height="554"/>
         <StackPanel x:Name="BoardSPDummy" Orientation="Horizontal" Margin="822,462,0,-33">
             <StackPanel x:Name="BoardSPDummy1" Orientation="Vertical"  Visibility="Hidden"/>
             <StackPanel x:Name="BoardSPDummy2" Orientation="Vertical" Margin="8,0,0,0" Visibility="Hidden"/>
@@ -32,7 +32,7 @@
             <StackPanel Name="HeaderSP1" Orientation="Horizontal"/>
             <StackPanel Name="HeaderSP2" Orientation="Horizontal"/>
         </StackPanel>
-        <TextBlock x:Name="IOInfo" HorizontalAlignment="Left" Margin="16,462,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="532" Height="554"/>
+        <StackPanel x:Name="IOInfoSP" Orientation="Vertical" HorizontalAlignment="Left" Margin="16,462,0,0" VerticalAlignment="Top" Width="532" Height="554"/>
         <StackPanel x:Name="BoardSP" Margin="16,467,0,-5" Orientation="Horizontal">
             <StackPanel x:Name="BoardSP1" Orientation="Vertical" Visibility="Hidden"/>
             <StackPanel x:Name="BoardSP2" Orientation="Vertical" Margin="8,0,0,0" Visibility="Hidden"/>

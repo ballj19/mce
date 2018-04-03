@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="Modification Hub by Jake Ball" Height="800" Width="1500">
+        Title="Modification Hub by Jake Ball" Height="800" Width="1100">
 
     <Grid Height="770" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
@@ -28,7 +28,10 @@
         <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
         <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,227,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="378" Height="456" Margin="19,308,0,0"></TextBlock>
-        <TabControl Margin="413,41,0,0">
+        <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
+        <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
+        <Button x:Name="PrintPage" Content="Print Preview" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="PrintPage_Click" Height="22"/>
+        <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged">
             <TabItem Name="LandingsTab" Header="Landings">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Orientation="Vertical" x:Name="LandingConfig">
@@ -49,7 +52,7 @@
             <TabItem Name="IOTab" Header="Inputs/Outputs">
                 <Grid>
                     <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
-                    <TextBlock x:Name="IOInfo" HorizontalAlignment="Left" Margin="14,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="445" Height="349"/>
+                    <StackPanel x:Name="IOInfoSP" Orientation="Vertical" Margin="0,37,0,0"/>
                     <StackPanel x:Name="BoardSP" Orientation="Vertical" Margin="0,37,0,0"/>
                 </Grid>
             </TabItem>
@@ -81,12 +84,10 @@
             <TabItem Name="AdminTab" Header="Admin">
                 <Grid>
                     <Button x:Name="ModUpgrade" Content="Upgrade" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Click="ModUpgrade_Click" />
+                    <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,40,0,0" Click="ArchiveButton_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
-        <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
-        <Button x:Name="PrintPage" Content="Print Preview" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="PrintPage_Click" Height="22"/>
     </Grid>
 </Window>
     

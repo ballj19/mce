@@ -393,9 +393,9 @@ namespace mods
             Content content = new Content(file);
 
             string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
-            string topFloorDecimal = (content.HexStringToDecimal(topFloor) + 1).ToString();
+            string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
             string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
-            string botFloorDecimal = (content.HexStringToDecimal(botFloor) + 1).ToString();
+            string botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
             string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
             string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
             string i4o = content.Get_Nibble("LOBBY:", 40, 1);
