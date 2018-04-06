@@ -48,9 +48,51 @@ namespace mods
             }
         }
 
+        private void Write_Missing_Labels()
+        {
+            Write_Intermediate(0, original_content.labelsInt[0]); //Writes the header at the beginning of file
+
+            foreach (string label in upgrade_content.labels) //First time through is to get all the missing labels in
+            {
+                int labelIndex = upgrade_content.labels.IndexOf(label);
+
+                if (!original_content.labels.Contains(label)) //If original_content did not contain the label, insert it
+                {
+                    if (labelIndex != 1) //The V013 Label messes things up because its always different, so skip it
+                    {
+                        original_content.labels.Insert(labelIndex, label);
+                        original_content.labelsInt.Insert(labelIndex, 0); //Dont know what the int is
+                        Insert_Upgraded_Lines(label + ":");
+                    }
+                    else
+                    {
+                        original_content.labels.RemoveAt(1);
+                        original_content.labels.Insert(1, upgrade_content.labels[1]);
+                        Insert_Upgraded_Lines(label + ":");
+                    }
+                }
+                else
+                {
+                    int labelNumber = upgrade_content.labels.IndexOf(label);
+                    if (labelNumber + 1 == original_content.labels.Count)
+                    {
+                        int EOFindex = original_content.lines.IndexOf("END");
+                        Write_Intermediate(original_content.labelsInt[labelNumber], EOFindex + 1);
+                    }
+                    else
+                    {
+                        Write_Intermediate(original_content.labelsInt[labelNumber], original_content.labelsInt[labelNumber + 1]);
+                    }
+                }
+            }
+        }
+
         public void Version_Upgrade(string sourcepath)
         {
             upgrade_content = new UpgradeContent(sourcepath);
+            Write_Missing_Labels();
+            original_content = new UpgradeContent(Write_File());
+            new_lines.Clear();
 
             List<string> combine_labels = new List<string>
             {   "IOINPE",
@@ -73,6 +115,9 @@ namespace mods
                 "XELIGI",
                 "HELIGI",
                 "CCLOCKM",
+                "AIOI",
+                "SAB_TBLA",
+                "SABOPT",
             };
 
             List<string> add_to_end_labels = new List<string>
@@ -105,27 +150,12 @@ namespace mods
             };
 
             Write_Intermediate(0, original_content.labelsInt[0]); //Writes the header at the beginning of file
-
+            
             foreach (string label in upgrade_content.labels)
             {
                 int labelIndex = upgrade_content.labels.IndexOf(label);
 
-                if (!original_content.labels.Contains(label)) //If original_content did not contain the label, insert it
-                {
-                    if (labelIndex != 1) //The V013 Label messes things up because its always different, so skip it
-                    {
-                        original_content.labels.Insert(labelIndex, label);
-                        original_content.labelsInt.Insert(labelIndex, 0); //Dont know what the int is
-                        Insert_Upgraded_Lines(label + ":");
-                    }
-                    else
-                    {
-                        original_content.labels.RemoveAt(1);
-                        original_content.labels.Insert(1, upgrade_content.labels[1]);
-                        Insert_Upgraded_Lines(label + ":");
-                    }
-                }
-                else if (combine_labels.Contains(label))
+                if (combine_labels.Contains(label))
                 {
                     Combine_Label(label + ":");
                 }
@@ -190,7 +220,7 @@ namespace mods
             int o = oLabelIndex + 1;
             while (!General.Value(original_content.lines[o]).EndsWith(":") && !General.Value(original_content.lines[o]).Contains("'{'"))
             {
-                if (General.Value(original_content.lines[o]).StartsWith("DB"))
+                if (General.Value(original_content.lines[o]).StartsWith("DB") || General.Value(original_content.lines[o]).StartsWith("DW"))
                 {
                     tableCount++;
                 }
@@ -198,23 +228,34 @@ namespace mods
                 o++;
             }
 
+            int uByteCount = 0;
             int u = uLabelIndex + 1;
-            while (!General.Value(upgrade_content.lines[u]).EndsWith(":"))
+            while(uByteCount < tableCount)
             {
+                if (General.Value(upgrade_content.lines[u]).StartsWith("DB") || General.Value(upgrade_content.lines[u]).StartsWith("DW"))
+                {
+                    uByteCount++;
+                }
                 uCount++;
                 u++;
             }
 
-            for (int x = 0; x <= uCount; x++)
-            {
-                if(x < oCount)
+            int oByteWriteCount = 0;
+            int x = 0;
+            while(oByteWriteCount < tableCount)
+            { 
+                Write_Line(original_content.lines[oLabelIndex + x]);
+                if(General.Value(original_content.lines[oLabelIndex + x]).StartsWith("DB") || General.Value(original_content.lines[oLabelIndex + x]).StartsWith("DW"))
                 {
-                    Write_Line(original_content.lines[oLabelIndex + x]);
+                    oByteWriteCount++;
                 }
-                else
-                {
-                    Write_Line(upgrade_content.lines[uLabelIndex + x]);
-                }                
+                x++;
+            }
+
+            while(!General.Value(upgrade_content.lines[u]).EndsWith(":"))
+            {
+                Write_Line(upgrade_content.lines[u]);
+                u++;
             }
         }
 
@@ -241,8 +282,10 @@ namespace mods
         private void Load_Label(string label)
         {
             int uload_labelIndex = upgrade_content.lines.IndexOf(label);
-            
-            int u = 0;
+
+            Write_Line(upgrade_content.lines[uload_labelIndex]); //Write "LABEL:"
+
+            int u = 1;
             while (!General.Value(upgrade_content.lines[uload_labelIndex + u]).EndsWith(":"))
             {
                 if(u == 1)

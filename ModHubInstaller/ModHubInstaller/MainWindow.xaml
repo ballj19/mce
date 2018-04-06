@@ -1,0 +1,20 @@
+﻿<Window x:Class="ModHubInstaller.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModHubInstaller"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="600">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Margin="0,40,0,0" FontSize="30" VerticalAlignment="Top" Content="ModHub Installer"></Label>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,40,0,0">
+                <TextBox HorizontalAlignment="Left" x:Name="PathBox" TextAlignment="Right" Height="23" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="464"/>
+                <Button Content="Folder" x:Name="BrowseFolderButton" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="BrowseFolderButton_Click"/>
+            </StackPanel>
+            <CheckBox x:Name="DesktopShortcutButton" Content="Create a Desktop Shortcut" HorizontalAlignment="Center" Margin="0,30,380,0" VerticalAlignment="Top"/>
+            <Button x:Name="InstallButton" Content="Install" Width="75" HorizontalAlignment="Center" Margin="465,30,0,0" Click="InstallButton_Click"/>
+        </StackPanel>
+     </Grid>
+</Window>

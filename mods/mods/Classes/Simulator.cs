@@ -83,7 +83,7 @@ namespace mods
             string[,] inputs = content.inputs;
 
             Write_Intermediate(number_of_landings_index);
-            Write_Line("Value = " + (General.HexStringToDecimal(topFloor)));
+            Write_Line("Value = " + (General.HexStringToDecimal(topFloor) + 1));
             Write_Intermediate(landing_config_index);
             Write_Landing_Config();
             Write_Intermediate(ccelig_index);

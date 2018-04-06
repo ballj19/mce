@@ -1,0 +1,17 @@
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\bin\Debug\install.exe.config
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\bin\Debug\install.exe
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\bin\Debug\install.pdb
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\ModHubInstaller.csprojResolveAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\MainWindow.g.cs
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\App.g.cs
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\install_MarkupCompile.cache
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\install_MarkupCompile.lref
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\MainWindow.baml
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\install.g.resources
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\ModHubInstaller.Properties.Resources.resources
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\ModHubInstaller.csproj.GenerateResource.cache
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\ModHubInstaller.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\install.exe
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\install.pdb
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\Interop.IWshRuntimeLibrary.dll
+C:\Users\Jacob.Ball\source\repos\ModHubInstaller\ModHubInstaller\obj\Debug\ModHubInstaller.csproj.ResolveComReference.cache

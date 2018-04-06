@@ -334,14 +334,18 @@ namespace mods
                                     }
                                 }
                             }
-                            iomap[io_x, io_y] = ioCode.ToString();
-                            ioCode.Clear();
-                            io_y++;
-                            if (io_y == 8)
+                            if(ioCode.ToString().Any(o => char.IsLetter(o)))
                             {
-                                io_y = 0;
-                                io_x++;
+                                iomap[io_x, io_y] = ioCode.ToString();
+
+                                io_y++;
+                                if (io_y == 8)
+                                {
+                                    io_y = 0;
+                                    io_x++;
+                                }
                             }
+                            ioCode.Clear();
                             building = false;
                             x++;
                             iomap_index = io_index + x + 1;
@@ -828,21 +832,41 @@ namespace mods
 
         public List<string> Get_PILabels()
         {
-            int index = this.content.FindIndex(x => x.StartsWith("PILAB"));
             string pilabelstring = "";
             List<string> piLabels = new List<string>();
-            int c = 1;
-
-            while(this.content[index + c].StartsWith("DB"))
+            int index = this.content.FindIndex(x => x.StartsWith("PILAB"));
+            if (index != -1)
             {
-                pilabelstring += this.Get_String("PILAB", c);
-                c++;
+                int c = 1;
+
+                while (this.content[index + c].StartsWith("DB"))
+                {
+                    pilabelstring += this.Get_String("PILAB", c);
+                    c++;
+                }
+
+                for (int i = 0; i < pilabelstring.Length / 2; i++)
+                {
+                    string pilabel = pilabelstring.Substring(i * 2, 2);
+                    piLabels.Add(pilabel);
+                }
             }
-
-            for (int i = 0; i < pilabelstring.Length / 2; i++)
+            else
             {
-                string pilabel = pilabelstring.Substring(i * 2, 2);
-                piLabels.Add(pilabel);
+                index = this.content.FindIndex(x => x.StartsWith("CRTVAR:"));
+
+                int c = 9;
+                while(this.content[index + c].StartsWith("DB"))
+                {
+                    pilabelstring += this.Get_String("CRTVAR", c);
+                    c++;
+                }
+
+                for (int i = 0; i < pilabelstring.Length / 2; i++)
+                {
+                    string pilabel = pilabelstring.Substring(i * 2, 2);
+                    piLabels.Add(pilabel);
+                }
             }
 
             return piLabels;

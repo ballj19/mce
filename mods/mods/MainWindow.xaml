@@ -85,6 +85,8 @@
                 <Grid>
                     <Button x:Name="ModUpgrade" Content="Upgrade" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Click="ModUpgrade_Click" />
                     <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,40,0,0" Click="ArchiveButton_Click"/>
+                    <Button x:Name="PersonalFileButton" Content="Create Personal" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,70,0,0" Click="CreatePersonalFile_Click"/>
+
                 </Grid>
             </TabItem>
         </TabControl>

@@ -64,12 +64,19 @@ namespace mods
             CustomFoldersCheckBox.IsChecked = true;
             FilesListBox.SelectionMode = SelectionMode.Extended;
             FileExtension.Items.Add(".asm");
-            FileExtension.Items.Add(".old");
-            FileExtension.Items.Add("All Files");
+            if(permission < 2)
+            {
+                FileExtension.Items.Add(".old");
+                FileExtension.Items.Add("All Files");
+            }
             FileExtension.SelectedIndex = 0;
             Make_Controls_Invisible();
             Update_Search_History();
-            Track_Mod();
+            if(permission <= 1)
+            {
+                Track_Mod();
+            }
+                
             try
             {
                 if(SearchHistory.Items[1].ToString().StartsWith("-"))
@@ -731,8 +738,11 @@ namespace mods
                 {
                     if (content.inputs[i, i2] == "ALT")
                     {
-                        LandingAltHeader.Visibility = Visibility.Visible;
-                        LandingAltConfig.Visibility = Visibility.Visible;
+                        if (FilesListBox.SelectedItems.Count > 0) //This is to prevent this from being visible before a file is selected
+                        {
+                            LandingAltHeader.Visibility = Visibility.Visible;
+                            LandingAltConfig.Visibility = Visibility.Visible;
+                        }
 
                         LandingAltConfig.Text = "";
                         LandingAltConfig.Height = 16 * top_landing + 10;
@@ -2766,7 +2776,7 @@ namespace mods
         {
             if(Version_Check())
             {
-                if(System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Some Title", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if(System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     //To get the location the assembly normally resides on disk or the install directory
                     string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
@@ -2811,6 +2821,7 @@ namespace mods
                 Mp2link.Visibility = Visibility.Hidden;
                 Emulink.Visibility = Visibility.Hidden;
                 SettingsTab.Visibility = Visibility.Hidden;
+                TracModTab.Visibility = Visibility.Hidden;
 
                 ShowPrints.Margin = new Thickness(ShowPrints.Margin.Left, ShowPrints.Margin.Top - 51, ShowPrints.Margin.Right, ShowPrints.Margin.Bottom);
                 PrintPage.Margin = new Thickness(PrintPage.Margin.Left, PrintPage.Margin.Top - 51, PrintPage.Margin.Right, PrintPage.Margin.Bottom);
@@ -2898,6 +2909,36 @@ namespace mods
         {
             ArchiveWindow aw = new ArchiveWindow("G:\\Software\\" + FilesListBox.SelectedItem.ToString());
             aw.ShowDialog();
+        }
+
+        private void CreatePersonalFile_Click(object sender, RoutedEventArgs e)
+        {
+            string selectedPath = "G:\\Software\\" + FilesListBox.SelectedItem.ToString();
+            string selectedFolder = General.Get_Folder_From_Path(selectedPath);
+            string selectedFile = General.Get_File_From_Path(selectedPath);
+
+            StringBuilder newFileName = new StringBuilder();
+
+            int c = 0;
+            while (char.IsLetter(selectedFile[c]))
+            {
+                newFileName.Append(selectedFile[c]);
+                c++;
+            }
+            newFileName.Append("JAKE");
+            while (char.IsNumber(selectedFile[c]))
+            {
+                //do nothing while looping through the numbers
+                c++;
+            }
+            while (char.IsLetter(selectedFile[c]))
+            {
+                newFileName.Append(selectedFile[c]);
+                c++;
+            }
+            newFileName.Append(".ASM");
+
+            File.Copy(selectedPath, selectedFolder + newFileName, true);
         }
     }
 }

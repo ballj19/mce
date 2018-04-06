@@ -39,6 +39,10 @@ namespace mods
 
             foreach (string line in rawLines)
             {
+                if(line.Contains("ELIGI:"))
+                {
+                    //debug
+                }
 
                 if (line == "")
                 {
