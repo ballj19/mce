@@ -161,7 +161,7 @@ namespace mods
                     try
                     {
                         string jobNumber = "*.asm";
-                        string folder = "G:\\Software\\Product\\" + location;
+                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Product\\" + location;
                         SearchFolderTB.Text = "Searching through " + folder + "...";
                         string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                         progress = 0;
@@ -175,7 +175,7 @@ namespace mods
 
                             try
                             {
-                                int locationIndex = 12;
+                                int locationIndex = 28;
                                 string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                 Validate_File(jobFile);
                             }
@@ -200,7 +200,7 @@ namespace mods
                         try
                         {
                             string jobNumber = "*.asm";
-                            string folder = "G:\\Software\\Source\\" + location;
+                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Source\\" + location;
                             SearchFolderTB.Text = "Searching through " + folder + "...";
                             string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                             progress = 0;
@@ -214,7 +214,7 @@ namespace mods
 
                                 try
                                 {
-                                    int locationIndex = 12;
+                                    int locationIndex = 28;
                                     string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                     Validate_File(jobFile);
                                 }
@@ -235,7 +235,7 @@ namespace mods
                     try
                     {
                         string jobNumber = "*.asm";
-                        string folder = "G:\\Software\\Custom2\\";
+                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom2\\";
                         SearchFolderTB.Text = "Searching through " + folder + "...";
                         string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                         progress = 0;
@@ -249,7 +249,7 @@ namespace mods
 
                             try
                             {
-                                int locationIndex = 12;
+                                int locationIndex = 28;
                                 string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                 Validate_File(jobFile);
                             }
@@ -275,7 +275,7 @@ namespace mods
                     try
                     {
                         string jobNumber = "*.asm";
-                        string folder = "G:\\Software\\Product\\" + location;
+                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Product\\" + location;
                         SearchFolderTB.Text = "Searching through " + folder + "...";
                         string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                         progress = 0;
@@ -289,7 +289,7 @@ namespace mods
 
                             try
                             {
-                                int locationIndex = 12;
+                                int locationIndex = 28;
                                 string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                 Validate_File(jobFile);
                             }
@@ -314,7 +314,7 @@ namespace mods
                         try
                         {
                             string jobNumber = "*.asm";
-                            string folder = "G:\\Software\\Source\\" + location;
+                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Source\\" + location;
                             SearchFolderTB.Text = "Searching through " + folder + "...";
                             string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                             progress = 0;
@@ -328,7 +328,7 @@ namespace mods
 
                                 try
                                 {
-                                    int locationIndex = 12;
+                                    int locationIndex = 28;
                                     string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                     Validate_File(jobFile);
                                 }
@@ -351,7 +351,7 @@ namespace mods
                         try
                         {
                             string jobNumber = "*.asm";
-                            string folder = "G:\\Software\\Custom\\" + location;
+                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom\\" + location;
                             SearchFolderTB.Text = "Searching through " + folder + "...";
                             string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                             progress = 0;
@@ -365,7 +365,7 @@ namespace mods
 
                                 try
                                 {
-                                    int locationIndex = 12;
+                                    int locationIndex = 28;
                                     string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                                     Validate_File(jobFile);
                                 }
@@ -414,14 +414,11 @@ namespace mods
             string secur = content.Get_Bit("CPVAR", 7, 1, 0);
             string ace = content.Get_Bit("LOBBY:", 31, 0, 0);
 
-            for (int i = 0; i < 8; i++)
+            foreach(string input in content.inputs)
             {
-                for (int i2 = 0; i2 < 8; i2++)
+                if (input == "BSI")
                 {
-                    if (content.inputs[i, i2] == "BSI")
-                    {
-                        bsi = "YES";
-                    }
+                    bsi = "YES";
                 }
             }
 
@@ -711,23 +708,20 @@ namespace mods
                     TextBox tb = (TextBox)child;
                     bool found = false;
 
-                    if(tb.Text != null && tb.Text != "")
+                    if (tb.Text != null && tb.Text != "")
                     {
-                        for (int i = 0; i < 8; i++)
+                        foreach (string input in content.inputs)
                         {
-                            for (int i2 = 0; i2 < 8; i2++)
+                            if (input == tb.Text)
                             {
-                                if (content.inputs[i, i2] == tb.Text)
-                                {
-                                    found = true;
-                                }
+                                found = true;
                             }
                         }
+                    }
 
-                        if(found == false)
-                        {
-                            return;
-                        }
+                    if(found == false)
+                    {
+                        return;
                     }
                 }
             }
@@ -746,7 +740,7 @@ namespace mods
                         {
                             for (int i2 = 0; i2 < 8; i2++)
                             {
-                                if (content.outputs[i, i2] == tb.Text)
+                                if (content.outputs[i * 8 + i2] == tb.Text)
                                 {
                                     found = true;
                                 }

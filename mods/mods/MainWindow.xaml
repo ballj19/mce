@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="Modification Hub by Jake Ball" Height="800" Width="1100">
+        Title="Modification Hub by Jake Ball" Height="805" Width="1100">
 
     <Grid Height="770" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
@@ -50,16 +50,29 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Name="IOTab" Header="Inputs/Outputs">
-                <Grid>
-                    <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
-                    <StackPanel x:Name="IOInfoSP" Orientation="Vertical" Margin="0,37,0,0"/>
-                    <StackPanel x:Name="BoardSP" Orientation="Vertical" Margin="0,37,0,0"/>
-                </Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
+                        <StackPanel x:Name="IOInfoSP" Orientation="Vertical" Margin="0,37,0,0"/>
+                        <StackPanel x:Name="BoardSP" Orientation="Vertical" Margin="0,37,0,0"/>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
             <TabItem Name="HeaderTab" Header="Headers">
                 <StackPanel Name="HeaderSP" Orientation="Horizontal">
 
                 </StackPanel>
+            </TabItem>
+            <TabItem Name="OptionsTab" Header="Options">
+                <Grid>
+                    <ScrollViewer HorizontalAlignment="Left" Width="315" VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="LobbyOptionsBlock" Width="300" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                    <ScrollViewer Width="315" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="342,0,0,0">
+                        <TextBlock x:Name="BottomOptionsBlock" Width="300" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                </Grid>
+                
             </TabItem>
             <TabItem Name="TracModTab" Header="Trac Mod">
                 <Grid>
@@ -86,7 +99,6 @@
                     <Button x:Name="ModUpgrade" Content="Upgrade" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Click="ModUpgrade_Click" />
                     <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,40,0,0" Click="ArchiveButton_Click"/>
                     <Button x:Name="PersonalFileButton" Content="Create Personal" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,70,0,0" Click="CreatePersonalFile_Click"/>
-
                 </Grid>
             </TabItem>
         </TabControl>

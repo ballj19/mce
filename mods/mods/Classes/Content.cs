@@ -9,11 +9,11 @@ namespace mods
     public class Content
     {
         public List<string> content = new List<string>();
-        string[,] imap, omap;
-        public string[,] inputs, outputs;
+        List<string> imap, omap;
+        public List<string> inputs, outputs;
         List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
         List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
-        List<string> filepaths = new List<string> { "G:\\Software\\" };
+        string filepath =  "\\" + "\\" + "mceshared\\shared\\Software\\";
         public string file;
 
 
@@ -31,18 +31,16 @@ namespace mods
         {
             List<string> lines = new List<string>();
 
-            foreach (string filepath in filepaths)
+            try
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
-
-                }
+                string path = filepath + file;
+                lines = System.IO.File.ReadAllLines(@path).ToList();
             }
+            catch
+            {
+
+            }
+
             int x = 0;
             string[] uncommentedLines = new string[lines.Count];
             foreach (string line in lines)
@@ -246,30 +244,24 @@ namespace mods
                 return "N/A";
             }
         }
-        
-        private string[,] Build_IOmap(string file, char io)
+
+        private List<string> Build_IOmap(string file, char io)
         {
+            List<string> iomap = new List<string>();
+
             List<string> lines = new List<string>();
 
-            foreach (string filepath in filepaths)
+            try
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
+                string path = filepath + file;
+                lines = System.IO.File.ReadAllLines(@path).ToList();
+            }
+            catch
+            {
 
-                }
             }
 
-            string[,] iomap = new string[32, 8];
-
             List<string> ioLabels = new List<string>();
-
-            int io_x = 0;
-            int io_y = 0;
 
             string[] labelNumbers = { "", "2", "3", "4" };
 
@@ -282,6 +274,15 @@ namespace mods
             {
                 ioLabels = this.outputLabels;
             }
+
+            List<char> Acceptable_Chars = new List<char>
+            {
+                '/',
+                '_',
+                ' ',
+                '(',
+                ')',
+            };
 
             foreach (string ioLabel in ioLabels)
             {
@@ -296,57 +297,51 @@ namespace mods
                         while (lines[iomap_index].Trim().StartsWith("DB"))
                         {
                             int comment_index = lines[iomap_index].IndexOf(';');
-                            string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                            bool building = false;
-                            StringBuilder ioCode = new StringBuilder();
-
-                            for (int c = 0; c < comment_string.Length; c++)
+                            if (comment_index != -1)
                             {
-                                if (building)
+                                string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
+                                bool building = false;
+                                StringBuilder ioCode = new StringBuilder();
+
+                                for (int c = 0; c < comment_string.Length; c++)
                                 {
-                                    if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/' || comment_string[c] == '_' || comment_string[c] == '(' || comment_string[c] == ')')
+                                    if (building)
                                     {
-                                        ioCode.Append(comment_string[c]);
-                                    }
-                                    else
-                                    {
-                                        iomap[io_x, io_y] = ioCode.ToString();
-                                        ioCode.Clear();
-                                        io_y++;
-                                        if (io_y == 8)
+                                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
                                         {
-                                            io_y = 0;
-                                            io_x++;
+                                            ioCode.Append(comment_string[c]);
                                         }
-                                        building = false;
-                                    }
-                                }
-                                else
-                                {
-                                    if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                    {
-                                        ioCode.Append(comment_string[c]);
-                                        building = true;
+                                        else
+                                        {
+                                            iomap.Add(ioCode.ToString());
+                                            ioCode.Clear();
+                                            building = false;
+                                        }
                                     }
                                     else
                                     {
-                                        //do nothing
+                                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
+                                        {
+                                            ioCode.Append(comment_string[c]);
+                                            building = true;
+                                        }
+                                        else
+                                        {
+                                            //do nothing
+                                        }
                                     }
                                 }
+                                iomap.Add(ioCode.ToString());
+                                ioCode.Clear();
+                                building = false;
                             }
-                            if(ioCode.ToString().Any(o => char.IsLetter(o)))
+                            else //This is for the case where there is no comment to go with the byte
                             {
-                                iomap[io_x, io_y] = ioCode.ToString();
-
-                                io_y++;
-                                if (io_y == 8)
+                                for (int i = 0; i < 8; i++)
                                 {
-                                    io_y = 0;
-                                    io_x++;
+                                    iomap.Add("XXXX");
                                 }
                             }
-                            ioCode.Clear();
-                            building = false;
                             x++;
                             iomap_index = io_index + x + 1;
                         }
@@ -356,16 +351,14 @@ namespace mods
             return iomap;
         }
 
-        public string[,] IO(string[,] iomap, char io)
+        public List<string> IO(List<string> iomap, char io)
         {
-            int io_x = 0;
-            int io_y = 7;
+            List<string> ios = new List<string>();
+            List<string> ioValues = new List<string>();
 
             List<string> ioLabels = new List<string>();
 
-            string[,] ios = new string[8, 8];
-
-            if(io == 'I')
+            if (io == 'I')
             {
                 ioLabels = this.inputLabels;
             }
@@ -376,55 +369,50 @@ namespace mods
             }
 
             string[] labelNumbers = { "", "2", "3", "4" };
-            
 
-            foreach (string ioLabel in ioLabels)
+            foreach(string ioLabel in ioLabels)
             {
-                int labelNumberint = -1;
                 foreach (string labelNumber in labelNumbers)
                 {
-                    labelNumberint++;
                     if (this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":")) != -1)
                     {
-                        int io_index = this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":"));
-                        int x = 0;
-                        while (this.content[io_index + x + 1].Trim().StartsWith("DB"))
+                        int io_index = this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":")) + 1;
+
+                        while(content[io_index].StartsWith("DB"))
                         {
-                            int iomap_index = io_index + x + 1;
-                            string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
+                            ioValues.Add(General.Value(content[io_index]));
+                            io_index++;
+                        }
+                    }
+                }
+            }
 
-                            for (int y = 0; y < 8; y++)
-                            {
-                                if (io == 'I')
-                                {
-                                    if (iomap_binary[7 - y] == '1')
-                                    {
-                                        ios[io_x, io_y] = iomap[labelNumberint * 8 + x, 7 - y];
-                                        io_y--;
+            if(io == 'I')
+            {
+                for (int x = 0; x < iomap.Count / 8; x++)
+                {
+                    string iomap_binary = General.Hex_To_Bin(ioValues[x]);
 
-                                        if (io_y == -1)
-                                        {
-                                            io_x++;
-                                            io_y = 7;
-                                        }
-                                    }
-                                }
-                                else //This is needed because outputs get added in reverse
-                                {
-                                    if (iomap_binary[y] == '1')
-                                    {
-                                        ios[io_x, io_y] = iomap[labelNumberint * 8 + x, y];
-                                        io_y--;
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (iomap_binary[7 - y] == '1')
+                        {
+                            ios.Add(iomap[x * 8 + 7 - y]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int x = 0; x < iomap.Count / 8; x++)
+                {
+                    string iomap_binary = General.Hex_To_Bin(ioValues[x]);
 
-                                        if (io_y == -1)
-                                        {
-                                            io_x++;
-                                            io_y = 7;
-                                        }
-                                    }
-                                }
-                            }
-                            x++;
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (iomap_binary[y] == '1')
+                        {
+                            ios.Add(iomap[x * 8 + y]);
                         }
                     }
                 }
@@ -478,52 +466,183 @@ namespace mods
             return number_of_cars;
         }
 
-        private void Build_LobbyMap(string file)
+        public string Build_OptionsMap(string label)
         {
-            List<string> lines = new List<string>();
+            string OptionsBlock = "";
 
-            foreach (string filepath in filepaths)
+            List<string> optionsConfig = new List<string>();
+
+            if(label == "LOBBY:")
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
-
-                }
+                optionsConfig = LobbyConfig;
+                OptionsBlock += "LOBBY\n";
+            }
+            else if(label == "BOTTOM:")
+            {
+                optionsConfig = BottomConfig;
+                OptionsBlock += "BOTTOM\n";
             }
 
-            if (lines.FindIndex(x => x.StartsWith("LOBBY:")) != -1)
+            List<string> lines = General.Get_Clean_Lines_From_Path(filepath + file);            
+
+            if (lines.FindIndex(x => x.StartsWith(label)) != -1)
             {
-                int lobbyIndex = lines.FindIndex(x => x.StartsWith("LOBBY:"));
+                int lobbyIndex = lines.FindIndex(x => x.StartsWith(label));
 
                 //Configuration A:  XXXX-XXXX-XXXX-XXXX
                 //Configuration B:  Bits 0-7 = X
                 //Configuration C:  Bits 0-3 = X or Bits 4-7 = X
                 //Configuration D:  Should Always Be X
                 //Configuration E:  000H = X
-                //Configuration F:  XXXX-XXXX-XXXX Bits 5-0
+                //Configuration F:  XXXX-XXXX Bits 5-0
+                //Configuration G:  XXXX-XXXX-XXXX-XXXX--XXXX-XXXX Bits 2-0
                 //Configuration Z:  Not Used
+
+                int index = lobbyIndex + 1;
+                int byteIndex = 0;
+
+                while(!lines[index].EndsWith(":"))
+                {
+                    if(General.Value(lines[index]).StartsWith("DB"))
+                    {
+                        string byteString = "";
+                        string titleString = "";
+
+                        if (byteIndex < 16)
+                        {
+                            string comment = General.Comment(lines[index]);
+                            titleString += comment.Substring(1,2) + " - ";
+                        }
+                        else
+                        {
+                            string comment = General.Comment(lines[index]);
+                            titleString += comment.Substring(1, 3) + " - ";
+                        }
+
+                        for (int n = 0; n < optionsConfig[byteIndex].Length; n++)
+                        {
+                            if (optionsConfig[byteIndex][n] == 'A')
+                            {
+                                int numOfOptions = 4;
+                                string binary = General.Hex_To_Bin(General.Value(lines[index]));
+                                string nibbleBinary = binary.Substring(n * 4, 4);
+                                List<string> options = Crawl_Options(lines, index + 1 + n,numOfOptions);
+                                
+                                for (int b = 0; b < numOfOptions; b++)
+                                {
+                                    if (nibbleBinary[b] == '1')
+                                    {
+                                        byteString += options[b] + ", ";
+                                    }
+                                }
+                            }
+                            else if(optionsConfig[byteIndex][n] == 'F')
+                            {
+                                int numOfOptions = 2;
+                                string binary = General.Hex_To_Bin(General.Value(lines[index]));
+                                string nibbleBinary = binary.Substring(n * 4, 4);
+                                List<string> options = Crawl_Options(lines, index + 1 + n, numOfOptions);
+
+                                for (int b = 0; b < numOfOptions; b++)
+                                {
+                                    if (nibbleBinary[b] == '1')
+                                    {
+                                        byteString += options[b] + ", ";
+                                    }
+                                }
+                            }
+                        }
+
+                        if(byteString.Length > 0)
+                        {
+                            byteString = byteString.Substring(0, byteString.Length - 2);
+                        }
+                        OptionsBlock += titleString + byteString + "\n";
+                        byteIndex++;
+                    }
+                    index++;
+                }
             }
+
+            return OptionsBlock;
+        }
+
+        private List<string> Crawl_Options(List<string> lines, int offset, int numOfOptions = 8)
+        {
+            List<char> Acceptable_Chars = new List<char>
+            {
+                '/',
+                '_',
+                ' ',
+                '(',
+                ')',
+            };
+
+            List<string> options = new List<string>();
+            int comment_index = lines[offset].IndexOf(';');
+            if (comment_index != -1)
+            {
+                string comment_string = lines[offset].Substring(comment_index, lines[offset].Length - comment_index).Trim();
+                bool building = false;
+                StringBuilder opCode = new StringBuilder();
+
+                for (int c = 0; c < comment_string.Length; c++)
+                {
+                    if (building)
+                    {
+                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
+                        {
+                            opCode.Append(comment_string[c]);
+                        }
+                        else
+                        {
+                            options.Add(opCode.ToString());
+                            if(options.Count == numOfOptions)
+                            {
+                                return options;
+                            }
+                            opCode.Clear();
+                            building = false;
+                        }
+                    }
+                    else
+                    {
+                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
+                        {
+                            opCode.Append(comment_string[c]);
+                            building = true;
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+                    }
+                }
+                options.Add(opCode.ToString());
+            }
+            else //This is for the case where there is no comment to go with the byte
+            {
+                for (int i = 0; i < numOfOptions; i++)
+                {
+                    options.Add("XXXX");
+                }
+            }
+
+            return options;
         }
 
         private List<string> NC_Input_Map(string file)
         {
             List<string> lines = new List<string>();
 
-            foreach (string filepath in filepaths)
+            try
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
+                string path = filepath + file;
+                lines = System.IO.File.ReadAllLines(@path).ToList();
+            }
+            catch
+            {
 
-                }
             }
 
             List<string> ncinputs = new List<string>();
@@ -594,17 +713,14 @@ namespace mods
         {
             List<string> lines = new List<string>();
 
-            foreach (string filepath in filepaths)
+            try
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
+                string path = filepath + file;
+                lines = System.IO.File.ReadAllLines(@path).ToList();
+            }
+            catch
+            {
 
-                }
             }
 
             List<string> ncoutputs = new List<string>();
@@ -727,17 +843,14 @@ namespace mods
         {
             List<string> lines = new List<string>();
 
-            foreach (string filepath in filepaths)
+            try
             {
-                try
-                {
-                    string path = filepath + file;
-                    lines = System.IO.File.ReadAllLines(@path).ToList();
-                }
-                catch
-                {
+                string path = filepath + file;
+                lines = System.IO.File.ReadAllLines(@path).ToList();
+            }
+            catch
+            {
 
-                }
             }
 
             List<string> inputs = new List<string>();
@@ -872,70 +985,119 @@ namespace mods
             return piLabels;
         }
 
-        private static readonly Dictionary<string, string> LobbyConfig = new Dictionary<string, string> {
-            {"00","BB" },
-            {"01","AC" },
-            {"02","AC" },
-            {"03","DD" },
-            {"04","CC" },
-            {"05","DD" },
-            {"06","AA" },
-            {"07","AA" },
-            {"08","AA" },
-            {"09","AC" },
-            {"0A","AA" },
-            {"0B","AA" },
-            {"0C","AA" },
-            {"0D","AA" },
-            {"0E","AA" },
-            {"0F","AC" },
-            {"10","AA" },
-            {"11","AA" },
-            {"12","AA" },
-            {"13","AA" },
-            {"14","AA" },
-            {"15","AA" },
-            {"16","AA" },
-            {"17","AA" },
-            {"18","AA" },
-            {"19","AA" },
-            {"1A","AC" },
-            {"1B","AA" },
-            {"1C","AA" },
-            {"1D","AA" },
-            {"1E","AA" },
-            {"1F","AC" },
-            {"20","EE" },
-            {"21","AA" },
-            {"22","AA" },
-            {"23","AA" },
-            {"24","AA" },
-            {"25","AA" },
-            {"26","AA" },
-            {"27","CC" },
-            {"28","CC" },
-            {"29","AC" },
-            {"2A","FF" },
-            {"2B","AC" },
-            {"2C","DD" },
-            {"2D","BB" },
-            {"2E","BB" },
-            {"2F","AA" },
-            {"30","AC" },
-            {"31","CC" },
-            {"32","FF" },
-            {"33","ZC" },
-            {"34","BB" },
-            {"35","ZC" },
-            {"36","EE" },
-            {"37","CC" },
-            {"38","" },
-            {"39","" },
-            {"3A","" },
-            {"3B","" },
-            {"3C","" },
-            {"3D","" },
+        private List<string> LobbyConfig = new List<string>
+        {
+            //Configuration A:  XXXX-XXXX-XXXX-XXXX
+            //Configuration B:  Bits 0-7 = X
+            //Configuration C:  Bits 0-3 = X or Bits 4-7 = X
+            //Configuration D:  Should Always Be X
+            //Configuration E:  000H = X
+            //Configuration F:  XXXX-XXXX Bits 5-0
+            //Configuration G:  XXXX-XXXX-XXXX-XXXX--XXXX-XXXX Bits 2-0
+            //Configuration Z:  Not Used
+            "B", //00
+            "AC",
+            "AC",
+            "D",
+            "CC",
+            "D",
+            "AA",
+            "AA",
+            "AA", //08
+            "AC",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AC",
+            "AA", //10
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA", //18
+            "AA",
+            "AC",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AC",
+            "E", //20
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "AA",
+            "CC",
+            "CC", //28
+            "AC",
+            "F",
+            "ZZ",
+            "DD",
+            "B",
+            "B",
+            "AA",
+            "AC", //30
+            "CC",
+            "F",
+            "AC",
+            "B",
+            "ZC",
+            "E",
+            "CC",
+            "ZZ", //38
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
         };
-        
+
+        private List<string> BottomConfig = new List<string>
+        {
+            //Configuration A:  XXXX-XXXX-XXXX-XXXX
+            //Configuration B:  Bits 0-7 = X
+            //Configuration C:  Bits 0-3 = X or Bits 4-7 = X
+            //Configuration D:  Should Always Be X
+            //Configuration E:  000H = X
+            //Configuration F:  XXXX-XXXX Bits 5-0
+            //Configuration G:  XXXX-XXXX-XXXX-XXXX--XXXX-XXXX Bits 2-0
+            //Configuration Z:  Not Used
+            "B", //00
+            "B",
+            "AA",
+            "F",
+            "F",
+            "AA",
+            "F",
+            "AA",
+            "F", //08
+            "AA",
+            "AA",
+            "AA",
+            "G",
+            "B",
+            "AA",
+            "AA",
+            "AA", //10
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ", //18
+            "ZZ",
+            "ZZ",
+            "ZZ",
+            "ZZ",
+        };
     }
 }

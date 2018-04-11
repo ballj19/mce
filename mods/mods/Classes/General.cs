@@ -200,6 +200,47 @@ namespace mods
                 return line.Substring(commentIndex, line.Length - commentIndex).Trim();
             }
         }
+
+        public static List<string> Get_Clean_Lines_From_Path(string path)
+        {
+            List<string> lines = new List<string>();
+            List<string> rawLines = System.IO.File.ReadAllLines(@path).ToList();
+
+            foreach (string line in rawLines)
+            {
+                if (line == "")
+                {
+                    lines.Add("");
+                }
+                else
+                {
+                    //Need this logic because sometimes the first byte is defined on the same line as the label - inconsistently
+                    //So we force the defined byte onto the next line always
+                    if (General.Value(line).Contains(":") && (!General.Value(line).EndsWith(":") || !General.Comment(line).Equals("")))
+                    {
+                        int colonIndex = line.IndexOf(":");
+                        lines.Add(line.Substring(0, colonIndex + 1).Trim());
+                        lines.Add("\t" + line.Substring(colonIndex + 1, line.Length - colonIndex - 1).Trim());
+                    }
+                    else
+                    {
+                        if (line.Trim().EndsWith(":"))
+                        {
+                            lines.Add(line.Trim());
+                        }
+                        else if (line.Trim() == "END")
+                        {
+                            lines.Add(line.Trim());
+                        }
+                        else
+                        {
+                            lines.Add(line);
+                        }
+                    }
+                }
+            }
+            return lines;
+        }
         
     }
 }

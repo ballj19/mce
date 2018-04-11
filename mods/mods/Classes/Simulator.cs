@@ -80,7 +80,7 @@ namespace mods
             string ncBoard = content.Get_Bit("LOBBY:", 33, 1, 2);
             string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
             string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 2);
-            string[,] inputs = content.inputs;
+            List<string> inputs = content.inputs;
 
             Write_Intermediate(number_of_landings_index);
             Write_Line("Value = " + (General.HexStringToDecimal(topFloor) + 1));
@@ -215,7 +215,7 @@ namespace mods
             }
         }
 
-        private void Write_Inputs(string[,] inputs)
+        private void Write_Inputs(List<string> inputs)
         {
             int spare_number = 1;
 
@@ -223,16 +223,16 @@ namespace mods
             {
                 for(int y = 0; y < 8; y++)
                 {
-                    if(inputs[x, 7 - y] == null)
+                    if(x * 8 + y < inputs.Count)
                     {
-                        return;
+                        Write_Line("[SpareSwComboBox" + spare_number + "]");
+                        Write_Line("Value = " + inputs[x * 8 + y]);
+                        Write_Line("");
+                        spare_number++;
                     }
                     else
                     {
-                        Write_Line("[SpareSwComboBox" + spare_number + "]");
-                        Write_Line("Value = " + inputs[x, 7 - y]);
-                        Write_Line("");
-                        spare_number++;
+                        return;
                     }
                 }
             }

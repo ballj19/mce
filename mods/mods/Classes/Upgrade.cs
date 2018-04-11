@@ -48,7 +48,7 @@ namespace mods
             }
         }
 
-        private void Write_Missing_Labels()
+        private void Write_Missing_Labels(string cartype)
         {
             Write_Intermediate(0, original_content.labelsInt[0]); //Writes the header at the beginning of file
 
@@ -58,16 +58,16 @@ namespace mods
 
                 if (!original_content.labels.Contains(label)) //If original_content did not contain the label, insert it
                 {
-                    if (labelIndex != 1) //The V013 Label messes things up because its always different, so skip it
+                    if ((labelIndex == 1 && cartype != "Group") || (labelIndex == 4 && cartype == "Group")) //The V013 Label messes things up because its always different, so skip it
                     {
-                        original_content.labels.Insert(labelIndex, label);
-                        original_content.labelsInt.Insert(labelIndex, 0); //Dont know what the int is
+                        original_content.labels.RemoveAt(1);
+                        original_content.labels.Insert(1, upgrade_content.labels[1]);
                         Insert_Upgraded_Lines(label + ":");
                     }
                     else
                     {
-                        original_content.labels.RemoveAt(1);
-                        original_content.labels.Insert(1, upgrade_content.labels[1]);
+                        original_content.labels.Insert(labelIndex, label);
+                        original_content.labelsInt.Insert(labelIndex, 0); //Dont know what the int is
                         Insert_Upgraded_Lines(label + ":");
                     }
                 }
@@ -87,10 +87,10 @@ namespace mods
             }
         }
 
-        public void Version_Upgrade(string sourcepath)
+        public void Version_Upgrade(string sourcepath, string cartype)
         {
             upgrade_content = new UpgradeContent(sourcepath);
-            Write_Missing_Labels();
+            Write_Missing_Labels(cartype);
             original_content = new UpgradeContent(Write_File());
             new_lines.Clear();
 
@@ -112,12 +112,17 @@ namespace mods
                 "CPVAR",
                 "CPVAR2",
                 "ELIGI",
+                "AELIGI",
                 "XELIGI",
                 "HELIGI",
                 "CCLOCKM",
                 "AIOI",
                 "SAB_TBLA",
                 "SABOPT",
+                "CIOINE",
+                "IOXINE",
+                "IOXOUTE",
+                "CARVAR",
             };
 
             List<string> add_to_end_labels = new List<string>
@@ -126,6 +131,7 @@ namespace mods
                 "L_TABLE",
                 "ETMRA",
                 "ESYSTM",
+                "SYSTMR",
             };
 
             List<string> replace_labels = new List<string>

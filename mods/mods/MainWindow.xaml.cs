@@ -30,7 +30,7 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.02.4";
+        string version = "V1.03.1";
         int permission = 1000;
         int searchProgress = 0;
         List<string> Trac_Mod_Jobs = new List<string>();
@@ -38,9 +38,9 @@ namespace mods
         public MainWindow()
         {
             InitializeComponent();
-            
+
             Set_Permissions();
-            
+
             this.Title = "Modification Hub by Jake Ball " + version;
 
             if (Version_Check())
@@ -114,7 +114,7 @@ namespace mods
                 foreach (var item in FilesListBox.SelectedItems)
                 {
                     string cmd = "C:\\Windows\\explorer.exe";
-                    string arg = "G:\\Software\\" + FilesListBox.SelectedItem.ToString();
+                    string arg = "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
                     Process.Start(cmd, arg);
                 }
             }
@@ -134,11 +134,17 @@ namespace mods
             try
             {
                 string jobNumber = "*" + TextBox1.Text + "*.afm";
-                string folder = "G:\\Software\\Modification_docs";
-                string[] files = Directory.GetFiles(@folder, jobNumber);
+                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Modification_docs";
+                List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
                 foreach (string file in files)
                 {
-                    Console.WriteLine(file);
+                    Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                }
+
+                if(files.Count < 1)
+                {
+                    string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
+                    File.Copy(folder + "\\" + "Mod_Base.afm",file);
                     Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
                 }
             }
@@ -183,7 +189,7 @@ namespace mods
             if (Environment.UserName != "jacob.ball")
             {
                 using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(@"K:\\Jake Ball\\test.txt", true))
+                new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\test.txt", true))
                 {
                     DateTime now = DateTime.Now;
                     file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
@@ -231,11 +237,11 @@ namespace mods
                 try
                 {
                     string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "G:\\Software\\" + subfolder + "\\" + location;
+                    string folder = "\\" + "\\" + "mceshared\\shared\\Software\\" + subfolder + "\\" + location;
                     string[] files = Directory.GetFiles(@folder, jobNumber,SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
-                        int locationIndex = 12;
+                        int locationIndex = 28;
                         string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                         if (permission < 2)
                         {
@@ -265,7 +271,7 @@ namespace mods
             {
                 string topFolder = TextBox1.Text.Substring(0, TextBox1.Text.Length - 3) + "000";
                 string jobFolder = TextBox1.Text;
-                string path = "\\\\ranusnmcvpfs01\\Jobfiles\\" + topFolder + "\\" + jobFolder;
+                string path = "\\" + "\\" + "ranusnmcvpfs01\\Jobfiles\\" + topFolder + "\\" + jobFolder;
                 string cmd = "C:\\Windows\\explorer.exe";
                 string arg = path;
                 Process.Start(cmd, arg);
@@ -296,81 +302,174 @@ namespace mods
         private void MP2COC_JobInfo(string file)
         {
             Content content = new mods.Content(file);
-
-            DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
-            string jobName = content.Get_String("JBNAME:", 1);
-            string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
-            string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
-            string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
-            string botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
-            string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
-            string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
-            int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
-            int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
-            int aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
-            int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 41, 1));
-            string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
-            string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
-            string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
-            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
-            string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
-            string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
-            string versionBot = content.Get_String("CUSTOM:", 1);
-            if(versionTop[0] == '0' && versionTop.Length > 1)
+            try
             {
-                versionTop = versionTop.Substring(1, 1);
+                DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
+                string jobName = content.Get_String("JBNAME:", 1);
+                string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
+                string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
+                string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
+                string botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
+                string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
+                string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
+                int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 1));
+                int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 40, 0));
+                int aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
+                int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 41, 1));
+                string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
+                string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
+                string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
+                string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+                string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
+                string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+                string versionBot = content.Get_String("CUSTOM:", 1);
+                if (versionTop[0] == '0' && versionTop.Length > 1)
+                {
+                    versionTop = versionTop.Substring(1, 1);
+                }
+                if (versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+                {
+                    versionBot = versionBot.Substring(1, 1);
+                }
+
+                //Job Info
+                JobInfo.Text = "";
+                JobInfo.Text += file + "\n";
+                JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
+                JobInfo.Text += jobName + "\n";
+                JobInfo.Text += "Version: " + versionTop + "." + versionMid + "." + versionBot + "\n\n";
+                JobInfo.Text += "Top Floor: " + topFloorDecimal + "\n";
+                JobInfo.Text += "Bottom Floor: " + botFloorDecimal + "\n\n";
+                JobInfo.Text += "Independent Rear Doors: " + rearDoor + "\n";
+                JobInfo.Text += "Security: " + Security(content) + "\n";
+                JobInfo.Text += "False Floors: " + falseFloors + "\n";
+                JobInfo.Text += "Nudging: " + nudging + "\n";
+
+                //Hardware
+                JobInfo.Text += "\n";
+                JobInfo.Text += "# of CALL Boards: " + callbnu + "\n";
+                JobInfo.Text += "# of IOX Boards: " + iox + "\n";
+                JobInfo.Text += "# of I4O Boards: " + i4o + "\n";
+                JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
+                JobInfo.Text += "CE Board: " + ceBoard + "\n";
+                JobInfo.Text += "NC Board: " + ncBoard + "\n";
+                JobInfo.Text += "FT Board: " + ftBoard + "\n";
+                JobInfo.Text += "DLM Board: " + dlmBoard + "\n\n";
             }
-            if(versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+            catch(Exception ex)
+            { 
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+                JobInfo.Text = "Job Info Could not be created for this file";  
+            }
+
+            //Options
+            try
             {
-                versionBot = versionBot.Substring(1, 1);
+                LobbyOptionsBlock.Text = content.Build_OptionsMap("LOBBY:");
+            }
+            catch(Exception ex) 
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+                LobbyOptionsBlock.Text = "There was an issue generating options for this file";
             }
 
-            //Job Info
-            JobInfo.Text = "";
-            JobInfo.Text += file + "\n";
-            JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
-            JobInfo.Text += jobName + "\n";
-            JobInfo.Text += "Version: " + versionTop + "." + versionMid + "." + versionBot + "\n\n";
-            JobInfo.Text += "Top Floor: " + topFloorDecimal + "\n";
-            JobInfo.Text += "Bottom Floor: " + botFloorDecimal + "\n\n";
-            JobInfo.Text += "Independent Rear Doors: " + rearDoor + "\n";
-            JobInfo.Text += "Security: " + Security(content) + "\n";
-            JobInfo.Text += "False Floors: " + falseFloors + "\n";
-            JobInfo.Text += "Nudging: " + nudging + "\n";
-
-            //Hardware
-            JobInfo.Text += "\n";
-            JobInfo.Text += "# of CALL Boards: " + callbnu + "\n";
-            JobInfo.Text += "# of IOX Boards: " + iox + "\n";
-            JobInfo.Text += "# of I4O Boards: " + i4o + "\n";
-            JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
-            JobInfo.Text += "CE Board: " + ceBoard + "\n";
-            JobInfo.Text += "NC Board: " + ncBoard + "\n";
-            JobInfo.Text += "FT Board: " + ftBoard + "\n";
-            JobInfo.Text += "DLM Board: " + dlmBoard + "\n\n";
+            try
+            {
+                BottomOptionsBlock.Text = content.Build_OptionsMap("BOTTOM:");
+            }
+            catch (Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+                BottomOptionsBlock.Text = "There was an issue generating options for this file";
+            }
 
             //Landings
-            Draw_Landing_Preview(content);
+            try
+            {
+                Draw_Landing_Preview(content);
+            }
+            catch(Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
 
             //Inputs and Outputs
-            Generate_IO(content);
+            try
+            {
+                Generate_IO(content);
+            }
+            catch (Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
 
             //Headers
-            Generate_Headers(content);
+            try
+            {
+                Generate_Headers(content);
+            }
+            catch (Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
         }
 
         private void MP2OGM_JobInfo(string file)
         {
             Content content = new Content(file);
             
-            DateTime lastModified = System.IO.File.GetLastWriteTime("G:\\Software\\" + file);
+            DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
             string jobName = content.Get_String("JBNAME:", 1);
             int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
             int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
             int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
-            string[,] inputs = content.inputs;
-            string[,] outputs = content.outputs;
+            List<string> inputs = content.inputs;
+            List<string> outputs = content.outputs;
+
+            LobbyOptionsBlock.Text = "";
 
             LandingLevels.Text = "";
             LandingLevels.Height = 0;
@@ -382,7 +481,7 @@ namespace mods
             LandingAltConfig.Text = "";
             LandingAltConfig.Height = 0;
             LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
-
+            
             LandingNormalHeader.Visibility = Visibility.Hidden;
             LandingAltHeader.Visibility = Visibility.Hidden;
 
@@ -412,7 +511,7 @@ namespace mods
                 catch (Exception ex)
                 {
                     using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
                     {
                         DateTime now = DateTime.Now;
                         writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
@@ -434,7 +533,7 @@ namespace mods
                 catch (Exception ex)
                 {
                     using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"K:\\Jake Ball\\Error_Log.txt", true))
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
                     {
                         DateTime now = DateTime.Now;
                         writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
@@ -565,14 +664,11 @@ namespace mods
             bool SECUR = false;
             bool NEWSECRTY = false;
 
-            for (int i = 0; i < 8; i++)
+            foreach(string input in content.inputs)
             {
-                for (int i2 = 0; i2 < 8; i2++)
+                if (input == "BSI")
                 {
-                    if (content.inputs[i, i2] == "BSI")
-                    {
-                        BSI = true;
-                    }
+                    BSI = true;
                 }
             }
 
@@ -732,58 +828,55 @@ namespace mods
                 LandingNormalConfig.Text += front + " " + rear + "\n";
             }
 
-            for (int i = 0; i < 8; i++)
-            {
-                for (int i2 = 0; i2 < 8; i2++)
+            foreach(string input in content.inputs)
+            { 
+                if (input == "ALT")
                 {
-                    if (content.inputs[i, i2] == "ALT")
+                    if (FilesListBox.SelectedItems.Count > 0) //This is to prevent this from being visible before a file is selected
                     {
-                        if (FilesListBox.SelectedItems.Count > 0) //This is to prevent this from being visible before a file is selected
+                        LandingAltHeader.Visibility = Visibility.Visible;
+                        LandingAltConfig.Visibility = Visibility.Visible;
+                    }
+
+                    LandingAltConfig.Text = "";
+                    LandingAltConfig.Height = 16 * top_landing + 10;
+                    LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
+                    for (int f = top_landing; f >= 1; f--)
+                    {
+
+                        if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
                         {
-                            LandingAltHeader.Visibility = Visibility.Visible;
-                            LandingAltConfig.Visibility = Visibility.Visible;
+                            front = "F";
                         }
-
-                        LandingAltConfig.Text = "";
-                        LandingAltConfig.Height = 16 * top_landing + 10;
-                        LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
-
-                        for (int f = top_landing; f >= 1; f--)
+                        else
                         {
-
-                            if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
+                            if (falseFloors.Contains(f))
                             {
-                                front = "F";
+                                front = " X";
                             }
                             else
                             {
-                                if (falseFloors.Contains(f))
-                                {
-                                    front = " X";
-                                }
-                                else
-                                {
-                                    front = ".";
-                                }
+                                front = ".";
                             }
+                        }
 
-                            if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                        if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                        {
+                            rear = "R";
+                        }
+                        else
+                        {
+                            if (falseFloors.Contains(f))
                             {
-                                rear = "R";
+                                rear = "";
                             }
                             else
                             {
-                                if (falseFloors.Contains(f))
-                                {
-                                    rear = "";
-                                }
-                                else
-                                {
-                                    rear = ".";
-                                }
+                                rear = ".";
                             }
-                            LandingAltConfig.Text += front + " " + rear + "\n";
                         }
+                        LandingAltConfig.Text += front + " " + rear + "\n";
                     }
                 }
             }
@@ -1340,8 +1433,8 @@ namespace mods
         {
             IOInfoSP.Children.Clear();
 
-            string[,] inputs = content.inputs;
-            string[,] outputs = content.outputs;
+            List<string> inputs = content.inputs;
+            List<string> outputs = content.outputs;
 
             Label inputLabel = new Label
             {
@@ -1350,7 +1443,7 @@ namespace mods
 
             IOInfoSP.Children.Add(inputLabel);
 
-            for(int row = 0; row < 8; row++)
+            for (int row = 0; row < 8; row++)
             {
                 StackPanel rowSP = new StackPanel
                 {
@@ -1363,12 +1456,15 @@ namespace mods
                     rowSP.Margin = new Thickness(20, 0, 0, 20);
                 }
 
-                for (int column = 0; column < 8; column ++)
+                for (int column = 0; column < 8; column++)
                 {
-                    string ioText = inputs[row, column];
-
-                    if(ioText == null)
+                    string ioText = "";
+                    if (row * 8 + (7 - column) < inputs.Count)
                     {
+                        ioText = inputs[row * 8 + (7 - column)];
+                    }
+                    else
+                    { 
                         ioText = "XXXX";
                     }
 
@@ -1402,7 +1498,7 @@ namespace mods
 
                         rowSP.Children.Add(hyphen);
                     }
-                    else if(column < 7) // dont want to add hyphen for last column
+                    else if (column < 7) // dont want to add hyphen for last column
                     {
                         TextBox hyphen = new TextBox
                         {
@@ -1422,20 +1518,20 @@ namespace mods
 
                 bool rowIsEmpty = true;
 
-                foreach(var child in rowSP.Children)
+                foreach (var child in rowSP.Children)
                 {
-                    if(child.GetType() == typeof(TextBox))
+                    if (child.GetType() == typeof(TextBox))
                     {
                         TextBox tb = child as TextBox;
 
-                        if(tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
+                        if (tb.Text != "XXXX" && tb.Tag.ToString() == "IO")
                         {
                             rowIsEmpty = false;
                         }
                     }
                 }
 
-                if(!rowIsEmpty)
+                if (!rowIsEmpty)
                 {
                     IOInfoSP.Children.Add(rowSP);
                 }
@@ -1458,9 +1554,12 @@ namespace mods
 
                 for (int column = 0; column < 8; column++)
                 {
-                    string ioText = outputs[row, 7 - column];
-
-                    if (ioText == null)
+                    string ioText = "";
+                    if (row * 8 + column < outputs.Count)
+                    {
+                        ioText = outputs[row * 8 + column];
+                    }
+                    else
                     {
                         ioText = "XXXX";
                     }
@@ -1765,8 +1864,8 @@ namespace mods
                 aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 52, 0));
             }
 
-            string[,] inputs = content.inputs;
-            string[,] outputs = content.outputs;
+            List<string> inputs = content.inputs;
+            List<string> outputs = content.outputs;
 
             int inputRow = 0;
             int outputRow = 0;
@@ -1802,11 +1901,19 @@ namespace mods
 
                 for(int i = 0; i < 8; i++)
                 {
-                    string input = inputs[inputRow, inputCol];
+                    string ioText = "";
+                    if (inputRow * 8 + (7 - inputCol) < inputs.Count)
+                    {
+                        ioText = inputs[inputRow * 8 + (7 - inputCol)];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     inputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = input,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -1824,11 +1931,19 @@ namespace mods
 
                 for(int o = 0; o < 8; o ++)
                 {
-                    string output = outputs[outputRow, 7 - outputCol];
+                    string ioText = "";
+                    if (outputRow * 8 + outputCol < outputs.Count)
+                    {
+                        ioText = outputs[outputRow * 8 + outputCol];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     outputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = output,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -1887,11 +2002,19 @@ namespace mods
 
                 for (int i = 0; i < 8; i++)
                 {
-                    string input = inputs[inputRow, inputCol];
+                    string ioText = "";
+                    if (inputRow * 8 + (7 - inputCol) < inputs.Count)
+                    {
+                        ioText = inputs[inputRow * 8 + (7 - inputCol)];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     inputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = input,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -1913,11 +2036,19 @@ namespace mods
 
                 for (int i = 0; i < 8; i++)
                 {
-                    string input = inputs[inputRow, inputCol];
+                    string ioText = "";
+                    if (inputRow * 8 + (7 - inputCol) < inputs.Count)
+                    {
+                        ioText = inputs[inputRow * 8 + (7 - inputCol)];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     inputsp2.Children.Add(
                         new TextBox
                         {
-                            Text = input,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -1939,11 +2070,19 @@ namespace mods
                 
                 for (int o = 0; o < 4; o++)
                 {
-                    string output = outputs[outputRow, 7 - outputCol];
+                    string ioText = "";
+                    if (outputRow * 8 + outputCol < outputs.Count)
+                    {
+                        ioText = outputs[outputRow * 8 + outputCol];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     outputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = output,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -2007,11 +2146,19 @@ namespace mods
 
                 for (int i = 0; i < 8; i++)
                 {
-                    string input = inputs[inputRow, inputCol];
+                    string ioText = "";
+                    if (inputRow * 8 + (7 - inputCol) < inputs.Count)
+                    {
+                        ioText = inputs[inputRow * 8 + (7 - inputCol)];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     inputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = input,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -2029,11 +2176,19 @@ namespace mods
 
                 for (int o = 0; o < 8; o++)
                 {
-                    string output = outputs[outputRow, 7 - outputCol];
+                    string ioText = "";
+                    if (outputRow * 8 + outputCol < outputs.Count)
+                    {
+                        ioText = outputs[outputRow * 8 + outputCol];
+                    }
+                    else
+                    {
+                        ioText = "";
+                    }
                     outputsp1.Children.Add(
                         new TextBox
                         {
-                            Text = output,
+                            Text = ioText,
                             Width = tbWidth,
                             Height = 25,
                             BorderThickness = new Thickness(2),
@@ -2660,7 +2815,7 @@ namespace mods
                 }
 
                 string cmd = "C:\\Windows\\explorer.exe";
-                string arg = "G:\\Software\\" + path;
+                string arg = "\\" + "\\" + "mceshared\\shared\\Software\\" + path;
                 Process.Start(cmd, arg);
             }
             catch
@@ -2747,7 +2902,7 @@ namespace mods
             string newVersion = "";
 
             List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Versions.txt").ToList();
+            versions = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Versions.txt").ToList();
 
             foreach (string version in versions)
             {
@@ -2799,7 +2954,7 @@ namespace mods
         private void Set_Permissions()
         {
             List<string> users = new List<string>();
-            users = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Permissions.txt").ToList();
+            users = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Permissions.txt").ToList();
             string environmentName = Environment.UserName;
 
             foreach (string user in users)
@@ -2881,7 +3036,7 @@ namespace mods
 
             try
             {
-                uw.JobFile.Text =  "G:\\Software\\" + FilesListBox.SelectedItem.ToString();
+                uw.JobFile.Text =  "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
             }
             catch
             {
@@ -2892,7 +3047,7 @@ namespace mods
 
         private void InfoTabControl_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if(InfoTabControl.SelectedIndex == 3)
+            if(InfoTabControl.SelectedIndex == 4)
             {
                 InfoTabControl.Margin = new Thickness(0, 18, 0, 0);
 
@@ -2907,13 +3062,13 @@ namespace mods
 
         private void ArchiveButton_Click(object sender, RoutedEventArgs e)
         {
-            ArchiveWindow aw = new ArchiveWindow("G:\\Software\\" + FilesListBox.SelectedItem.ToString());
+            ArchiveWindow aw = new ArchiveWindow("\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString());
             aw.ShowDialog();
         }
 
         private void CreatePersonalFile_Click(object sender, RoutedEventArgs e)
         {
-            string selectedPath = "G:\\Software\\" + FilesListBox.SelectedItem.ToString();
+            string selectedPath = "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
             string selectedFolder = General.Get_Folder_From_Path(selectedPath);
             string selectedFile = General.Get_File_From_Path(selectedPath);
 

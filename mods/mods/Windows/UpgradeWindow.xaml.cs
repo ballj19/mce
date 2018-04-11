@@ -41,6 +41,7 @@ namespace mods
 
             SourceFile.Text = "F:\\Software\\Source\\MC-MP2\\MP2COC\\V8_06\\V8_06_1\\Mp2cocvar.ASM";
 
+            CarType.Items.Add("Simplex");
             CarType.Items.Add("Local");
             CarType.Items.Add("Group");
             CarType.SelectedIndex = 0;
@@ -85,6 +86,24 @@ namespace mods
                 else
                 {
                     Local_PerCarHallCallSecurity();
+                }
+            }
+            if(Chicago.IsChecked == true)
+            {
+                if(CarType.SelectedItem.ToString() != "Group")
+                {
+                    Chicago_Fire();
+                }
+            }
+            if (ANSI2K.IsChecked == true)
+            {
+                if (CarType.SelectedItem.ToString() != "Group")
+                {
+                    ANSI2K_Fire();
+                }
+                else
+                {
+                    ANSI2K_Fire_Group();
                 }
             }
             string newFile = upgrade.Write_File();
@@ -230,7 +249,7 @@ namespace mods
             commentText = "";
             commentText += ";***************************************************************************************\n";
             commentText += "; UPDATE: " + date.ToString("MM/dd/yyyy") + "\t\tNOTIFICATION #: " + notificationNumber + "\n";
-            commentText += ";\t\t" + boxText + "\n";
+            commentText += boxText + "\n";
             commentText += ";\t\t\t\t\t\t\t\t...............Jake\n";
             commentText += ";***************************************************************************************";
 
@@ -260,8 +279,9 @@ namespace mods
 
         private void Version_Upgrade()
         {
-            upgrade.Version_Upgrade(SourceFile.Text);
+            upgrade.Version_Upgrade(SourceFile.Text,CarType.SelectedItem.ToString());
 
+            CommentBox.Text += ";\t\t";
             CommentBox.Text += "Upgraded Software to Version \n";
         }
 
@@ -272,7 +292,76 @@ namespace mods
             upgrade.Modify_Value("LOBBY:", "26", "OR", "03H");
             upgrade.Modify_Value("LOBBY:", "31", "REPLACE", "001H");
 
+            CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled Options for NYC DLM\n";
+        }
+
+        private void Chicago_Fire()
+        {
+            upgrade.Modify_Value("LOBBY:", "14", "OR", "01H");
+            upgrade.Modify_Value("LOBBY:", "18", "OR", "04H");
+            upgrade.Modify_Value("LOBBY:", "15", "OR", "02H");
+
+            if(CarType.SelectedItem.ToString() == "Local")
+            {
+                upgrade.Modify_Value("LOBBY:", "0A", "OR", "08H");
+            }
+
+            CommentBox.Text += ";\t\t";
+            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001";
+        }
+
+        private void ANSI2K_Fire()
+        {
+            upgrade.Modify_Value("LOBBY:", "0B", "OR", "10H");
+            upgrade.Modify_Value("LOBBY:", "07", "OR", "05H");
+            upgrade.Modify_Value("LOBBY:", "18", "OR", "04H");
+            upgrade.Modify_Value("LOBBY:", "15", "OR", "30H");
+
+            if (CarType.SelectedItem.ToString() == "Local")
+            {
+                upgrade.Modify_Value("LOBBY:", "0A", "OR", "08H");
+            }
+
+            SoftwareOption so = new SoftwareOption("ANSI 2K Options", 450, 210);
+
+            List<string> ansi2k = new List<string>
+            {
+                "ANSI 2K5 Fire",
+                "ANSI 2K7 Fire",
+                "None of the above - Old ANSI 2K Fire"
+            };
+
+            so.Radio_Option(ansi2k);
+
+            so.ShowDialog();
+
+            int result = so.result;
+
+            if (result == 0)
+            {
+                upgrade.Modify_Value("L_TABLE:", "1A", "REPLACE", "'A2K5',  000H,  001H,  004H,  001H");
+            }
+            else if (result == 1)
+            {
+                upgrade.Modify_Value("L_TABLE:", "1B", "REPLACE", "'A2K7',  000H,  001H,  004H,  001H");
+            }
+            else
+            {
+                //do nothing
+            }
+
+            CommentBox.Text += ";\t\t";
+            CommentBox.Text += "Enabled Options for ANSI 2K Fire";
+        }
+
+        private void ANSI2K_Fire_Group()
+        {
+            upgrade.Modify_Value("LOBBY:", "10", "OR", "10H");
+            upgrade.Modify_Value("LOBBY:", "04", "OR", "18H");
+
+            CommentBox.Text += ";\t\t";
+            CommentBox.Text += "Enabled Options for ANSI 2K Fire";
         }
 
         public void Group_CRTLOCK()
@@ -280,6 +369,7 @@ namespace mods
             upgrade.Modify_Value("CPVAR:", "06", "OR", "01H");
             upgrade.Modify_Value("CPVAR:", "05", "OR", "80H");
 
+            CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled CRTLOCK Security Options\n";
         }
 
@@ -287,6 +377,7 @@ namespace mods
         {
             upgrade.Modify_Value("CPVAR:", "06", "OR", "08H");
 
+            CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled options for Per Car Hall Call Security\n";
         }
 
@@ -328,17 +419,15 @@ namespace mods
             {
                 upgrade.Modify_Value("LOBBY:", "1D", "OR", "10H");
             }
-            else if (result == 4)
-            {
-                //do nothing
-            }
 
+            CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled CRTLOCK Security Options\n";
         }
 
         public void Local_PerCarHallCallSecurity()
         {
-            //Nothing to add
+            CommentBox.Text += ";\t\t";
+            CommentBox.Text += "Enabled options for Per Car Hall Call Security\n";
         }
 
         private void Checkbox_Validator_Check(object sender, RoutedEventArgs e)

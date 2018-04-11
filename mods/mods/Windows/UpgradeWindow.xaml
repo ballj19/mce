@@ -31,6 +31,8 @@
                     <ComboBox x:Name="CarType" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
                     <CheckBox x:Name="CRTLOCK" Content="CRTLOCK" HorizontalAlignment="Left" Margin="39,140,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                     <CheckBox x:Name="Security" Content="Security" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="Chicago" Content="Chicago Fire" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="ANSI2K" Content="ANSI 2K" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                 </Grid>
             </TabItem>
         </TabControl>

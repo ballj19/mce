@@ -26,7 +26,7 @@ namespace ModHubUpdater
             Thread.Sleep(4000);
 
             List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Versions.txt").ToList();
+            versions = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Versions.txt").ToList();
             
             foreach(string version in versions)
             {

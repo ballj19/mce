@@ -48,10 +48,10 @@ namespace ModHubInstaller
         private void InstallButton_Click(object sender, RoutedEventArgs e)
         {
             string versionPath = "";
-            string updaterPath = "G:\\Software\\Utility\\Software Programs and shortcuts\\ModHub\\ModHubAutoUpgrader\\ModHubUpdater.exe";
+            string updaterPath = "\\\\mceshared\\shared\\Software\\Utility\\Software Programs and shortcuts\\ModHub\\ModHubAutoUpgrader\\ModHubUpdater.exe";
 
             List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"K:\\Jake Ball\\Versions.txt").ToList();
+            versions = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Versions.txt").ToList();
 
             foreach (string version in versions)
             {
