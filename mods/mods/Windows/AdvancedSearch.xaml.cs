@@ -22,12 +22,10 @@ using System.Drawing.Imaging;
 
 namespace mods
 {
-    /// <summary>
-    /// Interaction logic for AdvancedSearch.xaml
-    /// </summary>
     public partial class AdvancedSearch : Window
     {
         bool stopSearching = false;
+        int progress = 0;
 
         public AdvancedSearch()
         {
@@ -43,6 +41,11 @@ namespace mods
             ControllerCB.Items.Add("MP");
             ControllerCB.Items.Add("MP2");
             ControllerCB.SelectedIndex = 0;
+
+            TypeTB.Items.Add("Local");
+            TypeTB.Items.Add("Simplex");
+            TypeTB.Items.Add("Group");
+            TypeTB.SelectedIndex = 0;
 
             TopFloorCB.Items.Add("");
             TopFloorCB.Items.Add("=");
@@ -138,8 +141,6 @@ namespace mods
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            int progress = 0;
-
             foreach (Window window in Application.Current.Windows)
             {
                 if (window.GetType() == typeof(MainWindow))
@@ -148,238 +149,100 @@ namespace mods
                 }
             }
 
-            string[] MP_locations = new string[] { "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
+            string[] MP_locations = new string[] { "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM", "MPODH", "MPODT", "MPOLHD" };
+            string[] MP_locations_Group = new string[] { "MPOGD", "MPOGM" };
             string[] MP2_locations = new string[] { "MP2COC" };
-            string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGM", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM"};
-            string[] source2_locations = new string[] { "MC-MP2\\MP2COC", "MC-MP2\\MP2OGM" };
-            string[] custom_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGD", "MC-MP\\MPOGM", "MC-MP\\MPOLHD", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTD", "MC-MP\\MPOLTM" };
+            string[] MP2_locations_Group = new string[] { "MP2OGM" };
+            string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM"};
+            string[] source_locations_Group = new string[] { "MC-MP\\MPOGM" };
+            string[] source2_locations = new string[] { "MC-MP2\\MP2COC" };
+            string[] source2_locations_Group = new string[] {"MC-MP2\\MP2OGM" };
+            string[] custom_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOLHD", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTD", "MC-MP\\MPOLTM" };
+            string[] custom_locations_Group = new string[] { "MC-MP\\MPOGD", "MC-MP\\MPOGM" };
 
             if (ControllerCB.SelectedItem.ToString() != "MP")
             {
-                foreach (string location in MP2_locations)
+                if(TypeTB.SelectedItem.ToString() != "Group")
                 {
-                    try
+                    foreach (string location in MP2_locations)
                     {
-                        string jobNumber = "*.asm";
-                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Product\\" + location;
-                        SearchFolderTB.Text = "Searching through " + folder + "...";
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        progress = 0;
-                        SearchProgress.Maximum = files.Count();
-                        foreach (string file in files)
-                        {
-                            if (stopSearching)
-                            {
-                                return;
-                            }
-
-                            try
-                            {
-                                int locationIndex = 28;
-                                string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                Validate_File(jobFile);
-                            }
-                            catch
-                            {
-
-                            }
-                            progress++;
-                            SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                        }
+                        Search_Location(location, "Product", false);
                     }
-                    catch
+                }
+                else
+                {
+                    foreach (string location in MP2_locations_Group)
                     {
-
+                        Search_Location(location, "Product", true);
                     }
                 }
 
                 if (CustomFoldersCheckBox.IsChecked == true)
                 {
-                    foreach (string location in source2_locations)
+                    if(TypeTB.SelectedItem.ToString() != "Group")
                     {
-                        try
+                        foreach (string location in source2_locations)
                         {
-                            string jobNumber = "*.asm";
-                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Source\\" + location;
-                            SearchFolderTB.Text = "Searching through " + folder + "...";
-                            string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                            progress = 0;
-                            SearchProgress.Maximum = files.Count();
-                            foreach (string file in files)
-                            {
-                                if (stopSearching)
-                                {
-                                    return;
-                                }
-
-                                try
-                                {
-                                    int locationIndex = 28;
-                                    string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                    Validate_File(jobFile);
-                                }
-                                catch
-                                {
-
-                                }
-                                progress++;
-                                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                            }
+                            Search_Location(location, "Source", false);
                         }
-                        catch
-                        {
-
-                        }
+                        Search_Custom2();
                     }
-
-                    try
+                    else
                     {
-                        string jobNumber = "*.asm";
-                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom2\\";
-                        SearchFolderTB.Text = "Searching through " + folder + "...";
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        progress = 0;
-                        SearchProgress.Maximum = files.Count();
-                        foreach (string file in files)
+                        foreach (string location in source2_locations_Group)
                         {
-                            if (stopSearching)
-                            {
-                                return;
-                            }
-
-                            try
-                            {
-                                int locationIndex = 28;
-                                string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                Validate_File(jobFile);
-                            }
-                            catch
-                            {
-
-                            }
-                            progress++;
-                            SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
+                            Search_Location(location, "Source", true);
                         }
-                    }
-                    catch
-                    {
-
                     }
                 }
             }
 
             if(ControllerCB.SelectedItem.ToString() != "MP2")
             {
-                foreach (string location in MP_locations)
+                if(TypeTB.SelectedItem.ToString() != "Group")
                 {
-                    try
+                    foreach (string location in MP_locations)
                     {
-                        string jobNumber = "*.asm";
-                        string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Product\\" + location;
-                        SearchFolderTB.Text = "Searching through " + folder + "...";
-                        string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                        progress = 0;
-                        SearchProgress.Maximum = files.Count();
-                        foreach (string file in files)
-                        {
-                            if (stopSearching)
-                            {
-                                return;
-                            }
-
-                            try
-                            {
-                                int locationIndex = 28;
-                                string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                Validate_File(jobFile);
-                            }
-                            catch
-                            {
-
-                            }
-                            progress++;
-                            SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                        }
+                        Search_Location(location, "Product", false);
                     }
-                    catch
+                }
+                else
+                {
+                    foreach(string location in MP_locations_Group)
                     {
-
+                        Search_Location(location, "Product", true);
                     }
                 }
 
                 if(CustomFoldersCheckBox.IsChecked == true)
                 {
-                    foreach (string location in source_locations)
+                    if (TypeTB.SelectedItem.ToString() != "Group")
                     {
-                        try
+                        foreach (string location in source_locations)
                         {
-                            string jobNumber = "*.asm";
-                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Source\\" + location;
-                            SearchFolderTB.Text = "Searching through " + folder + "...";
-                            string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                            progress = 0;
-                            SearchProgress.Maximum = files.Count();
-                            foreach (string file in files)
-                            {
-                                if (stopSearching)
-                                {
-                                    return;
-                                }
-
-                                try
-                                {
-                                    int locationIndex = 28;
-                                    string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                    Validate_File(jobFile);
-                                }
-                                catch
-                                {
-
-                                }
-                                progress++;
-                                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                            }
+                            Search_Location(location, "Source", false);
                         }
-                        catch
+                    }
+                    else
+                    {
+                        foreach(string location in source_locations_Group)
                         {
-
+                            Search_Location(location, "Source", true);
                         }
                     }
 
-                    foreach (string location in custom_locations)
+                    if (TypeTB.SelectedItem.ToString() != "Group")
                     {
-                        try
+                        foreach (string location in custom_locations)
                         {
-                            string jobNumber = "*.asm";
-                            string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom\\" + location;
-                            SearchFolderTB.Text = "Searching through " + folder + "...";
-                            string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
-                            progress = 0;
-                            SearchProgress.Maximum = files.Count();
-                            foreach (string file in files)
-                            {
-                                if (stopSearching)
-                                {
-                                    return;
-                                }
-
-                                try
-                                {
-                                    int locationIndex = 28;
-                                    string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                                    Validate_File(jobFile);
-                                }
-                                catch
-                                {
-
-                                }
-                                progress++;
-                                SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
-                            }
+                            Search_Location(location, "Custom", false);
                         }
-                        catch
+                    }
+                    else
+                    {
+                        foreach (string location in custom_locations_Group)
                         {
-
+                            Search_Location(location, "Custom", true);
                         }
                     }
                 }
@@ -388,32 +251,158 @@ namespace mods
             this.Close();
         }
 
-        private void Validate_File(string file)
+        private void Search_Location(string location, string subfolder, bool isGroup)
+        {
+            try
+            {
+                int progress = 0;
+                string jobNumber = "*.asm";
+                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\" + subfolder + "\\" + location;
+                SearchFolderTB.Text = "Searching through " + folder + "...";
+                string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+                SearchProgress.Maximum = files.Count();
+                foreach (string file in files)
+                {
+                    if (stopSearching)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        int locationIndex = 28;
+                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                        Validate_File(jobFile, isGroup);
+                    }
+                    catch
+                    {
+
+                    }
+                    progress++;
+                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void Search_Custom2()
+        {
+            try
+            {
+                int progress = 0;
+                string jobNumber = "*.asm";
+                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom2";
+                SearchFolderTB.Text = "Searching through " + folder + "...";
+                string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+                SearchProgress.Maximum = files.Count();
+                foreach (string file in files)
+                {
+                    if (stopSearching)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        int locationIndex = 28;
+                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                        if(General.Get_File_From_Path(jobFile).StartsWith("g") || General.Get_File_From_Path(jobFile).StartsWith("G"))
+                        {
+                            Validate_File(jobFile, true);
+                        }
+                        else
+                        {
+                            Validate_File(jobFile, false);
+                        }
+                        
+                    }
+                    catch
+                    {
+
+                    }
+                    progress++;
+                    SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = progress, DispatcherPriority.Background);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void Validate_File(string file, bool isGroup = false)
         {
             Content content = new Content(file);
 
-            string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
-            string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
-            string botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
-            string botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
-            string falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
-            string nudging = content.Get_Bit("CPVAR", 7, 0, 3);
-            string i4o = content.Get_Nibble("LOBBY:", 40, 1);
-            string iox = content.Get_Nibble("LOBBY:", 40, 0);
-            string aiox = content.Get_Nibble("LOBBY:", 52, 0);
-            string callbnu = content.Get_Nibble("LOBBY:", 41, 1);
-            string rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
-            string ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
-            string ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
-            string ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
-            string dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
+            string jobName = "";
+            string topFloor = "";
+            string topFloorDecimal = "";
+            string botFloor = "";
+            string botFloorDecimal = "";
+            string falseFloors = "";
+            string nudging = "";
+            string iox = "";
+            string i4o = "";
+            string aiox = "";
+            string callbnu = "";
+            string rearDoor = "";
+            string ceBoard = "";
+            string ncBoard = "";
+            string ftBoard = "";
+            string dlmBoard = "";
+            string bsi = "";
+            string secrty = "";
+            string crtlok = "";
+            string secur = "";
+            string ace = "";
+            string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+            string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+            string versionBot = content.Get_String("CUSTOM:", 1);
+            if (versionTop[0] == '0' && versionTop.Length > 1)
+            {
+                versionTop = versionTop.Substring(1, 1);
+            }
+            if (versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+            {
+                versionBot = versionBot.Substring(1, 1);
+            }
+            string FileVersion = versionTop + "." + versionMid + "." + versionBot;
 
-            string bsi = "NO";
-            string secrty = content.Get_Bit("LOBBY:", 31, 0, 3);
-            string crtlok = content.Get_Bit("LOBBY:", 31, 0, 1);
-            string secur = content.Get_Bit("CPVAR", 7, 1, 0);
-            string ace = content.Get_Bit("LOBBY:", 31, 0, 0);
-
+            if (isGroup)
+            {
+                jobName = content.Get_String("JBNAME:", 1);
+                iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0)).ToString();
+                i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1)).ToString();
+                aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 8, 0)).ToString();
+                callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0)).ToString();
+            }
+            else
+            {
+                topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
+                topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
+                botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
+                botFloorDecimal = (General.HexStringToDecimal(botFloor) + 1).ToString();
+                falseFloors = content.Get_Bit("CPVAR", 3, 0, 3);
+                nudging = content.Get_Bit("CPVAR", 7, 0, 3);
+                i4o = content.Get_Nibble("LOBBY:", 40, 1);
+                iox = content.Get_Nibble("LOBBY:", 40, 0);
+                aiox = content.Get_Nibble("LOBBY:", 52, 0);
+                callbnu = content.Get_Nibble("LOBBY:", 41, 1);
+                rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
+                ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
+                ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
+                ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+                dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
+                bsi = "NO";
+                secrty = content.Get_Bit("LOBBY:", 31, 0, 3);
+                crtlok = content.Get_Bit("LOBBY:", 31, 0, 1);
+                secur = content.Get_Bit("CPVAR", 7, 1, 0);
+                ace = content.Get_Bit("LOBBY:", 31, 0, 0);
+            }
+            
             foreach(string input in content.inputs)
             {
                 if (input == "BSI")
@@ -752,6 +741,15 @@ namespace mods
                             return;
                         }
                     }
+                }
+            }
+
+            //File Version
+            if(VersionTB.Text.Length > 0)
+            {
+                if(FileVersion.Trim() != VersionTB.Text)
+                {
+                    return;
                 }
             }
 

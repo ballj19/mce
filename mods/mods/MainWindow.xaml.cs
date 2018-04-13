@@ -21,6 +21,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Printing;
+using System.Text.RegularExpressions;
 
 namespace mods
 {
@@ -30,9 +31,10 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.03.1";
+        string version = "V1.03.2";
         int permission = 1000;
         int searchProgress = 0;
+        string selectedFileVersion = "";
         List<string> Trac_Mod_Jobs = new List<string>();
 
         public MainWindow()
@@ -332,6 +334,7 @@ namespace mods
                 {
                     versionBot = versionBot.Substring(1, 1);
                 }
+                this.selectedFileVersion = versionTop + "." + versionMid + "." + versionBot;
 
                 //Job Info
                 JobInfo.Text = "";
@@ -358,15 +361,8 @@ namespace mods
                 JobInfo.Text += "DLM Board: " + dlmBoard + "\n\n";
             }
             catch(Exception ex)
-            { 
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+            {
+                Write_Error_To_Log(file, ex);
                 JobInfo.Text = "Job Info Could not be created for this file";  
             }
 
@@ -377,14 +373,7 @@ namespace mods
             }
             catch(Exception ex) 
             {
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+                Write_Error_To_Log(file, ex);
                 LobbyOptionsBlock.Text = "There was an issue generating options for this file";
             }
 
@@ -394,14 +383,7 @@ namespace mods
             }
             catch (Exception ex)
             {
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+                Write_Error_To_Log(file, ex);
                 BottomOptionsBlock.Text = "There was an issue generating options for this file";
             }
 
@@ -412,14 +394,7 @@ namespace mods
             }
             catch(Exception ex)
             {
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+                Write_Error_To_Log(file, ex);
             }
 
             //Inputs and Outputs
@@ -429,14 +404,7 @@ namespace mods
             }
             catch (Exception ex)
             {
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+                Write_Error_To_Log(file, ex);
             }
 
             //Headers
@@ -446,57 +414,117 @@ namespace mods
             }
             catch (Exception ex)
             {
-                using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                {
-                    DateTime now = DateTime.Now;
-                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                    writefile.WriteLine(file);
-                    writefile.WriteLine(ex.ToString() + "\n");
-                }
+                Write_Error_To_Log(file, ex);
             }
         }
 
         private void MP2OGM_JobInfo(string file)
         {
             Content content = new Content(file);
+
+            try
+            {
+                DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
+                string jobName = content.Get_String("JBNAME:", 1);
+                int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
+                int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+                int aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 8, 0));
+                int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
+                List<string> inputs = content.inputs;
+                List<string> outputs = content.outputs;
+                string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+                string versionBot = content.Get_String("CUSTOM:", 1);
+                if (versionTop[0] == '0' && versionTop.Length > 1)
+                {
+                    versionTop = versionTop.Substring(1, 1);
+                }
+                if (versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+                {
+                    versionBot = versionBot.Substring(1, 1);
+                }
+                this.selectedFileVersion = versionTop + "." + versionMid + "." + versionBot;
+
+                LandingLevels.Text = "";
+                LandingLevels.Height = 0;
+                LandingLevels.BorderThickness = new System.Windows.Thickness(0);
+
+                LandingNormalConfig.Text = "";
+                LandingNormalConfig.Height = 0;
+                LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
+                LandingAltConfig.Text = "";
+                LandingAltConfig.Height = 0;
+                LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
+
+                LandingNormalHeader.Visibility = Visibility.Hidden;
+                LandingAltHeader.Visibility = Visibility.Hidden;
+
+                JobInfo.Text = "";
+                JobInfo.Text += file + "\n";
+                JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
+                JobInfo.Text += jobName + "\n";
+                JobInfo.Text += "Version: " + versionTop + "." + versionMid + "." + versionBot + "\n\n";
+                JobInfo.Text += "# of Call Boards: " + callbnu + "\n";
+                JobInfo.Text += "# of IOX Boards: " + iox + "\n";
+                JobInfo.Text += "# of I4O Boards: " + i4o + "\n";
+                JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                JobInfo.Text = "Job Info Could not be created for this file";
+            }
+
+            //Headers
+            try
+            {
+                Generate_Headers_Group(content);
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+            }
+
+            //IO
+            try
+            {
+                Generate_IO(content, true);
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+            }
+
+            //Landings
+            try
+            {
+                Draw_Group_Landing_Preview(content);
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+            }
             
-            DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
-            string jobName = content.Get_String("JBNAME:", 1);
-            int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
-            int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
-            int callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
-            List<string> inputs = content.inputs;
-            List<string> outputs = content.outputs;
+            //Options
+            try
+            {
+                LobbyOptionsBlock.Text = content.Build_OptionsMap("LOBBY:");
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                LobbyOptionsBlock.Text = "There was an issue generating options for this file";
+            }
 
-            LobbyOptionsBlock.Text = "";
-
-            LandingLevels.Text = "";
-            LandingLevels.Height = 0;
-            LandingLevels.BorderThickness = new System.Windows.Thickness(0);
-            
-            LandingNormalConfig.Text = "";
-            LandingNormalConfig.Height = 0;
-            LandingNormalConfig.BorderThickness = new System.Windows.Thickness(0);
-            LandingAltConfig.Text = "";
-            LandingAltConfig.Height = 0;
-            LandingAltConfig.BorderThickness = new System.Windows.Thickness(0);
-            
-            LandingNormalHeader.Visibility = Visibility.Hidden;
-            LandingAltHeader.Visibility = Visibility.Hidden;
-
-            Draw_Group_Landing_Preview(content);
-
-            JobInfo.Text = "";
-            JobInfo.Text += file + "\n";
-            JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";
-            JobInfo.Text += jobName + "\n\n";
-            JobInfo.Text += "# of Call Boards: " + callbnu + "\n";
-            JobInfo.Text += "# of IOX Boards: " + iox + "\n";
-            JobInfo.Text += "# of I4O Boards: " + i4o + "\n\n";
-
-            HeaderSP.Children.Clear();
-            Generate_IO(content,true);
+            try
+            {
+                BottomOptionsBlock.Text = content.Build_OptionsMap("BOTTOM:");
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                BottomOptionsBlock.Text = "There was an issue generating options for this file";
+            }
         }
 
         private bool Generate_JobInfo(string file)
@@ -510,15 +538,7 @@ namespace mods
                 }
                 catch (Exception ex)
                 {
-                    using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                    {
-                        DateTime now = DateTime.Now;
-                        writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                        writefile.WriteLine(file);
-                        writefile.WriteLine(ex.ToString() + "\n");
-                    }
-
+                    Write_Error_To_Log(file, ex);
                     JobInfo.Text = "Job Info could not be generated for this file.";
                     return false;
                 }
@@ -532,14 +552,7 @@ namespace mods
                 }
                 catch (Exception ex)
                 {
-                    using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
-                    {
-                        DateTime now = DateTime.Now;
-                        writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                        writefile.WriteLine(file);
-                        writefile.WriteLine(ex.ToString() + "\n");
-                    }
+                    Write_Error_To_Log(file, ex);
                     JobInfo.Text = "Job Info could not be generated for this file.";
                     return false;
                 }
@@ -1110,8 +1123,6 @@ namespace mods
 
             if (content.content.IndexOf("XELIGI:") != -1)
             {
-
-
                 //XELIGI: Front Car Calls
                 for (int x = 0; x < 8; x++)
                 {
@@ -1287,7 +1298,7 @@ namespace mods
             if (content.content.IndexOf("INELIG:") != -1)
             {
                 //INELIG: System Input Eligibility Map
-                List<string> inelig = content.INELIG_Inputs(file);
+                List<string> inelig = content.IO(new List<string> { "INELIG" });
                 foreach (string input in inelig)
                 {
                     calls.Add(input);
@@ -1420,6 +1431,251 @@ namespace mods
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
                             Margin = new Thickness(0,-2,0,0)
+                        });
+                    numOfCalls--;
+                }
+                column++;
+
+                HeaderSP.Children.Add(sp);
+            } while (numOfCalls > 0);
+        }
+
+        private void Generate_Headers_Group(Content content)
+        {
+            HeaderSP.Children.Clear();
+
+            List<string> calls = new List<string>();
+            
+            //ELIGI: Down Hall Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 1, n, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                }
+            }
+
+            //ELIGI: Down Hall Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 9, n, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                }
+            }
+
+            //ELIGI: Up Hall Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 17, n, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString());
+                        }
+                    }
+                }
+            }
+
+            //ELIGI: Up Hall Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("ELIGI:", x + 25, n, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "R");
+                        }
+                    }
+                }
+            }
+
+            //AELIGI: Aux Down Hall Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AELIGI:", x + 1, n, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                }
+            }
+
+            //AELIGI: Aux Down Hall Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AELIGI:", x + 9, n, b) == "YES")
+                        {
+                            int callNum = 500 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "RX");
+                        }
+                    }
+                }
+            }
+
+            //AELIGI: Aux Up Hall Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AELIGI:", x + 17, n, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "X");
+                        }
+                    }
+                }
+            }
+
+            //AELIGI: Aux Up Hall Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AELIGI:", x + 25, n, b) == "YES")
+                        {
+                            int callNum = 600 + x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add(callNum.ToString() + "RX");
+                        }
+                    }
+                }
+            }
+
+            //HELIGI: Hospital Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("HELIGI:", x + 1, n, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add("EC" + callNum.ToString());
+                        }
+                    }
+                }
+            }
+
+            //HELIGI: Hospital Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("HELIGI:", x + 9, n, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add("EC" + callNum.ToString() + "R");
+                        }
+                    }
+                }
+            }
+
+            //AHELIGI: Hospital Calls Front
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AHELIGI:", x + 1, n, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add("EC" + callNum.ToString() + "X");
+                        }
+                    }
+                }
+            }
+
+            //AHELIGI: Hospital Calls Rear
+            for (int x = 0; x < 8; x++)
+            {
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 3; b >= 0; b--)
+                    {
+                        if (content.Get_Bit("AHELIGI:", x + 9, n, b) == "YES")
+                        {
+                            int callNum = x * 8 + (3 - b) + 1 + n * 4;
+                            calls.Add("EC" + callNum.ToString() + "RX");
+                        }
+                    }
+                }
+            }
+
+            if (content.content.IndexOf("CIOINE:") != -1)
+            {
+                List<string> ioLabels = new List<string> { "CIOINE" };
+                List<string> cioine = content.IO(ioLabels);
+                foreach (string input in cioine)
+                {
+                    calls.Add(input);
+                }
+            }
+
+            //Add to Headers Tab
+            int numOfCalls = calls.Count;
+            int column = 0;
+            do
+            {
+                if (numOfCalls < 16)
+                {
+                    for (int x = 16 - numOfCalls; x > 0; x--)
+                    {
+                        calls.Add("N/C");
+                    }
+                }
+
+                StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin = new Thickness(10, 15, 10, 0) };
+                for (int x = 15; x >= 0; x--)
+                {
+                    sp.Children.Add(
+                        new TextBox
+                        {
+                            Text = calls[column * 16 + x],
+                            Width = 50,
+                            Height = 25,
+                            BorderThickness = new Thickness(2),
+                            BorderBrush = System.Windows.Media.Brushes.Black,
+                            IsReadOnly = true,
+                            Background = System.Windows.Media.Brushes.Transparent,
+                            TextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, -2, 0, 0)
                         });
                     numOfCalls--;
                 }
@@ -1639,8 +1895,8 @@ namespace mods
                 
                 if (ncBoard == "YES")
                 {
-                    List<string> ncinputs = content.NC_Inputs(content.file);
-                    List<string> ncoutputs = content.NC_Outputs(content.file);
+                    List<string> ncinputs = content.IO(new List<string> { "NIOINS" });
+                    List<string> ncoutputs = content.IO(new List<string> { "NIOOUTS" }, 'O');
 
                     Label ncInputLabel = new Label
                     {
@@ -1855,6 +2111,7 @@ namespace mods
             {
                 iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
                 i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
+                aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 8, 0));
 
             }
             else
@@ -2774,6 +3031,18 @@ namespace mods
             Marshal.ReleaseComObject(xlApp);
         }
         
+        private void Write_Error_To_Log(string file, Exception ex)
+        {
+            using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Error_Log.txt", true))
+            {
+                DateTime now = DateTime.Now;
+                writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                writefile.WriteLine(file);
+                writefile.WriteLine(ex.ToString() + "\n");
+            }
+        }
+
         private void TracModSearch_Click(object sender, RoutedEventArgs e)
         {
             InfoTabControl.SelectedIndex = 0;
@@ -3094,6 +3363,32 @@ namespace mods
             newFileName.Append(".ASM");
 
             File.Copy(selectedPath, selectedFolder + newFileName, true);
+        }
+
+        private void N_EPLNK_Click(object sender, RoutedEventArgs e)
+        {
+            string args = "";
+            string cmd = @"Y:\N_EPLNK.bat";
+
+            string folder = General.Get_Folder_From_Path(FilesListBox.SelectedItem.ToString());
+
+            string subfolder = folder.Substring(8, folder.Length - 8);
+            int slashIndex = subfolder.IndexOf("\\");
+            subfolder = subfolder.Substring(0, slashIndex);
+
+            string file = General.Get_File_From_Path(FilesListBox.SelectedItem.ToString());
+            int dotIndex = file.IndexOf(".");
+            file = file.Substring(0, dotIndex);
+
+            string topVersion = selectedFileVersion.Substring(0, 1);
+            string midVersion = selectedFileVersion.Substring(2, 2);
+            string botVersion = selectedFileVersion.Substring(5, 1);
+
+            string version = topVersion + "_" + midVersion + " " + botVersion;
+
+            args = file + " " + subfolder + " " + version;
+
+            Process.Start(cmd, args);
         }
     }
 }

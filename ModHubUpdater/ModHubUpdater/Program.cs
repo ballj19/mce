@@ -13,37 +13,50 @@ namespace ModHubUpdater
     {
         static void Main(string[] args)
         {
-            string versionPath = "";
-
-            //To get the location the assembly normally resides on disk or the install directory
-            string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-
-            //once you have the path you get the directory with:
-            string modsPath = System.IO.Path.GetDirectoryName(path) + "\\mods.exe";
-            modsPath = modsPath.Substring(6, modsPath.Length - 6);
-
-            Console.Write("Fetching Update");
-            Thread.Sleep(4000);
-
-            List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Versions.txt").ToList();
-            
-            foreach(string version in versions)
+            try
             {
-                if(version.StartsWith("ModHub"))
+                string versionPath = "";
+
+                //To get the location the assembly normally resides on disk or the install directory
+                string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                //once you have the path you get the directory with:
+                string modsPath = System.IO.Path.GetDirectoryName(path) + @"\mods.exe";
+                modsPath = modsPath.Substring(6, modsPath.Length - 6);
+
+                Console.Write("Fetching Update");
+                Thread.Sleep(4000);
+
+                List<string> versions = new List<string>();
+                versions = System.IO.File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\Versions.txt").ToList();
+
+                foreach (string version in versions)
                 {
-                    int colonIndex = version.IndexOf(":");
-                    versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
-					int semicolonIndex = versionPath.IndexOf(";");
-					versionPath = versionPath.Substring(0,semicolonIndex);
+                    if (version.StartsWith("ModHub"))
+                    {
+                        int colonIndex = version.IndexOf(":");
+                        versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
+                        int semicolonIndex = versionPath.IndexOf(";");
+                        versionPath = versionPath.Substring(0, semicolonIndex);
+                    }
+                }
+
+                File.Copy(versionPath, modsPath, true);
+
+                string cmd = @"C:\Windows\explorer.exe";
+                string arg = modsPath;
+                Process.Start(cmd, arg);
+            }
+            catch(Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\amrappfil01\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(ex.ToString() + "\n");
                 }
             }
-
-            File.Copy(@versionPath, @modsPath,true);
-
-            string cmd = "C:\\Windows\\explorer.exe";
-            string arg = modsPath;
-            Process.Start(cmd, arg);
         }
     }
 }

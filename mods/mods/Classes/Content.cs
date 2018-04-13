@@ -9,25 +9,22 @@ namespace mods
     public class Content
     {
         public List<string> content = new List<string>();
-        List<string> imap, omap;
         public List<string> inputs, outputs;
         List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
         List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
         string filepath =  "\\" + "\\" + "mceshared\\shared\\Software\\";
         public string file;
 
-
         public Content(string file)
         {
-            this.content = Get_Content(file);
-            this.imap = Build_IOmap(file, 'I');
-            this.omap = Build_IOmap(file, 'O');
-            this.inputs = IO(this.imap, 'I');
-            this.outputs = IO(this.omap, 'O');
-            this.file = file;
+            this.file = General.Get_File_From_Path(filepath + file);
+            this.filepath = General.Get_Folder_From_Path(filepath + file);
+            this.content = Get_Content();
+            this.inputs = IO(inputLabels , 'I');
+            this.outputs = IO(outputLabels, 'O');
         }
 
-        private List<string> Get_Content(string file)
+        private List<string> Get_Content()
         {
             List<string> lines = new List<string>();
 
@@ -245,44 +242,13 @@ namespace mods
             }
         }
 
-        private List<string> Build_IOmap(string file, char io)
+        private List<string> Build_IOmap(List<string> ioLabels)
         {
             List<string> iomap = new List<string>();
 
-            List<string> lines = new List<string>();
-
-            try
-            {
-                string path = filepath + file;
-                lines = System.IO.File.ReadAllLines(@path).ToList();
-            }
-            catch
-            {
-
-            }
-
-            List<string> ioLabels = new List<string>();
+            List<string> lines = General.Get_Clean_Lines_From_Path(filepath + file);
 
             string[] labelNumbers = { "", "2", "3", "4" };
-
-            if (io == 'I')
-            {
-                ioLabels = this.inputLabels;
-            }
-
-            if (io == 'O')
-            {
-                ioLabels = this.outputLabels;
-            }
-
-            List<char> Acceptable_Chars = new List<char>
-            {
-                '/',
-                '_',
-                ' ',
-                '(',
-                ')',
-            };
 
             foreach (string ioLabel in ioLabels)
             {
@@ -294,53 +260,11 @@ namespace mods
                         int x = 0;
                         int iomap_index = io_index + x + 1;
 
-                        while (lines[iomap_index].Trim().StartsWith("DB"))
+                        while (!lines[iomap_index].Trim().EndsWith(":"))
                         {
-                            int comment_index = lines[iomap_index].IndexOf(';');
-                            if (comment_index != -1)
+                            if(General.Value(lines[iomap_index]).StartsWith("DB"))
                             {
-                                string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                                bool building = false;
-                                StringBuilder ioCode = new StringBuilder();
-
-                                for (int c = 0; c < comment_string.Length; c++)
-                                {
-                                    if (building)
-                                    {
-                                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
-                                        {
-                                            ioCode.Append(comment_string[c]);
-                                        }
-                                        else
-                                        {
-                                            iomap.Add(ioCode.ToString());
-                                            ioCode.Clear();
-                                            building = false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (Char.IsLetterOrDigit(comment_string[c]) || Acceptable_Chars.Contains(comment_string[c]))
-                                        {
-                                            ioCode.Append(comment_string[c]);
-                                            building = true;
-                                        }
-                                        else
-                                        {
-                                            //do nothing
-                                        }
-                                    }
-                                }
-                                iomap.Add(ioCode.ToString());
-                                ioCode.Clear();
-                                building = false;
-                            }
-                            else //This is for the case where there is no comment to go with the byte
-                            {
-                                for (int i = 0; i < 8; i++)
-                                {
-                                    iomap.Add("XXXX");
-                                }
+                                iomap.AddRange(Crawl_Options(lines, iomap_index, 8));
                             }
                             x++;
                             iomap_index = io_index + x + 1;
@@ -351,22 +275,11 @@ namespace mods
             return iomap;
         }
 
-        public List<string> IO(List<string> iomap, char io)
+        public List<string> IO(List<string> ioLabels, char io = 'I')
         {
             List<string> ios = new List<string>();
             List<string> ioValues = new List<string>();
-
-            List<string> ioLabels = new List<string>();
-
-            if (io == 'I')
-            {
-                ioLabels = this.inputLabels;
-            }
-
-            if (io == 'O')
-            {
-                ioLabels = this.outputLabels;
-            }
+            List<string> iomap = Build_IOmap(ioLabels);
 
             string[] labelNumbers = { "", "2", "3", "4" };
 
@@ -551,6 +464,20 @@ namespace mods
                                     }
                                 }
                             }
+                            else if(optionsConfig[byteIndex][n] == 'G')
+                            {
+                                int numOfOptions = 6;
+                                string binary = General.Hex_To_Bin(General.Value(lines[index]));
+                                List<string> options = Crawl_Options(lines, index + 1 + n, numOfOptions);
+
+                                for (int b = 0; b < numOfOptions; b++)
+                                {
+                                    if (binary[b] == '1')
+                                    {
+                                        byteString += options[b] + ", ";
+                                    }
+                                }
+                            }
                         }
 
                         if(byteString.Length > 0)
@@ -629,318 +556,6 @@ namespace mods
             }
 
             return options;
-        }
-
-        private List<string> NC_Input_Map(string file)
-        {
-            List<string> lines = new List<string>();
-
-            try
-            {
-                string path = filepath + file;
-                lines = System.IO.File.ReadAllLines(@path).ToList();
-            }
-            catch
-            {
-
-            }
-
-            List<string> ncinputs = new List<string>();
-
-            if (lines.FindIndex(x => x.StartsWith("NIOINS:")) != -1)
-            {
-                int io_index = lines.FindIndex(i => i.StartsWith("NIOINS:"));
-                int x = 0;
-                int iomap_index = io_index + x + 1;
-
-                while (lines[iomap_index].Trim().StartsWith("DB"))
-                {
-                    int comment_index = lines[iomap_index].IndexOf(';');
-                    if(comment_index != -1)
-                    {
-                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                        bool building = false;
-                        StringBuilder ioCode = new StringBuilder();
-
-                        for (int c = 0; c < comment_string.Length; c++)
-                        {
-                            if (building)
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                }
-                                else
-                                {
-                                    ncinputs.Add(ioCode.ToString());
-                                    ioCode.Clear();
-                                    building = false;
-                                }
-                            }
-                            else
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                    building = true;
-                                }
-                                else
-                                {
-                                    //do nothing
-                                }
-                            }
-                        }
-                        ncinputs.Add(ioCode.ToString());
-                        ioCode.Clear();
-                        building = false;
-                    }
-                    else //This is for the case where there is no comment to go with the byte
-                    {
-                        for (int i = 0; i < 8; i++)
-                        {
-                            ncinputs.Add("XXXX");
-                        }
-                    }
-                    x++;
-                    iomap_index = io_index + x + 1;
-                }
-            }
-
-            return ncinputs;
-        }
-
-        private List<string> NC_Output_Map(string file)
-        {
-            List<string> lines = new List<string>();
-
-            try
-            {
-                string path = filepath + file;
-                lines = System.IO.File.ReadAllLines(@path).ToList();
-            }
-            catch
-            {
-
-            }
-
-            List<string> ncoutputs = new List<string>();
-
-            if (lines.FindIndex(x => x.StartsWith("NIOOUTS:")) != -1)
-            {
-                int io_index = lines.FindIndex(i => i.StartsWith("NIOOUTS:"));
-                int x = 0;
-                int iomap_index = io_index + x + 1;
-
-                while (lines[iomap_index].Trim().StartsWith("DB"))
-                {
-                    int comment_index = lines[iomap_index].IndexOf(';');
-                    if(comment_index != -1)
-                    {
-                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                        bool building = false;
-                        StringBuilder ioCode = new StringBuilder();
-
-                        for (int c = 0; c < comment_string.Length; c++)
-                        {
-                            if (building)
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                }
-                                else
-                                {
-                                    ncoutputs.Add(ioCode.ToString());
-                                    ioCode.Clear();
-                                    building = false;
-                                }
-                            }
-                            else
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                    building = true;
-                                }
-                                else
-                                {
-                                    //do nothing
-                                }
-                            }
-                        }
-                        ncoutputs.Add(ioCode.ToString());
-                        ioCode.Clear();
-                        building = false;
-                    }
-                    else //This is for the case where there is no comment to go with the byte
-                    {
-                        for (int i = 0; i < 8; i++)
-                        {
-                           ncoutputs.Add("XXXX");
-                        }
-                    }
-                    x++;
-                    iomap_index = io_index + x + 1;
-                }
-            }
-
-            return ncoutputs;
-        }
-        
-        public List<string> NC_Inputs(string file)
-        {
-            List<string> ncinputs = new List<string>();
-            List<string> ncinputsmap = NC_Input_Map(file);
-
-            if (this.content.FindIndex(x => x.StartsWith("NIOINS:")) != -1)
-            {
-                int io_index = this.content.FindIndex(x => x.StartsWith("NIOINS:"));
-                for (int x = 0; x < ncinputsmap.Count/8; x++)
-                {
-                    int iomap_index = io_index + x + 1;
-                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
-
-                    for (int y = 0; y < 8; y++)
-                    {
-                        if (iomap_binary[7 - y] == '1')
-                        {
-                            ncinputs.Add(ncinputsmap[x * 8 + 7 - y]);
-                        }
-                    }
-                }
-            }
-
-            return ncinputs;
-        }
-
-        public List<string> NC_Outputs(string file)
-        {
-            List<string> ncoutputs = new List<string>();
-            List<string> ncoutputsmap = NC_Output_Map(file);
-
-            if (this.content.FindIndex(x => x.StartsWith("NIOOUTS:")) != -1)
-            {
-                int io_index = this.content.FindIndex(x => x.StartsWith("NIOOUTS:"));
-                for (int x = 0; x < ncoutputsmap.Count / 8; x++)
-                {
-                    int iomap_index = io_index + x + 1;
-                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
-
-                    for (int y = 0; y < 8; y++)
-                    {
-                        if (iomap_binary[7 - y] == '1')
-                        {
-                            ncoutputs.Add(ncoutputsmap[x * 8 + 7 - y]);
-                        }
-                    }
-                }
-            }
-
-            return ncoutputs;
-        }
-
-        private List<string> INELIG_Input_Map(string file)
-        {
-            List<string> lines = new List<string>();
-
-            try
-            {
-                string path = filepath + file;
-                lines = System.IO.File.ReadAllLines(@path).ToList();
-            }
-            catch
-            {
-
-            }
-
-            List<string> inputs = new List<string>();
-
-            if (lines.FindIndex(x => x.StartsWith("INELIG:")) != -1)
-            {
-                int io_index = lines.FindIndex(i => i.StartsWith("INELIG:"));
-                int x = 0;
-                int iomap_index = io_index + x + 1;
-
-                while (lines[iomap_index].Trim().StartsWith("DB"))
-                {
-                    int comment_index = lines[iomap_index].IndexOf(';');
-                    if(comment_index != -1)
-                    {
-                        string comment_string = lines[iomap_index].Substring(comment_index, lines[iomap_index].Length - comment_index).Trim();
-                        bool building = false;
-                        StringBuilder ioCode = new StringBuilder();
-
-                        for (int c = 0; c < comment_string.Length; c++)
-                        {
-                            if (building)
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                }
-                                else
-                                {
-                                    inputs.Add(ioCode.ToString());
-                                    ioCode.Clear();
-                                    building = false;
-                                }
-                            }
-                            else
-                            {
-                                if (Char.IsLetterOrDigit(comment_string[c]) || comment_string[c] == '/')
-                                {
-                                    ioCode.Append(comment_string[c]);
-                                    building = true;
-                                }
-                                else
-                                {
-                                    //do nothing
-                                }
-                            }
-                        }
-                        inputs.Add(ioCode.ToString());
-                        ioCode.Clear();
-                        building = false;
-                    }
-                    else //This is for the case where there is no comment to go with the byte
-                    {
-                        for(int i = 0; i < 8; i++)
-                        {
-                            inputs.Add("XXXX");
-                        }
-                    }
-                    x++;
-                    iomap_index = io_index + x + 1;
-                }
-            }
-
-            return inputs;
-        }
-
-        public List<string> INELIG_Inputs(string file)
-        {
-            List<string> inputs = new List<string>();
-            List<string> inputsmap = INELIG_Input_Map(file);
-
-            if (this.content.FindIndex(x => x.StartsWith("INELIG:")) != -1)
-            {
-                int io_index = this.content.FindIndex(x => x.StartsWith("INELIG:"));
-                for (int x = 0; x < inputsmap.Count / 8; x++)
-                {
-                    int iomap_index = io_index + x + 1;
-                    string iomap_binary = General.Hex_To_Bin(this.content[iomap_index]);
-
-                    for (int y = 0; y < 8; y++)
-                    {
-                        if (iomap_binary[7 - y] == '1')
-                        {
-                            inputs.Add(inputsmap[x * 8 + 7 - y]);
-                        }
-                    }
-                }
-            }
-
-            return inputs;
         }
 
         public List<string> Get_PILabels()

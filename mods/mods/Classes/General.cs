@@ -58,7 +58,7 @@ namespace mods
 
         public static int HexStringToDecimal(string hex)
         {
-            hex = Remove_Suffix(hex, "H");
+            hex = Remove_Suffix(hex, "H").Trim();
             
             //Need to reverse the hex string for the math to work out better
             char[] charArray = hex.ToCharArray();

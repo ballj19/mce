@@ -5,62 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:mods"
         mc:Ignorable="d"
-        Title="Advanced Search" Height="600" Width="600" Closed="Close">
+        Title="Advanced Search" Height="650" Width="805" Closed="Close">
     <Grid>
         <Label Content="Any Option left blank will be ignored.  Enter a value for each option that you want to be filtered." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="16,53,0,0" VerticalAlignment="Top" Width="196"/>
-        <Button x:Name="Search" Content="Search" HorizontalAlignment="Left" Margin="507,538,0,0" VerticalAlignment="Top" Width="75" Click="Search_Click"/>
+        <Button x:Name="Search" Content="Search" HorizontalAlignment="Left" Margin="500,587,0,0" VerticalAlignment="Top" Width="75" Click="Search_Click"/>
         <Label Content="Controller" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="ControllerCB" HorizontalAlignment="Left" Margin="91,77,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="Top Floor" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="TopFloorCB" HorizontalAlignment="Left" Margin="91,105,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="TopFloorTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,104,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="Bottom Floor" HorizontalAlignment="Left" Margin="10,132,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="BottomFloorCB" HorizontalAlignment="Left" Margin="91,134,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="BottomFloorTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,134,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="Rear Doors" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="RearDoorsCB" HorizontalAlignment="Left" Margin="91,162,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="Security" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="SecurityCB" HorizontalAlignment="Left" Margin="91,191,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="BSI" HorizontalAlignment="Left" Margin="154,189,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="BSICB" HorizontalAlignment="Left" Margin="185,191,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="CRTLOCK" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="61"/>
-        <ComboBox x:Name="CRTLOCKCB" HorizontalAlignment="Left" Margin="91,220,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="ACE" HorizontalAlignment="Left" Margin="154,220,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="ACECB" HorizontalAlignment="Left" Margin="185,220,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="False Floors" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="FalseFloorsCB" HorizontalAlignment="Left" Margin="91,251,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="Nudging" HorizontalAlignment="Left" Margin="10,274,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="NudgingCB" HorizontalAlignment="Left" Margin="91,277,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="Call Boards" HorizontalAlignment="Left" Margin="10,302,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="CallBoardsCB" HorizontalAlignment="Left" Margin="91,304,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="CallBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,303,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="IOX Boards" HorizontalAlignment="Left" Margin="10,330,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="IOXBoardsCB" HorizontalAlignment="Left" Margin="91,332,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="IOXBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,331,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="I4O Boards" HorizontalAlignment="Left" Margin="10,358,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="I4OBoardsCB" HorizontalAlignment="Left" Margin="91,360,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="I4OBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,359,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="AIOX Boards" HorizontalAlignment="Left" Margin="10,386,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="AIOXBoardsCB" HorizontalAlignment="Left" Margin="91,388,0,0" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="AIOXBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,387,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
-        <Label Content="CE Board" HorizontalAlignment="Left" Margin="10,413,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="CEBoardCB" HorizontalAlignment="Left" Margin="91,415,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="NC Board" HorizontalAlignment="Left" Margin="10,440,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="NCBoardCB" HorizontalAlignment="Left" Margin="91,442,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="FT Board" HorizontalAlignment="Left" Margin="10,467,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="FTBoardCB" HorizontalAlignment="Left" Margin="91,469,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label Content="DLM Board" HorizontalAlignment="Left" Margin="10,496,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="DLMBoardCB" HorizontalAlignment="Left" Margin="91,498,0,0" VerticalAlignment="Top" Width="62"/>
-        <StackPanel x:Name="SpareIOSP" Orientation="Vertical">
+        <Label Content="Top Floor" HorizontalAlignment="Left" Margin="10,162,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="TopFloorCB" HorizontalAlignment="Left" Margin="91,164,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="TopFloorTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,163,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="Bottom Floor" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="BottomFloorCB" HorizontalAlignment="Left" Margin="91,193,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="BottomFloorTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,193,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="Rear Doors" HorizontalAlignment="Left" Margin="10,219,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="RearDoorsCB" HorizontalAlignment="Left" Margin="91,221,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Security" HorizontalAlignment="Left" Margin="10,248,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="SecurityCB" HorizontalAlignment="Left" Margin="91,250,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="BSI" HorizontalAlignment="Left" Margin="154,248,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="BSICB" HorizontalAlignment="Left" Margin="185,250,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="CRTLOCK" HorizontalAlignment="Left" Margin="10,277,0,0" VerticalAlignment="Top" Width="61"/>
+        <ComboBox x:Name="CRTLOCKCB" HorizontalAlignment="Left" Margin="91,279,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="ACE" HorizontalAlignment="Left" Margin="154,279,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="ACECB" HorizontalAlignment="Left" Margin="185,279,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="False Floors" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="FalseFloorsCB" HorizontalAlignment="Left" Margin="91,310,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Nudging" HorizontalAlignment="Left" Margin="10,333,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="NudgingCB" HorizontalAlignment="Left" Margin="91,336,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Call Boards" HorizontalAlignment="Left" Margin="10,361,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="CallBoardsCB" HorizontalAlignment="Left" Margin="91,363,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="CallBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,362,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="IOX Boards" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="IOXBoardsCB" HorizontalAlignment="Left" Margin="91,391,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="IOXBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,390,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="I4O Boards" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="I4OBoardsCB" HorizontalAlignment="Left" Margin="91,419,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="I4OBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,418,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="AIOX Boards" HorizontalAlignment="Left" Margin="10,445,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="AIOXBoardsCB" HorizontalAlignment="Left" Margin="91,447,0,0" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="AIOXBoardsTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="157,447,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="47"/>
+        <Label Content="CE Board" HorizontalAlignment="Left" Margin="10,472,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="CEBoardCB" HorizontalAlignment="Left" Margin="91,474,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="NC Board" HorizontalAlignment="Left" Margin="10,499,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="NCBoardCB" HorizontalAlignment="Left" Margin="91,501,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="FT Board" HorizontalAlignment="Left" Margin="10,526,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="FTBoardCB" HorizontalAlignment="Left" Margin="91,528,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="DLM Board" HorizontalAlignment="Left" Margin="10,556,0,0" VerticalAlignment="Top"/>
+
+        <ComboBox x:Name="DLMBoardCB" HorizontalAlignment="Left" Margin="91,557,0,0" VerticalAlignment="Top" Width="62"/>
+        <StackPanel x:Name="SpareIOSP" Orientation="Vertical" Margin="300,0,0,0">
             <StackPanel x:Name="SpareInputSP" Orientation="Vertical">
-                <Button x:Name="AddSpareInput" Content="Add Spare Input" HorizontalAlignment="Left" Margin="388,46,0,10" VerticalAlignment="Top" Width="112" Click="AddSpareInput_Click"/>
+                <Button x:Name="AddSpareInput" Content="Add Spare Input" HorizontalAlignment="Left" Margin="88,46,0,10" VerticalAlignment="Top" Width="112" Click="AddSpareInput_Click"/>
             </StackPanel>
             <StackPanel x:Name="SpareOutputSP" Orientation="Vertical">
-                <Button x:Name="AddSpareOutput" Content="Add Spare Output" HorizontalAlignment="Left" Margin="388,46,0,10" VerticalAlignment="Top" Width="112" Click="AddSpareOutput_Click"/>
+                <Button x:Name="AddSpareOutput" Content="Add Spare Output" HorizontalAlignment="Left" Margin="88,46,0,10" VerticalAlignment="Top" Width="112" Click="AddSpareOutput_Click"/>
             </StackPanel>
         </StackPanel>
-        <TextBlock x:Name="SearchFolderTB" Margin="221,514,10,32" TextWrapping="Wrap" Text=""/>
-        <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="221,539,0,0" VerticalAlignment="Top" Width="274"/>
+        <TextBlock x:Name="SearchFolderTB" Margin="221,562,10,33" TextWrapping="Wrap" Text=""/>
+        <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="221,587,0,0" VerticalAlignment="Top" Width="274"/>
+        <TextBox x:Name="VersionTB" TextAlignment="Center" HorizontalAlignment="Left" Height="23" Margin="91,131,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Version" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="TypeTB" HorizontalAlignment="Left" Margin="91,104,0,0" VerticalAlignment="Top" Width="62"/>
     </Grid>
 </Window>

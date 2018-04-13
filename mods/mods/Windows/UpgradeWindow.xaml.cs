@@ -341,10 +341,12 @@ namespace mods
             if (result == 0)
             {
                 upgrade.Modify_Value("L_TABLE:", "1A", "REPLACE", "'A2K5',  000H,  001H,  004H,  001H");
+                upgrade.Modify_Value("LOBBY:", "0A", "AND", "0BH");
             }
             else if (result == 1)
             {
                 upgrade.Modify_Value("L_TABLE:", "1B", "REPLACE", "'A2K7',  000H,  001H,  004H,  001H");
+                upgrade.Modify_Value("LOBBY:", "0A", "AND", "0BH");
             }
             else
             {
@@ -359,6 +361,34 @@ namespace mods
         {
             upgrade.Modify_Value("LOBBY:", "10", "OR", "10H");
             upgrade.Modify_Value("LOBBY:", "04", "OR", "18H");
+
+            SoftwareOption so = new SoftwareOption("ANSI 2K Options", 450, 210);
+
+            List<string> ansi2k = new List<string>
+            {
+                "ANSI 2K5 Fire",
+                "ANSI 2K7 Fire",
+                "None of the above - Old ANSI 2K Fire"
+            };
+
+            so.Radio_Option(ansi2k);
+
+            so.ShowDialog();
+
+            int result = so.result;
+
+            if (result == 0)
+            {
+                upgrade.Modify_Value("LOBBY:", "01", "AND", "B0H");
+            }
+            else if (result == 1)
+            {
+                upgrade.Modify_Value("LOBBY:", "01", "AND", "B0H");
+            }
+            else
+            {
+                //do nothing
+            }
 
             CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled Options for ANSI 2K Fire";

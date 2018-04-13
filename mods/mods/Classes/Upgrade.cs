@@ -155,6 +155,11 @@ namespace mods
                 "TDEF_SELECT",
             };
 
+            List<string> replace_empty_timer_labels = new List<string>
+            {
+                "CARTMR"
+            };
+
             Write_Intermediate(0, original_content.labelsInt[0]); //Writes the header at the beginning of file
             
             foreach (string label in upgrade_content.labels)
@@ -180,6 +185,10 @@ namespace mods
                 else if (select_labels.Contains(label))
                 {
                     Select_Label(label + ":");
+                }
+                else if(replace_empty_timer_labels.Contains(label))
+                {
+                    Replace_Empty_Timer_Label(label + ":");
                 }
                 else
                 {
@@ -381,6 +390,74 @@ namespace mods
                     Write_Line(General.Comment(upgrade_content.lines[uSelect_labelIndex + b]));
                 }
                 b++;
+            }
+        }
+
+        private void Replace_Empty_Timer_Label(string label)
+        {
+            int oLabelIndex = original_content.lines.IndexOf(label);
+            int uLabelIndex = upgrade_content.lines.IndexOf(label);
+
+            Write_Line(original_content.lines[oLabelIndex]);
+
+            List<string> byteIdentifiers = new List<string> { "DB", "DW" };
+
+            List<string> oValues = new List<string>();
+            List<string> uValues = new List<string>();
+
+            int o = oLabelIndex + 1;
+            while (!General.Value(original_content.lines[o]).EndsWith(":"))
+            {
+                foreach(string byteIdentifier in byteIdentifiers)
+                {
+                    if(General.Value(original_content.lines[o]).StartsWith(byteIdentifier))
+                    {
+                        oValues.Add(original_content.lines[o]);
+                    }
+                }
+                o++;
+            }
+
+            int u = uLabelIndex + 1;
+            while (!General.Value(upgrade_content.lines[u]).EndsWith(":"))
+            {
+                foreach (string byteIdentifier in byteIdentifiers)
+                {
+                    if (General.Value(upgrade_content.lines[u]).StartsWith(byteIdentifier))
+                    {
+                        uValues.Add(upgrade_content.lines[u]);
+                    }
+                }
+                u++;
+            }
+
+            int line = oLabelIndex + 1;
+            int byteNum = 0;
+            while(!General.Value(original_content.lines[line]).EndsWith(":"))
+            {
+                bool byteLine = false;
+                foreach (string byteIdentifier in byteIdentifiers)
+                {
+                    if (General.Value(original_content.lines[line]).StartsWith(byteIdentifier))
+                    {
+                        byteLine = true;
+                        string value = General.Remove_Prefix(General.Value(original_content.lines[line]), byteIdentifier).Trim();
+                        if(value == "0H")
+                        {
+                            Write_Line(uValues[byteNum]);
+                        }
+                        else
+                        {
+                            Write_Line(oValues[byteNum]);
+                        }
+                        byteNum++;
+                    }
+                }
+                if(!byteLine)
+                {
+                    Write_Line(original_content.lines[line]);
+                }
+                line++;
             }
         }
 

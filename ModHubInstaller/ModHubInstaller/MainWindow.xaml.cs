@@ -47,50 +47,63 @@ namespace ModHubInstaller
 
         private void InstallButton_Click(object sender, RoutedEventArgs e)
         {
-            string versionPath = "";
-            string updaterPath = "\\\\mceshared\\shared\\Software\\Utility\\Software Programs and shortcuts\\ModHub\\ModHubAutoUpgrader\\ModHubUpdater.exe";
-
-            List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Versions.txt").ToList();
-
-            foreach (string version in versions)
+            try
             {
-                if (version.StartsWith("ModHub"))
+                string versionPath = "";
+                string updaterPath = @"\\mceshared\shared\Software\Utility\Software Programs and shortcuts\\ModHub\ModHubAutoUpgrader\ModHubUpdater.exe";
+
+                List<string> versions = new List<string>();
+                versions = System.IO.File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\Versions.txt").ToList();
+
+                foreach (string version in versions)
                 {
-                    int colonIndex = version.IndexOf(":");
-                    versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
-                    int semicolonIndex = versionPath.IndexOf(";");
-                    versionPath = versionPath.Substring(0, semicolonIndex);
+                    if (version.StartsWith("ModHub"))
+                    {
+                        int colonIndex = version.IndexOf(":");
+                        versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
+                        int semicolonIndex = versionPath.IndexOf(";");
+                        versionPath = versionPath.Substring(0, semicolonIndex);
+                    }
+                }
+
+                if (Directory.Exists(PathBox.Text))
+                {
+
+                }
+                else
+                {
+                    // Try to create the directory.
+                    DirectoryInfo di = Directory.CreateDirectory(PathBox.Text);
+                }
+
+                System.IO.File.Copy(versionPath, PathBox.Text + @"\mods.exe", true);
+                System.IO.File.Copy(updaterPath, PathBox.Text + @"\ModHubUpdater.exe", true);
+
+                if (DesktopShortcutButton.IsChecked == true)
+                {
+                    object shDesktop = (object)"Desktop";
+                    WshShell shell = new WshShell();
+                    string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\ModHub.lnk";
+                    IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+                    shortcut.Description = "Shortcut for ModHub";
+                    shortcut.TargetPath = PathBox.Text + @"\mods.exe";
+                    shortcut.Save();
+                }
+
+                System.Windows.Forms.MessageBox.Show("ModHub installed successfully");
+
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\amrappfil01\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(ex.ToString() + "\n");
                 }
             }
-
-            if (Directory.Exists(PathBox.Text))
-            {
-
-            }
-            else
-            {
-                // Try to create the directory.
-                DirectoryInfo di = Directory.CreateDirectory(PathBox.Text);
-            }
-
-            System.IO.File.Copy(@versionPath, PathBox.Text + "\\mods.exe",true);
-            System.IO.File.Copy(updaterPath, PathBox.Text + "\\ModHubUpdater.exe",true);
-
-            if (DesktopShortcutButton.IsChecked == true)
-            {
-                object shDesktop = (object)"Desktop";
-                WshShell shell = new WshShell();
-                string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\ModHub.lnk";
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-                shortcut.Description = "Shortcut for ModHub";
-                shortcut.TargetPath = PathBox.Text + "\\mods.exe";
-                shortcut.Save();
-            }
-
-            System.Windows.Forms.MessageBox.Show("ModHub installed successfully");
-
-            this.Close();
         }
     }
 }
