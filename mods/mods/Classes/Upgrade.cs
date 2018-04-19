@@ -184,7 +184,14 @@ namespace mods
                 }
                 else if (select_labels.Contains(label))
                 {
-                    Select_Label(label + ":");
+                    if (tableCount == 0)
+                    {
+                        Replace_Label(label + ":");
+                    }
+                    else
+                    {
+                        Select_Label(label + ":");
+                    }
                 }
                 else if(replace_empty_timer_labels.Contains(label))
                 {
@@ -305,7 +312,15 @@ namespace mods
             {
                 if(u == 1)
                 {
-                    string value = "\tDB\t055H";
+                    string value = "";
+                    if(tableCount == 0)
+                    {
+                        value = "\tDB\t000H";
+                    }
+                    else
+                    {
+                        value = "\tDB\t055H";
+                    }
                     string comment = General.Comment(upgrade_content.lines[uload_labelIndex + u]);
                     Write_Line(value + "\t" + comment);
                 }

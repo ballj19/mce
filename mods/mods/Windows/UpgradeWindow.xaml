@@ -21,7 +21,6 @@
             </TabItem>
             <TabItem x:Name="OptionsTab" Header="Options">
                 <Grid>
-
                     <CheckBox x:Name="VersionUpgrade" Content="Version Upgrade" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top"/>
                     <Label Content="Source File" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="69" RenderTransformOrigin="1.549,0.479"/>
                     <TextBox x:Name="SourceFile" HorizontalAlignment="Left" Height="23" Margin="85,69,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="323"/>
@@ -29,6 +28,7 @@
                     <CheckBox x:Name="DLMUpgrade" Content="DLM" HorizontalAlignment="Left" Margin="11,98,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="PCHCSUpgrade" Content="Per Car Hall Call Security" HorizontalAlignment="Left" Margin="39,161,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                     <ComboBox x:Name="CarType" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
+                    <ComboBox x:Name="ControllerType" HorizontalAlignment="Left" Margin="150,10,0,0" VerticalAlignment="Top" Width="65"/>
                     <CheckBox x:Name="CRTLOCK" Content="CRTLOCK" HorizontalAlignment="Left" Margin="39,140,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                     <CheckBox x:Name="Security" Content="Security" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                     <CheckBox x:Name="Chicago" Content="Chicago Fire" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>

@@ -15,16 +15,13 @@ namespace Flowchart
 
         public Content()
         {
-            Get_Content();
+            string path = @"C:\Users\jacob.ball\Desktop\Docs\test.asm";
+            Get_Content(General.Get_Clean_Lines_From_Path(path));
             Parse_Lines();
         }
 
-        private void Get_Content()
+        private void Get_Content(List<string> lines)
         {
-            List<string> lines = new List<string>();
-            string path = "test.asm";
-            lines = System.IO.File.ReadAllLines(@path).ToList();
-
             int x = 0;
             string[] uncommentedLines = new string[lines.Count];
             foreach (string line in lines)

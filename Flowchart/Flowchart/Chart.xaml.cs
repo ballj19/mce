@@ -73,33 +73,6 @@ namespace Flowchart
             }
         }
 
-        public void placeholder()
-        {
-            TextBox textbox = new TextBox();
-            textbox.Name = "textbox" + i;
-            textbox.BorderThickness = new Thickness(2);
-            textbox.BorderBrush = System.Windows.Media.Brushes.Black;
-            textbox.HorizontalAlignment = HorizontalAlignment.Left;
-            textbox.VerticalAlignment = VerticalAlignment.Top;
-            textbox.TextWrapping = TextWrapping.Wrap;
-            textbox.Margin = new Thickness(350, 0, 0, 0);
-            textbox.Width = 350;
-
-            Line branch = new Line();
-
-            branch.X1 = 525;
-            branch.X2 = 525;
-            branch.Y2 = branch.Y1 + 25;
-
-            branch.Stroke = Brushes.Black;
-            branch.StrokeThickness = 2;
-
-            sp1.Children.Add(textbox);
-            this.chartHeight += textbox.Height;
-            sp1.Children.Add(branch);
-            this.chartHeight += (int)branch.Height;
-        }
-
         private void Draw_Lanes()
         {
             List<Lane> lanes = new List<Lane>();
@@ -184,7 +157,7 @@ namespace Flowchart
     {
         public int startIndex;
         public string label;
-        public string conent;
+        public string content;
 
         public JumpBox(int startIndex, string label, string content)
         {

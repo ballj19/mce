@@ -73,7 +73,17 @@ namespace mods
                     }
                     else
                     {
-                        content.Add(line);
+                        char[] trim = { '\u001a' };
+                        string trimmedLine = line.Trim(trim);
+                        trimmedLine = trimmedLine.Trim();
+                        if(trimmedLine == "END")
+                        {
+                            content.Add(trimmedLine);
+                        }
+                        else
+                        {
+                            content.Add(line);
+                        }
                     }
                 }
             }
@@ -523,7 +533,10 @@ namespace mods
                         }
                         else
                         {
-                            options.Add(opCode.ToString());
+                            if(opCode.ToString().Trim() != "")
+                            {
+                                options.Add(opCode.ToString().Trim());
+                            }
                             if(options.Count == numOfOptions)
                             {
                                 return options;
@@ -545,7 +558,10 @@ namespace mods
                         }
                     }
                 }
-                options.Add(opCode.ToString());
+                if (opCode.ToString().Trim() != "")
+                {
+                    options.Add(opCode.ToString().Trim());
+                }
             }
             else //This is for the case where there is no comment to go with the byte
             {

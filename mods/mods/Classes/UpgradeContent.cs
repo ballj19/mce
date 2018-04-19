@@ -64,13 +64,19 @@ namespace mods
                         {
                             lines.Add(line.Trim());
                         }
-                        else if(line.Trim() == "END")
-                        {
-                            lines.Add(line.Trim());
-                        }
                         else
                         {
-                            lines.Add(line);
+                            char[] trim = { '\u001a' };
+                            string trimmedLine = line.Trim(trim);
+                            trimmedLine = trimmedLine.Trim();
+                            if (trimmedLine == "END")
+                            {
+                                lines.Add(trimmedLine);
+                            }
+                            else
+                            {
+                                lines.Add(line);
+                            }
                         }
                     }
                 }

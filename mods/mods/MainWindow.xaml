@@ -63,12 +63,12 @@
 
                 </StackPanel>
             </TabItem>
-            <TabItem Name="OptionsTab" Header="Options">
+            <TabItem Name="OptionsTab" Header="Options (Beta)">
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalAlignment="Top" Width="325" HorizontalAlignment="Left" Height="700">
                         <TextBlock x:Name="LobbyOptionsBlock" VerticalAlignment="Top" Width="300" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                     </ScrollViewer>
-                    <TextBlock x:Name="BottomOptionsBlock" Background="Transparent" Width="300" HorizontalAlignment="Left" Margin="350,0,0,0" Height="670" />
+                    <TextBlock x:Name="BottomOptionsBlock" Background="Transparent" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="350,0,0,0" Height="670" />
                 </Grid>
             </TabItem>
             <TabItem Name="TracModTab" Header="Trac Mod">

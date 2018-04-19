@@ -36,6 +36,7 @@ namespace mods
         int searchProgress = 0;
         string selectedFileVersion = "";
         List<string> Trac_Mod_Jobs = new List<string>();
+        string G_DRIVE = @"G:\";
 
         public MainWindow()
         {
@@ -116,7 +117,7 @@ namespace mods
                 foreach (var item in FilesListBox.SelectedItems)
                 {
                     string cmd = "C:\\Windows\\explorer.exe";
-                    string arg = "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
+                    string arg = G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
                     Process.Start(cmd, arg);
                 }
             }
@@ -136,7 +137,7 @@ namespace mods
             try
             {
                 string jobNumber = "*" + TextBox1.Text + "*.afm";
-                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Modification_docs";
+                string folder = G_DRIVE + "Software\\Modification_docs";
                 List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
                 foreach (string file in files)
                 {
@@ -239,11 +240,11 @@ namespace mods
                 try
                 {
                     string jobNumber = "*" + TextBox1.Text + fileExtension;
-                    string folder = "\\" + "\\" + "mceshared\\shared\\Software\\" + subfolder + "\\" + location;
+                    string folder = G_DRIVE + "Software\\" + subfolder + "\\" + location;
                     string[] files = Directory.GetFiles(@folder, jobNumber,SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
-                        int locationIndex = 28;
+                        int locationIndex = folder.IndexOf(subfolder);
                         string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                         if (permission < 2)
                         {
@@ -301,12 +302,18 @@ namespace mods
             }
         }
 
-        private void MP2COC_JobInfo(string file)
+        private bool MP2COC_JobInfo(string file)
         {
             Content content = new mods.Content(file);
             try
             {
-                DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
+                if(content.content.IndexOf("END") == -1)
+                {
+                    JobInfo.Text = "This variable file is incomplete - this job may be located in a custom folder";
+                    return false;
+                }
+
+                DateTime lastModified = System.IO.File.GetLastWriteTime(G_DRIVE + "Software\\" + file);
                 string jobName = content.Get_String("JBNAME:", 1);
                 string topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
                 string topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
@@ -416,15 +423,23 @@ namespace mods
             {
                 Write_Error_To_Log(file, ex);
             }
+
+            return true;
         }
 
-        private void MP2OGM_JobInfo(string file)
+        private bool MP2OGM_JobInfo(string file)
         {
             Content content = new Content(file);
 
             try
             {
-                DateTime lastModified = System.IO.File.GetLastWriteTime("\\" + "\\" + "mceshared\\shared\\Software\\" + file);
+                if (content.content.IndexOf("END") == -1)
+                {
+                    JobInfo.Text = "This variable file is incomplete - this job may be located in a custom folder";
+                    return false;
+                }
+
+                DateTime lastModified = System.IO.File.GetLastWriteTime(G_DRIVE + "Software\\" + file);
                 string jobName = content.Get_String("JBNAME:", 1);
                 int iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
                 int i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
@@ -525,16 +540,18 @@ namespace mods
                 Write_Error_To_Log(file, ex);
                 BottomOptionsBlock.Text = "There was an issue generating options for this file";
             }
+
+            return true;
         }
 
         private bool Generate_JobInfo(string file)
         {
             if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
             {
+
                 try
                 {
-                    MP2OGM_JobInfo(file);
-                    return true;
+                    return MP2OGM_JobInfo(file);
                 }
                 catch (Exception ex)
                 {
@@ -547,8 +564,7 @@ namespace mods
             {
                 try
                 {
-                    MP2COC_JobInfo(file);
-                    return true;
+                    return MP2COC_JobInfo(file);
                 }
                 catch (Exception ex)
                 {
@@ -841,56 +857,76 @@ namespace mods
                 LandingNormalConfig.Text += front + " " + rear + "\n";
             }
 
+            bool isAltInput = false;
+            if (content.content.IndexOf("INELIG:") != -1)
+            {
+                //INELIG: System Input Eligibility Map
+                List<string> inelig = content.IO(new List<string> { "INELIG" });
+                foreach (string input in inelig)
+                {
+                    if(input == "ALT")
+                    {
+                        isAltInput = true;
+                    }
+                }
+            }
+
             foreach(string input in content.inputs)
-            { 
+            {
                 if (input == "ALT")
                 {
-                    if (FilesListBox.SelectedItems.Count > 0) //This is to prevent this from being visible before a file is selected
+                    isAltInput = true;
+                }
+            }
+
+
+            if(isAltInput)
+            { 
+                if (FilesListBox.SelectedItems.Count > 0) //This is to prevent this from being visible before a file is selected
+                {
+                    LandingAltHeader.Visibility = Visibility.Visible;
+                    LandingAltConfig.Visibility = Visibility.Visible;
+                }
+
+                LandingAltConfig.Text = "";
+                LandingAltConfig.Height = 16 * top_landing + 10;
+                LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
+
+                for (int f = top_landing; f >= 1; f--)
+                {
+
+                    if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
                     {
-                        LandingAltHeader.Visibility = Visibility.Visible;
-                        LandingAltConfig.Visibility = Visibility.Visible;
+                        front = "F";
                     }
-
-                    LandingAltConfig.Text = "";
-                    LandingAltConfig.Height = 16 * top_landing + 10;
-                    LandingAltConfig.BorderThickness = new System.Windows.Thickness(2);
-
-                    for (int f = top_landing; f >= 1; f--)
+                    else
                     {
-
-                        if (content.Get_Bit("ALTMP:", f, 0, 3) == "YES")
+                        if (falseFloors.Contains(f))
                         {
-                            front = "F";
+                            front = " X";
                         }
                         else
                         {
-                            if (falseFloors.Contains(f))
-                            {
-                                front = " X";
-                            }
-                            else
-                            {
-                                front = ".";
-                            }
+                            front = ".";
                         }
+                    }
 
-                        if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                    if (content.Get_Bit("ALTMP:", f, 0, 2) == "YES")
+                    {
+                        rear = "R";
+                    }
+                    else
+                    {
+                        if (falseFloors.Contains(f))
                         {
-                            rear = "R";
+                            rear = "";
                         }
                         else
                         {
-                            if (falseFloors.Contains(f))
-                            {
-                                rear = "";
-                            }
-                            else
-                            {
-                                rear = ".";
-                            }
+                            rear = ".";
                         }
-                        LandingAltConfig.Text += front + " " + rear + "\n";
                     }
+                    LandingAltConfig.Text += front + " " + rear + "\n";
                 }
             }
         }
@@ -3084,7 +3120,7 @@ namespace mods
                 }
 
                 string cmd = "C:\\Windows\\explorer.exe";
-                string arg = "\\" + "\\" + "mceshared\\shared\\Software\\" + path;
+                string arg = G_DRIVE + "Software\\" + path;
                 Process.Start(cmd, arg);
             }
             catch
@@ -3147,6 +3183,8 @@ namespace mods
             IOInfoSP.Visibility = Visibility.Visible;
             BoardSP.Visibility = Visibility.Hidden;
             JobInfo.Visibility = Visibility.Visible;
+            LobbyOptionsBlock.Visibility = Visibility.Visible;
+            BottomOptionsBlock.Visibility = Visibility.Visible;
         }
 
         private void Make_Controls_Invisible()
@@ -3163,6 +3201,8 @@ namespace mods
             TogglePIs.Visibility = Visibility.Hidden;
             ToggleIOView.Visibility = Visibility.Hidden;
             JobInfo.Visibility = Visibility.Hidden;
+            LobbyOptionsBlock.Visibility = Visibility.Hidden;
+            BottomOptionsBlock.Visibility = Visibility.Hidden;
         }
 
         private bool Version_Check()
@@ -3223,7 +3263,7 @@ namespace mods
         private void Set_Permissions()
         {
             List<string> users = new List<string>();
-            users = System.IO.File.ReadAllLines(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\Permissions.txt").ToList();
+            users = System.IO.File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\Permissions.txt").ToList();
             string environmentName = Environment.UserName;
 
             foreach (string user in users)
@@ -3246,9 +3286,12 @@ namespace mods
                 Emulink.Visibility = Visibility.Hidden;
                 SettingsTab.Visibility = Visibility.Hidden;
                 TracModTab.Visibility = Visibility.Hidden;
+                OptionsTab.Visibility = Visibility.Hidden;
 
                 ShowPrints.Margin = new Thickness(ShowPrints.Margin.Left, ShowPrints.Margin.Top - 51, ShowPrints.Margin.Right, ShowPrints.Margin.Bottom);
                 PrintPage.Margin = new Thickness(PrintPage.Margin.Left, PrintPage.Margin.Top - 51, PrintPage.Margin.Right, PrintPage.Margin.Bottom);
+
+                G_DRIVE = @"\\mceshared\shared\";
             }
 
             if(permission > 0)
@@ -3305,7 +3348,7 @@ namespace mods
 
             try
             {
-                uw.JobFile.Text =  "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
+                uw.JobFile.Text =  G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
             }
             catch
             {
@@ -3331,13 +3374,13 @@ namespace mods
 
         private void ArchiveButton_Click(object sender, RoutedEventArgs e)
         {
-            ArchiveWindow aw = new ArchiveWindow("\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString());
+            ArchiveWindow aw = new ArchiveWindow(G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString());
             aw.ShowDialog();
         }
 
         private void CreatePersonalFile_Click(object sender, RoutedEventArgs e)
         {
-            string selectedPath = "\\" + "\\" + "mceshared\\shared\\Software\\" + FilesListBox.SelectedItem.ToString();
+            string selectedPath = G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
             string selectedFolder = General.Get_Folder_From_Path(selectedPath);
             string selectedFile = General.Get_File_From_Path(selectedPath);
 
@@ -3388,7 +3431,17 @@ namespace mods
 
             args = file + " " + subfolder + " " + version;
 
-            Process.Start(cmd, args);
+            Process proc = Process.Start(cmd, args);
+            proc.WaitForExit();
+
+            if(file.ToUpper().StartsWith("G"))
+            {
+                File.Copy(@"C:\EMULATION\TMPMPGRP.BIN", @"C:\EMULATION\" + file + ".BIN", true);
+            }
+            else
+            {
+                File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + file + ".BIN", true);
+            }
         }
     }
 }

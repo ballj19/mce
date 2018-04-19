@@ -1,7 +1,0 @@
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\bin\Debug\Randomizer.exe.config
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\bin\Debug\Randomizer.exe
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\bin\Debug\Randomizer.pdb
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\obj\Debug\Randomizer.csproj.CoreCompileInputs.cache
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\obj\Debug\Randomizer.exe
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\obj\Debug\Randomizer.pdb
-C:\Users\Jacob.Ball\source\repos\Randomizer\Randomizer\obj\Debug\Randomizer.csprojResolveAssemblyReference.cache

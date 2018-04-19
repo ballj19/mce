@@ -45,6 +45,10 @@ namespace mods
             CarType.Items.Add("Local");
             CarType.Items.Add("Group");
             CarType.SelectedIndex = 0;
+
+            ControllerType.Items.Add("MP");
+            ControllerType.Items.Add("MP2");
+            ControllerType.SelectedIndex = 0;
         }
 
         private void Upgrade_Click(object sender, RoutedEventArgs e)
@@ -90,7 +94,11 @@ namespace mods
             }
             if(Chicago.IsChecked == true)
             {
-                if(CarType.SelectedItem.ToString() != "Group")
+                if(CarType.SelectedItem.ToString() == "Group")
+                {
+                    Chicago_Fire_Group();
+                }
+                else
                 {
                     Chicago_Fire();
                 }
@@ -149,7 +157,7 @@ namespace mods
 
             List<string> Usernames = new List<string>();
 
-            string userName = "Jacob;Jake";
+            string userName = "jacob;jake";
 
             while (userName.Contains(";"))
             {
@@ -169,7 +177,7 @@ namespace mods
                     string notifNumber = xlRange.Cells[row, 4].Value2.ToString();
                     foreach (string username in Usernames)
                     {
-                        if (engineer.Contains(username))
+                        if (engineer.ToLower().Contains(username))
                         {
                             if (jobNumber.Contains("-"))
                             {
@@ -290,7 +298,10 @@ namespace mods
             upgrade.Modify_Value("BOTTOM:", "10", "OR", "40H");
             upgrade.Modify_Value("LOBBY:", "17", "OR", "30H");
             upgrade.Modify_Value("LOBBY:", "26", "OR", "03H");
-            upgrade.Modify_Value("LOBBY:", "31", "REPLACE", "001H");
+            if(ControllerType.SelectedItem.ToString() == "MP2")
+            {
+                upgrade.Modify_Value("LOBBY:", "31", "REPLACE", "001H");
+            }
 
             CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled Options for NYC DLM\n";
@@ -306,6 +317,14 @@ namespace mods
             {
                 upgrade.Modify_Value("LOBBY:", "0A", "OR", "08H");
             }
+
+            CommentBox.Text += ";\t\t";
+            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001";
+        }
+
+        private void Chicago_Fire_Group()
+        {
+            upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'NFRC',  00H,   01H,  04H,  01H");
 
             CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled Options for Chicago Fire Code 2001";
