@@ -199,7 +199,7 @@ namespace mods
                     string notifNumber = dlmRange.Cells[row, 4].Value2.ToString();
                     foreach (string username in Usernames)
                     {
-                        if (engineer.Contains(username))
+                        if (engineer.ToLower().Contains(username))
                         {
                             if (jobNumber.Contains("-"))
                             {
@@ -257,7 +257,7 @@ namespace mods
             commentText = "";
             commentText += ";***************************************************************************************\n";
             commentText += "; UPDATE: " + date.ToString("MM/dd/yyyy") + "\t\tNOTIFICATION #: " + notificationNumber + "\n";
-            commentText += boxText + "\n";
+            commentText += boxText;
             commentText += ";\t\t\t\t\t\t\t\t...............Jake\n";
             commentText += ";***************************************************************************************";
 
@@ -287,7 +287,7 @@ namespace mods
 
         private void Version_Upgrade()
         {
-            upgrade.Version_Upgrade(SourceFile.Text,CarType.SelectedItem.ToString());
+            upgrade.Version_Upgrade(SourceFile.Text,CarType.SelectedItem.ToString(),ControllerType.SelectedItem.ToString());
 
             CommentBox.Text += ";\t\t";
             CommentBox.Text += "Upgraded Software to Version \n";
@@ -319,7 +319,7 @@ namespace mods
             }
 
             CommentBox.Text += ";\t\t";
-            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001";
+            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001\n";
         }
 
         private void Chicago_Fire_Group()
@@ -373,7 +373,7 @@ namespace mods
             }
 
             CommentBox.Text += ";\t\t";
-            CommentBox.Text += "Enabled Options for ANSI 2K Fire";
+            CommentBox.Text += "Enabled Options for ANSI 2K Fire\n";
         }
 
         private void ANSI2K_Fire_Group()
@@ -410,7 +410,7 @@ namespace mods
             }
 
             CommentBox.Text += ";\t\t";
-            CommentBox.Text += "Enabled Options for ANSI 2K Fire";
+            CommentBox.Text += "Enabled Options for ANSI 2K Fire\n";
         }
 
         public void Group_CRTLOCK()

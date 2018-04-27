@@ -30,3 +30,4 @@ C:\Users\Jacob.Ball\source\repos\mce\ModHubInstaller\ModHubInstaller\obj\Release
 C:\Users\Jacob.Ball\source\repos\mce\ModHubInstaller\ModHubInstaller\obj\Release\ModHubInstaller.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\ModHubInstaller\ModHubInstaller\obj\Release\install.exe
 C:\Users\Jacob.Ball\source\repos\mce\ModHubInstaller\ModHubInstaller\obj\Release\install.pdb
+C:\Users\Jacob.Ball\source\repos\mce\ModHubInstaller\ModHubInstaller\obj\Release\ModHubInstaller.csprojResolveAssemblyReference.cache

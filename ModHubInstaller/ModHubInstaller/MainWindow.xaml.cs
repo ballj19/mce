@@ -50,7 +50,7 @@ namespace ModHubInstaller
             try
             {
                 string versionPath = "";
-                string updaterPath = @"\\mceshared\shared\Software\Utility\Software Programs and shortcuts\\ModHub\ModHubAutoUpgrader\ModHubUpdater.exe";
+                string updaterPath = @"\\mceshared\shared\Software\Utility\Software Programs and shortcuts\ModHub\ModHubAutoUpgrader\ModHubUpdater.exe";
 
                 List<string> versions = new List<string>();
                 versions = System.IO.File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\Versions.txt").ToList();

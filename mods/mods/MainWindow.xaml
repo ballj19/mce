@@ -27,10 +27,10 @@
         <Button x:Name="OpenFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="OpenFolder_Click"/>
         <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
         <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,227,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
-        <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="378" Height="456" Margin="19,308,0,0"></TextBlock>
         <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
         <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
         <Button x:Name="PrintPage" Content="Print Preview" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="PrintPage_Click" Height="22"/>
+        <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="398" Height="450" Margin="18,310,0,0"></TextBlock>
         <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged">
             <TabItem Name="LandingsTab" Header="Landings">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -52,9 +52,14 @@
             <TabItem Name="IOTab" Header="Inputs/Outputs">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="39*"/>
+                            <ColumnDefinition Width="28*"/>
+                        </Grid.ColumnDefinitions>
                         <Button x:Name="ToggleIOView" Content="Toggle View" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ToggleIOView_Click" Height="22"/>
-                        <StackPanel x:Name="IOInfoSP" Orientation="Vertical" Margin="0,37,0,0"/>
-                        <StackPanel x:Name="BoardSP" Orientation="Vertical" Margin="0,37,0,0"/>
+                        <Button x:Name="ViewVersionIO" Content="V0.0.0 I/O" HorizontalAlignment="Left" Margin="127,10,0,0" VerticalAlignment="Top" Width="99" Click="ViewVersionIO_Click" Height="22"/>
+                        <StackPanel x:Name="IOInfoSP" Orientation="Vertical" Margin="0,37,0,0" Grid.ColumnSpan="2"/>
+                        <StackPanel x:Name="BoardSP" Orientation="Vertical" Margin="0,37,0,0" Grid.ColumnSpan="2"/>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
@@ -62,6 +67,11 @@
                 <StackPanel Name="HeaderSP" Orientation="Horizontal">
 
                 </StackPanel>
+            </TabItem>
+            <TabItem x:Name="JobSummaryTab" Header="Summary">
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <TextBlock x:Name="JobSummary" TextWrapping="Wrap" Width="640" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                </ScrollViewer>
             </TabItem>
             <TabItem Name="OptionsTab" Header="Options (Beta)">
                 <Grid>

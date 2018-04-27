@@ -17,6 +17,7 @@ namespace mods
         UpgradeContent original_content;
         List<string> new_lines = new List<string>();
         int tableCount = 0;
+        int addLabelDifference = 0;
 
         public Upgrade(string filepath)
         {
@@ -32,7 +33,14 @@ namespace mods
                 filepath = tempfilepath;
             }
             int dotIndex = filepath.IndexOf(".");
-            this.filename = filepath.Substring(0,dotIndex);
+            if(dotIndex == -1)
+            {
+                filename = filepath;
+            }
+            else
+            {
+                this.filename = filepath.Substring(0, dotIndex);
+            }
         }
 
         public void Write_Line(string text)
@@ -48,7 +56,7 @@ namespace mods
             }
         }
 
-        private void Write_Missing_Labels(string cartype)
+        private void Write_Missing_Labels(string cartype, string controllertype)
         {
             Write_Intermediate(0, original_content.labelsInt[0]); //Writes the header at the beginning of file
 
@@ -85,12 +93,31 @@ namespace mods
                     }
                 }
             }
+
+            if (controllertype == "MP2")
+            {
+                foreach (string line in new_lines) //This is to fix the PUBLIC V013 statement
+                {
+                    if (line.Contains("PUBLIC") && line.Contains("V0"))
+                    {
+                        int pubIndex = new_lines.IndexOf(line);
+
+                        string version = new_lines[pubIndex + 1].Substring(0, 4);
+
+                        int lineVersionIndex = line.IndexOf("V0");
+
+                        new_lines[pubIndex] = line.Substring(0, lineVersionIndex) + version;
+
+                        break;
+                    }
+                }
+            }
         }
 
-        public void Version_Upgrade(string sourcepath, string cartype)
+        public void Version_Upgrade(string sourcepath, string cartype, string controllertype)
         {
             upgrade_content = new UpgradeContent(sourcepath);
-            Write_Missing_Labels(cartype);
+            Write_Missing_Labels(cartype, controllertype);
             original_content = new UpgradeContent(Write_File());
             new_lines.Clear();
 
@@ -180,11 +207,18 @@ namespace mods
                 }
                 else if (load_labels.Contains(label))
                 {
-                    Load_Label(label + ":");
+                    if(addLabelDifference == 0)
+                    {
+                        Replace_Label(label + ":");
+                    }
+                    else
+                    {
+                        Load_Label(label + ":");
+                    }
                 }
                 else if (select_labels.Contains(label))
                 {
-                    if (tableCount == 0)
+                    if (addLabelDifference == 0)
                     {
                         Replace_Label(label + ":");
                     }
@@ -235,6 +269,7 @@ namespace mods
             int oCount = 0;
             int uCount = 0;
             tableCount = 0;
+            addLabelDifference = 0;
 
             int oLabelIndex = original_content.lines.IndexOf(label);
             int uLabelIndex = upgrade_content.lines.IndexOf(label);
@@ -277,6 +312,10 @@ namespace mods
             while(!General.Value(upgrade_content.lines[u]).EndsWith(":"))
             {
                 Write_Line(upgrade_content.lines[u]);
+                if((General.Value(upgrade_content.lines[u])).StartsWith("DB") || (General.Value(upgrade_content.lines[u])).StartsWith("DW"))
+                {
+                    addLabelDifference++;
+                }
                 u++;
             }
         }
@@ -285,6 +324,8 @@ namespace mods
         {
             int oLabelIndex = original_content.lines.IndexOf(label);
             int uLabelIndex = upgrade_content.lines.IndexOf(label);
+
+            Write_Line(original_content.lines[oLabelIndex]);
 
             int uCount = 0;
 
@@ -297,7 +338,7 @@ namespace mods
 
             for (int x = 0; x < uCount; x++)
             {
-                Write_Line(upgrade_content.lines[uLabelIndex + x]);
+                Write_Line(upgrade_content.lines[uLabelIndex + 1 + x]);
             }
         }
 

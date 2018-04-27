@@ -1,0 +1,25 @@
+﻿<Window x:Class="mods.VersionIO"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mods"
+        mc:Ignorable="d"
+        Title="VersionIO" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="Filter" HorizontalAlignment="Left" Height="23" Margin="5,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150" TextChanged="Filter_TextChanged"/>
+        <Label Content="Filter" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50" Margin="160,7,0,0" VerticalContentAlignment="Center"/>
+        <TabControl Margin="0,38,0,0">
+            <TabItem x:Name="Inputs" Header="Inputs">
+                <ScrollViewer Margin="0,0,0,0">
+                    <WrapPanel x:Name="InputsSP" Orientation="Horizontal" Width="700"></WrapPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem x:Name="Outputs" Header="Outputs">
+                <ScrollViewer Margin="0,0,0,0">
+                    <WrapPanel x:Name="OutputsSP" Orientation="Horizontal" Width="700"></WrapPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

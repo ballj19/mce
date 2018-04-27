@@ -39,7 +39,14 @@ namespace mods
 
             string jobFile = General.Get_File_From_Path(filePath);
             int dotIndex = jobFile.IndexOf(".");
-            this.jobNumber = jobFile.Substring(0, dotIndex);
+            if(dotIndex == -1)
+            {
+                jobNumber = jobFile;
+            }
+            else
+            {
+                this.jobNumber = jobFile.Substring(0, dotIndex);
+            }
 
             FileNameBlock.Text = jobNumber + ".";
             FileExtensionBox.Text = "OLD";

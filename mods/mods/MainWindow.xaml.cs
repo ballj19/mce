@@ -31,12 +31,13 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.03.2";
+        string version = "V1.03.3";
         int permission = 1000;
         int searchProgress = 0;
         string selectedFileVersion = "";
         List<string> Trac_Mod_Jobs = new List<string>();
         string G_DRIVE = @"G:\";
+        string file = "";
 
         public MainWindow()
         {
@@ -146,9 +147,12 @@ namespace mods
 
                 if(files.Count < 1)
                 {
-                    string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
-                    File.Copy(folder + "\\" + "Mod_Base.afm",file);
-                    Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                    if (System.Windows.Forms.MessageBox.Show("There is no existing modification doc. Would you like to create one?", "Create Mod Doc?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
+                        File.Copy(folder + "\\" + "Mod_Base.afm", file);
+                        Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                    }
                 }
             }
             catch
@@ -159,7 +163,16 @@ namespace mods
 
         private void Emulink_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("Y:\\Emulink.exe");
+            Process proc = Process.Start("Y:\\Emulink.exe");
+
+            proc.WaitForExit();
+
+            string response = Microsoft.VisualBasic.Interaction.InputBox("Rename File?", "Rename File", TextBox1.Text + ".BIN");
+
+            if(response != "")
+            {
+                File.Copy(@"C:\EMULATION\TEMP.BIN", @"C:\EMULATION\" + response, true);
+            }
         }
 
         private void Mp2link_Click(object sender, RoutedEventArgs e)
@@ -221,40 +234,57 @@ namespace mods
 
         private void SearchLocation(string[] locations, string subfolder)
         {
-            string fileExtension = "";
-            if (FileExtension.SelectedIndex == 0)
-            {
-                fileExtension = "*.asm";
-            }
-            else if (FileExtension.SelectedIndex == 1)
-            {
-                fileExtension = "*.ol*";
-            }
-            else
-            {
-                fileExtension = "*";
-            }
-
             foreach (string location in locations)
             {
                 try
                 {
-                    string jobNumber = "*" + TextBox1.Text + fileExtension;
+                    string jobNumber = "*" + TextBox1.Text + "*";
                     string folder = G_DRIVE + "Software\\" + subfolder + "\\" + location;
                     string[] files = Directory.GetFiles(@folder, jobNumber,SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
-                        int locationIndex = folder.IndexOf(subfolder);
-                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
-                        if (permission < 2)
+                        bool validFile = false;
+                        string fileExtension = General.Get_FileExtension_From_Path(file).ToLower();
+
+                        if (FileExtension.SelectedIndex == 0)
                         {
-                            FilesListBox.Items.Add(jobFile);
+                            if(fileExtension == ".asm" || fileExtension == "")
+                            {
+                                validFile = true;
+                            }
+                        }
+                        else if (FileExtension.SelectedIndex == 1)
+                        {
+                            if(fileExtension.Contains(".ol"))
+                            {
+                                validFile = true;
+                            }
                         }
                         else
                         {
-                            if(Generate_JobInfo(jobFile))
+                            validFile = true;
+                        }
+
+                        if(TextBox1.Text.ToUpper() != General.Get_Job_Number_From_Path(file))
+                        {
+                            validFile = false;
+                        }
+
+                        if(validFile)
+                        {
+                            int locationIndex = folder.IndexOf(subfolder);
+                            string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                            if (permission < 2)
                             {
                                 FilesListBox.Items.Add(jobFile);
+                            }
+                            else
+                            {
+                                if (Generate_JobInfo(jobFile))
+                                {
+                                    FilesListBox.Items.Add(jobFile);
+                                    Make_Controls_Invisible();
+                                }
                             }
                         }
                     }
@@ -305,6 +335,30 @@ namespace mods
         private bool MP2COC_JobInfo(string file)
         {
             Content content = new mods.Content(file);
+
+            //Job Summary
+            try
+            {
+                JobSummary.Text = "";
+                List<string> jobSummary = content.Get_Job_Summary();
+                foreach (string line in jobSummary)
+                {
+                    if (line.IndexOf(";") != -1)
+                    {
+                        JobSummary.Text += line.Substring(line.IndexOf(";") + 1, line.Length - line.IndexOf(";") - 1) + "\n";
+                    }
+                    else
+                    {
+                        JobSummary.Text += line + "\n";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                JobSummary.Text = "Job Summary could not be created for this file";
+            }
+
             try
             {
                 if(content.content.IndexOf("END") == -1)
@@ -370,7 +424,7 @@ namespace mods
             catch(Exception ex)
             {
                 Write_Error_To_Log(file, ex);
-                JobInfo.Text = "Job Info Could not be created for this file";  
+                JobInfo.Text = "Job Info could not be created for this file";  
             }
 
             //Options
@@ -431,6 +485,29 @@ namespace mods
         {
             Content content = new Content(file);
 
+            //Job Summary
+            try
+            {
+                JobSummary.Text = "";
+                List<string> jobSummary = content.Get_Job_Summary();
+                foreach (string line in jobSummary)
+                {
+                    if (line.IndexOf(";") != -1)
+                    {
+                        JobSummary.Text += line.Substring(line.IndexOf(";") + 1, line.Length - line.IndexOf(";") - 1) + "\n";
+                    }
+                    else
+                    {
+                        JobSummary.Text += line + "\n";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                JobSummary.Text = "Job Summary could not be created for this file";
+            }
+
             try
             {
                 if (content.content.IndexOf("END") == -1)
@@ -483,11 +560,12 @@ namespace mods
                 JobInfo.Text += "# of IOX Boards: " + iox + "\n";
                 JobInfo.Text += "# of I4O Boards: " + i4o + "\n";
                 JobInfo.Text += "# of AIOX Boards: " + aiox + "\n\n";
+                
             }
             catch (Exception ex)
             {
                 Write_Error_To_Log(file, ex);
-                JobInfo.Text = "Job Info Could not be created for this file";
+                JobInfo.Text = "Job Info could not be created for this file";
             }
 
             //Headers
@@ -546,6 +624,7 @@ namespace mods
 
         private bool Generate_JobInfo(string file)
         {
+            this.file = file;
             if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
             {
 
@@ -593,6 +672,9 @@ namespace mods
                     JobInfo.Visibility = Visibility.Visible;
                 }
             }
+
+            ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "V" + selectedFileVersion + " I/O", DispatcherPriority.Background);
+
         }
 
         private void OpenSim_Click(object sender, RoutedEventArgs e)
@@ -2519,7 +2601,8 @@ namespace mods
         {
             //OPEN EXCEL
             Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm",0,true);
+            xlApp.Visible = false;
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm",0,true);          
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel._Worksheet dlmWorksheet = xlWorkbook.Sheets[2];
             Excel.Range xlRange = xlWorksheet.UsedRange;
@@ -3185,6 +3268,8 @@ namespace mods
             JobInfo.Visibility = Visibility.Visible;
             LobbyOptionsBlock.Visibility = Visibility.Visible;
             BottomOptionsBlock.Visibility = Visibility.Visible;
+            JobSummary.Visibility = Visibility.Visible;
+            ViewVersionIO.Visibility = Visibility.Visible;
         }
 
         private void Make_Controls_Invisible()
@@ -3203,6 +3288,8 @@ namespace mods
             JobInfo.Visibility = Visibility.Hidden;
             LobbyOptionsBlock.Visibility = Visibility.Hidden;
             BottomOptionsBlock.Visibility = Visibility.Hidden;
+            JobSummary.Visibility = Visibility.Hidden;
+            ViewVersionIO.Visibility = Visibility.Hidden;
         }
 
         private bool Version_Check()
@@ -3349,17 +3436,18 @@ namespace mods
             try
             {
                 uw.JobFile.Text =  G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
+                uw.ShowDialog();
             }
-            catch
+            catch(Exception ex)
             {
-
+                Write_Error_To_Log("MODUPGRADE", ex);
             }
-            uw.ShowDialog();            
+                      
         }
 
         private void InfoTabControl_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if(InfoTabControl.SelectedIndex == 4)
+            if(InfoTabControl.SelectedIndex == 5)
             {
                 InfoTabControl.Margin = new Thickness(0, 18, 0, 0);
 
@@ -3442,6 +3530,20 @@ namespace mods
             {
                 File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + file + ".BIN", true);
             }
+        }
+
+        private void ViewVersionIO_Click(object sender, RoutedEventArgs e)
+        {
+            Content content = new Content(file);
+            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
+            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
+
+            List<string> inputs = content.Build_IOmap(inputLabels);
+            List<string> outputs = content.Build_IOmap(outputLabels);
+            
+            VersionIO vio = new VersionIO(inputs, outputs);
+            vio.Title = "V" + selectedFileVersion + " Spare Inputs and Outputs";
+            vio.Show();
         }
     }
 }

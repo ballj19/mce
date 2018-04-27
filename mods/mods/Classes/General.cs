@@ -34,6 +34,51 @@ namespace mods
             return folder;
         }
 
+        public static string Get_FileExtension_From_Path(string path)
+        {
+            string file = Get_File_From_Path(path);
+
+            int dotIndex = file.IndexOf(".");
+
+            if(dotIndex == -1)
+            {
+                return "";
+            }
+            else
+            {
+                return file.Substring(dotIndex, file.Length - dotIndex);
+            }
+        }
+
+        public static string Get_Job_Number_From_Path(string path)
+        {
+            string file = Get_File_From_Path(path);
+
+            int c = 0;
+            string jobNumber = "";
+            string onlyLettersJobNumber = "";
+
+            while(char.IsLetter(file[c]))
+            {
+                onlyLettersJobNumber += file[c];
+                c++;
+            }
+            while(c < file.Length && char.IsNumber(file[c]))
+            {
+                jobNumber += file[c];
+                c++;
+            }
+
+            if(jobNumber.Length < 1)
+            {
+                return onlyLettersJobNumber.ToUpper();
+            }
+            else
+            {
+                return jobNumber;
+            }
+        }
+
         public static bool Is_Hex(string text)
         {
             if (text.IndexOf("H") == -1)
@@ -45,6 +90,11 @@ namespace mods
 
         public static string Hex_To_Bin(string hex)
         {
+            if(!Is_Hex(hex))
+            {
+                hex = Dec_To_Hex(hex);
+            }
+
             string strippedHex = Remove_Suffix(Remove_Prefix(hex, "DB"), "H").Trim();
             strippedHex = strippedHex.Substring(strippedHex.Length - 2, 2);
             return HexStringToBinary(strippedHex);
@@ -52,7 +102,8 @@ namespace mods
 
         public static string Dec_To_Hex(string deci)
         {
-            int dec = Int32.Parse(deci);
+            string strippedDeci = Remove_Prefix(deci, "DB");
+            int dec = Int32.Parse(strippedDeci);
             return dec.ToString("X").PadLeft(3, '0');
         }
 

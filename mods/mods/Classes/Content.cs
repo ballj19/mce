@@ -252,7 +252,7 @@ namespace mods
             }
         }
 
-        private List<string> Build_IOmap(List<string> ioLabels)
+        public List<string> Build_IOmap(List<string> ioLabels)
         {
             List<string> iomap = new List<string>();
 
@@ -614,6 +614,39 @@ namespace mods
             }
 
             return piLabels;
+        }
+
+        public List<string> Get_Job_Summary()
+        {
+            List<string> lines = General.Get_Clean_Lines_From_Path(filepath + file);
+            List<string> jobSummary = new List<string>();
+
+            int startIndex = 0;
+            int endIndex = 0;
+            foreach(string line in lines)
+            {
+                if(General.Comment(line) != "")
+                {
+                    startIndex = lines.IndexOf(line);
+                    break;
+                }
+            }
+
+            foreach(string line in lines)
+            {
+                if(General.Comment(line).Contains(";BOARD TYPE:"))
+                {
+                    endIndex = lines.IndexOf(line);
+                    break;
+                }
+            }
+
+            for(int l = startIndex; l < endIndex; l++)
+            {
+                jobSummary.Add(lines[l]);
+            }
+
+            return jobSummary;
         }
 
         private List<string> LobbyConfig = new List<string>
