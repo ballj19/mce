@@ -46,3 +46,7 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\App\App.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ArchiveWindow.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\VersionIO.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\VersionIO.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Interop.IWshRuntimeLibrary.dll
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Debug\Interop.IWshRuntimeLibrary.dll
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\CustomMod.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\CustomMod.baml

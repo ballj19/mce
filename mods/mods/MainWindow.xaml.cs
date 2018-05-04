@@ -2,26 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.IO;
 using System.ComponentModel;
 using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Media;
-using System.Printing;
-using System.Text.RegularExpressions;
+using IWshRuntimeLibrary;
 
 namespace mods
 {
@@ -38,6 +27,7 @@ namespace mods
         List<string> Trac_Mod_Jobs = new List<string>();
         string G_DRIVE = @"G:\";
         string file = "";
+        
 
         public MainWindow()
         {
@@ -46,6 +36,8 @@ namespace mods
             Set_Permissions();
 
             this.Title = "Modification Hub by Jake Ball " + version;
+
+            Update_Auto_Updater();
 
             if (Version_Check())
             {
@@ -76,10 +68,6 @@ namespace mods
             FileExtension.SelectedIndex = 0;
             Make_Controls_Invisible();
             Update_Search_History();
-            if(permission <= 1)
-            {
-                Track_Mod();
-            }
                 
             try
             {
@@ -150,7 +138,7 @@ namespace mods
                     if (System.Windows.Forms.MessageBox.Show("There is no existing modification doc. Would you like to create one?", "Create Mod Doc?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                     {
                         string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
-                        File.Copy(folder + "\\" + "Mod_Base.afm", file);
+                        System.IO.File.Copy(folder + "\\" + "Mod_Base.afm", file);
                         Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
                     }
                 }
@@ -171,7 +159,7 @@ namespace mods
 
             if(response != "")
             {
-                File.Copy(@"C:\EMULATION\TEMP.BIN", @"C:\EMULATION\" + response, true);
+                System.IO.File.Copy(@"C:\EMULATION\TEMP.BIN", @"C:\EMULATION\" + response, true);
             }
         }
 
@@ -228,7 +216,9 @@ namespace mods
             if(FilesListBox.Items.Count < 1)
             {
                 JobInfo.Visibility = Visibility.Visible;
-                JobInfo.Text = "No preview available for this job";
+                JobInfo.Text = "No preview available for this job.\n";
+                JobInfo.Text += "This job may be custom and under a different Job Number.\n";
+                JobInfo.Text += "Please consult the Software Department for more info on this job.";
             }
         }
 
@@ -239,6 +229,7 @@ namespace mods
                 try
                 {
                     string jobNumber = "*" + TextBox1.Text + "*";
+
                     string folder = G_DRIVE + "Software\\" + subfolder + "\\" + location;
                     string[] files = Directory.GetFiles(@folder, jobNumber,SearchOption.AllDirectories);
                     foreach (string file in files)
@@ -264,8 +255,7 @@ namespace mods
                         {
                             validFile = true;
                         }
-
-                        if(TextBox1.Text.ToUpper() != General.Get_Job_Number_From_Path(file))
+                        if (TextBox1.Text.ToUpper() != General.Get_Job_Number_From_Path(file))
                         {
                             validFile = false;
                         }
@@ -673,7 +663,7 @@ namespace mods
                 }
             }
 
-            ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "V" + selectedFileVersion + " I/O", DispatcherPriority.Background);
+            ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "Version I/O", DispatcherPriority.Background);
 
         }
 
@@ -3493,7 +3483,11 @@ namespace mods
             }
             newFileName.Append(".ASM");
 
-            File.Copy(selectedPath, selectedFolder + newFileName, true);
+            System.IO.File.Copy(selectedPath, selectedFolder + newFileName, true);
+
+            string cmd = "C:\\Windows\\explorer.exe";
+            string arg = selectedFolder + newFileName;
+            Process.Start(cmd, arg);
         }
 
         private void N_EPLNK_Click(object sender, RoutedEventArgs e)
@@ -3524,11 +3518,11 @@ namespace mods
 
             if(file.ToUpper().StartsWith("G"))
             {
-                File.Copy(@"C:\EMULATION\TMPMPGRP.BIN", @"C:\EMULATION\" + file + ".BIN", true);
+                System.IO.File.Copy(@"C:\EMULATION\TMPMPGRP.BIN", @"C:\EMULATION\" + file + ".BIN", true);
             }
             else
             {
-                File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + file + ".BIN", true);
+                System.IO.File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + file + ".BIN", true);
             }
         }
 
@@ -3544,6 +3538,86 @@ namespace mods
             VersionIO vio = new VersionIO(inputs, outputs);
             vio.Title = "V" + selectedFileVersion + " Spare Inputs and Outputs";
             vio.Show();
+        }
+
+        private void Update_Auto_Updater()
+        {
+            try
+            {
+                //To get the location the assembly normally resides on disk or the install directory
+                string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                //once you have the path you get the directory with:
+                string modsPath = System.IO.Path.GetDirectoryName(path) + @"\ModHubUpdater.exe";
+                modsPath = modsPath.Substring(6, modsPath.Length - 6);
+
+                string updaterPath = @"\\mceshared\shared\Software\Utility\Software Programs and shortcuts\ModHub\ModHubAutoUpgrader\ModHubUpdater.exe";
+
+                System.IO.File.Copy(updaterPath, modsPath, true);
+            }
+            catch (Exception ex)
+            {
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\amrappfil01\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
+        }
+
+        private void MotionDummyFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string path = @"G:\Software\MOTION_LINE\";
+            string yearSubFolder = TextBox1.Text.Substring(0, 4);
+            string jobPath = path + yearSubFolder + "\\" + TextBox1.Text;
+
+            if (!Directory.Exists(jobPath))
+            {
+                string response = Microsoft.VisualBasic.Interaction.InputBox("What job number can this job Reference?", "Rename File", "");
+                
+                if (System.Windows.Forms.MessageBox.Show("There is no existing folder for this job. Would you like to create one?", "Create Job Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    Directory.CreateDirectory(jobPath);
+
+                    // Create a file to write to.
+                    using (StreamWriter sw = System.IO.File.CreateText(jobPath + @"\Readme.txt"))
+                    {
+                        DateTime now = DateTime.Now;
+                        sw.WriteLine("Date: " + now.ToString("MM-dd-yy"));
+                        sw.WriteLine("");
+                        sw.WriteLine("The Custom is the same as job " + response.Substring(0,4) + "-" + response.Substring(4,response.Length - 4));
+                    }
+                }
+
+                if (response != "")
+                {
+                    string referenceYearSubFolder = response.Substring(0, 4);
+                    string referenceJobPath = path + referenceYearSubFolder + "\\" + response;
+                    CreateShortcut(response + " - Shortcut", jobPath + "\\", referenceJobPath);
+                }
+            }
+
+            string cmd = "C:\\Windows\\explorer.exe";
+            string arg = jobPath;
+            Process.Start(cmd, arg);
+        }
+
+        public static void CreateShortcut(string shortcutName, string shortcutPath, string targetFileLocation)
+        {
+            string shortcutLocation = System.IO.Path.Combine(shortcutPath, shortcutName + ".lnk");
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+
+            shortcut.TargetPath = targetFileLocation;                 // The path of the file that will launch when the shortcut is run
+            shortcut.Save();                                    // Save the shortcut
+        }
+
+        private void Custom_Mod_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMod cm = new CustomMod(TextBox1.Text);
+            cm.Show();
         }
     }
 }

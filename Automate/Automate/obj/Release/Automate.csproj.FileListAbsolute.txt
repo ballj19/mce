@@ -12,3 +12,6 @@ C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.cspr
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.exe
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.pdb
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\Automate.csprojResolveAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\CarCalls.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Release\CarCalls.baml

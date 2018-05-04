@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\App\App.xaml
-71898380087
+82026073501
 
-20-505360788
-201151854591
-Windows\ArchiveWindow.xaml;Windows\AdvancedSearch.xaml;MainWindow.xaml;Windows\PrintPreview.xaml;Windows\SoftwareOption.xaml;Windows\UpgradeWindow.xaml;Windows\VersionIO.xaml;
+21-211380901
+211916403443
+Windows\CustomMod.xaml;Windows\ArchiveWindow.xaml;Windows\AdvancedSearch.xaml;MainWindow.xaml;Windows\PrintPreview.xaml;Windows\SoftwareOption.xaml;Windows\UpgradeWindow.xaml;Windows\VersionIO.xaml;
 
-False
+True
 

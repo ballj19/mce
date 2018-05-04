@@ -62,10 +62,9 @@ namespace Automate
         public MainWindow()
         {
             InitializeComponent();
-
-            CarCallsBox.IsChecked = true;
-            FireServiceBox.IsChecked = true;
-            DLMBox.IsChecked = false;
+            DLMNormalBox.IsChecked = true;
+            DLMFSPH1.IsChecked = true;
+            DLMFSPH2.IsChecked = true;
                         
             CarCallDictionary();
         }
@@ -93,6 +92,10 @@ namespace Automate
                 }
                 cc++;
             }
+
+            CarCalls calls = new CarCalls(car_calls, this.top_landing);
+            calls.ShowDialog();
+            car_calls = calls.car_calls;
         }
 
         private void Get_Content()
@@ -155,36 +158,48 @@ namespace Automate
 
         private void Simulate_Click(object sender, RoutedEventArgs e)
         {
-            bool cc = (bool)CarCallsBox.IsChecked;
-            bool fs = (bool)FireServiceBox.IsChecked;
-            bool dlm = (bool)DLMBox.IsChecked;
+            bool ccb = (bool)CarCallsBox.IsChecked;
+            bool fs = (bool)FSPH2Box.IsChecked;
+            bool dlmN = (bool)DLMNormalBox.IsChecked;
+            bool dlmFS1 = (bool)DLMFSPH1.IsChecked;
+            bool dlmFS2 = (bool)DLMFSPH2.IsChecked;
             Get_Content();
             SetVariables();
-            Thread t = new System.Threading.Thread(() => DoTheLoop(cc, fs, dlm));
+            Thread t = new System.Threading.Thread(() => DoTheLoop(ccb,fs,dlmN,dlmFS1,dlmFS2));
             t.Start();
         }
 
-        private void DoTheLoop(bool cc, bool fs, bool dlm)
+        private void DoTheLoop(bool ccb, bool fs, bool dlmN, bool dlmFS1, bool dlmFS2)
         {
-            if (cc)
+            DateTime now = DateTime.Now;
+            filelog = "[" + now.ToString() + "]";
+            WriteToFile();
+
+            if (ccb == true)
             {
                 CarCalls();
+                WriteToFile();
             }
-            if (dlm)
-            {
-                DLMNormal();
-            }
-            if (fs)
+            if (fs == true)
             {
                 FireService();
+                WriteToFile();
             }
-            if (dlm)
+            if (dlmN == true)
+            {
+                DLMNormal();
+                WriteToFile();
+            }
+            if (dlmFS1 == true)
             {
                 DLMFireServicePhase1();
-                DLMFireServicePhase2();
+                WriteToFile();
             }
-
-            WriteToFile();
+            if(dlmFS2 == true)
+            { 
+                DLMFireServicePhase2();
+                WriteToFile();
+            }
         }
 
         private void CursorPos_Click(object sender, RoutedEventArgs e)
@@ -294,10 +309,9 @@ namespace Automate
             using (System.IO.StreamWriter file =
             new System.IO.StreamWriter(@"C:\\Simulator\\Log\\" + filename + ".log", true))
             {
-                DateTime now = DateTime.Now;
-                file.WriteLine("[" + now.ToString() + "]");
                 file.WriteLine(filelog);
             }
+            filelog = "";
         }
 
         private bool waitEvent(string button, string color, string log, int tab, double wait = 120)
@@ -724,7 +738,7 @@ namespace Automate
 
             //Part 2
             LeftMouseClick(Buttons[d + "CDH"][0], Buttons[d + "CDH"][1]);
-            Log("\n\t\t\tCD Jumpered\n");
+            Log("\t\t\tCD Jumpered\n");
             Thread.Sleep(1000);
 
             //Part 3
@@ -821,7 +835,7 @@ namespace Automate
             Log("\t" + d + " Car Call " + call_num + "\n");
             Thread.Sleep(1000);
             LeftMouseClick(Buttons[d + "CDH"][0], Buttons[d + "CDH"][1]);
-            Log("\n\t\tCD Jumpered\n");
+            Log("\t\tCD Jumpered\n");
             Thread.Sleep(1000);
             LeftMouseClick(Buttons[d + "DOBH"][0], Buttons[d + "DOBH"][1]);
             waitEvent(d + "DO", "DoorOpen", "Door Opened\n",3);
@@ -901,6 +915,11 @@ namespace Automate
                 string filename = dlg.FileName;
                 FileBox.Text = filename;
             }
+        }
+        
+        private void Window_Closed(object sender, EventArgs args)
+        {
+            System.Windows.Application.Current.Shutdown();
         }
     }
 }

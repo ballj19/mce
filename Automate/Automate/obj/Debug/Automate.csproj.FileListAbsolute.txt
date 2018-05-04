@@ -28,3 +28,5 @@ C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\Automate.csproj
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\Automate.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\Automate.exe
 C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\Automate.pdb
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\CarCalls.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\Automate\Automate\obj\Debug\CarCalls.baml

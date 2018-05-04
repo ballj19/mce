@@ -5,16 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Automate"
         mc:Ignorable="d"
+        Icon="automate.ico"
+        Closed="Window_Closed"
         Title="MainWindow" Height="900" Width="810.5">
     <Grid>
         <Button x:Name="CursorPos" Content="CursorPos" HorizontalAlignment="Left" Margin="693,10,0,0" VerticalAlignment="Top" Width="99" Click="CursorPos_Click"/>
         <TextBlock x:Name="CursorPosition" HorizontalAlignment="Left" Margin="657,37,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135" Height="27"/>
         <Button x:Name="Simulate" Content="Simulate" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="Simulate_Click"/>
-        <TextBlock x:Name="ProcedureLog" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="472" Height="773" x:FieldModifier="public"/>
+        <TextBlock x:Name="ProcedureLog" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="782" Height="773" x:FieldModifier="public"/>
         <CheckBox x:Name="CarCallsBox" Content="Car Calls" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="FireServiceBox" Content="Fire Service" HorizontalAlignment="Left" Margin="77,37,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="DLMBox" Content="DLM" HorizontalAlignment="Left" Margin="159,37,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="FSPH1Box" Content="FS PH1" HorizontalAlignment="Left" Margin="77,37,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="FSPH2Box" Content="FS PH2" HorizontalAlignment="Left" Margin="164,37,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="FileBox" HorizontalAlignment="Left" Height="23" Margin="232,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="226"/>
         <Button x:Name="Browse" Content="Browse" HorizontalAlignment="Left" Margin="463,11,0,0" VerticalAlignment="Top" Width="74" Click="Browse_Click"/>
+        <CheckBox x:Name="DLMNormalBox" Content="DLM N" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="DLMFSPH1" Content="DLM FS PH1" HorizontalAlignment="Left" Margin="77,55,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="DLMFSPH2" Content="DLM FS PH2" HorizontalAlignment="Left" Margin="164,55,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

@@ -107,6 +107,8 @@
                     <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,37,0,0" Click="ArchiveButton_Click"/>
                     <Button x:Name="PersonalFileButton" Content="Create Personal" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,64,0,0" Click="CreatePersonalFile_Click"/>
                     <Button x:Name="N_EPLNK" Content="N_EPNLK" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,91,0,0" Click="N_EPLNK_Click"/>
+                    <Button x:Name="MotionDummyFolder" Content="Dummy Folder" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="242,10,0,0" Click="MotionDummyFolder_Click" />
+                    <Button x:Name="CustomModButton" Content="Custom Mod" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,118,0,0" Click="Custom_Mod_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>
