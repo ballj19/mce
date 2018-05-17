@@ -11,15 +11,16 @@
         <Label Content="Filter" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50" Margin="160,7,0,0" VerticalContentAlignment="Center"/>
         <TabControl Margin="0,38,0,0">
             <TabItem x:Name="Inputs" Header="Inputs">
-                <ScrollViewer Margin="0,0,0,0">
+                <ScrollViewer Margin="0,0,0,31">
                     <WrapPanel x:Name="InputsSP" Orientation="Horizontal" Width="700"></WrapPanel>
                 </ScrollViewer>
             </TabItem>
             <TabItem x:Name="Outputs" Header="Outputs">
-                <ScrollViewer Margin="0,0,0,0">
+                <ScrollViewer Margin="0,0,0,29">
                     <WrapPanel x:Name="OutputsSP" Orientation="Horizontal" Width="700"></WrapPanel>
                 </ScrollViewer>
             </TabItem>
         </TabControl>
+        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="692,388,0,0" VerticalAlignment="Top" Width="75" Click="SubmitButton_Click"/>
     </Grid>
 </Window>

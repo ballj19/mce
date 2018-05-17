@@ -25,14 +25,16 @@
                     <Label Content="Source File" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="69" RenderTransformOrigin="1.549,0.479"/>
                     <TextBox x:Name="SourceFile" HorizontalAlignment="Left" Height="23" Margin="85,69,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="323"/>
                     <Button x:Name="BrowseSource" Content="Browse" HorizontalAlignment="Left" Margin="413,69,0,0" VerticalAlignment="Top" Width="75" Click="BrowseSource_Click"/>
-                    <CheckBox x:Name="DLMUpgrade" Content="DLM" HorizontalAlignment="Left" Margin="11,98,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="PCHCSUpgrade" Content="Per Car Hall Call Security" HorizontalAlignment="Left" Margin="39,161,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="DLMUpgrade" Content="DLM" HorizontalAlignment="Left" Margin="11,125,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="PCHCSUpgrade" Content="Per Car Hall Call Security" HorizontalAlignment="Left" Margin="39,188,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
                     <ComboBox x:Name="CarType" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
                     <ComboBox x:Name="ControllerType" HorizontalAlignment="Left" Margin="150,10,0,0" VerticalAlignment="Top" Width="65"/>
-                    <CheckBox x:Name="CRTLOCK" Content="CRTLOCK" HorizontalAlignment="Left" Margin="39,140,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
-                    <CheckBox x:Name="Security" Content="Security" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
-                    <CheckBox x:Name="Chicago" Content="Chicago Fire" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
-                    <CheckBox x:Name="ANSI2K" Content="ANSI 2K" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="CRTLOCK" Content="CRTLOCK" HorizontalAlignment="Left" Margin="39,167,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="Security" Content="Security" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="Chicago" Content="Chicago Fire" HorizontalAlignment="Left" Margin="10,209,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <CheckBox x:Name="ANSI2K" Content="ANSI 2K" HorizontalAlignment="Left" Margin="10,229,0,0" VerticalAlignment="Top" Unchecked="Checkbox_Validator_UnCheck" Checked="Checkbox_Validator_Check"/>
+                    <Button x:Name="ModifyIOButton" Content="Modify IO" HorizontalAlignment="Left" Margin="91,100,0,0" VerticalAlignment="Top" Width="75" Click="ModifyIO_Click"/>
+                    <CheckBox x:Name="ModifyIOCB" Content="Modify IO" HorizontalAlignment="Left" Margin="11,103,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>

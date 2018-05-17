@@ -23,6 +23,12 @@ namespace mods
     public partial class UpgradeWindow : Window
     {
         Upgrade upgrade;
+        private List<string> activeInputs;
+        private List<string> activeOutputs;
+        private List<string> addedInputs;
+        private List<string> removedInputs;
+        private List<string> addedOutputs;
+        private List<string> removedOutputs;
 
         public UpgradeWindow()
         {
@@ -66,6 +72,11 @@ namespace mods
             {
                 upgrade.No_Version_Upgrade();
             }
+            if(ModifyIOCB.IsChecked == true)
+            {
+                Modify_IO();
+            }
+
             if (DLMUpgrade.IsChecked == true)
             {
                 NYC_DLM();
@@ -293,6 +304,153 @@ namespace mods
             CommentBox.Text += "Upgraded Software to Version \n";
         }
 
+        private void Modify_IO()
+        {
+            int jobFileSoftwareIndex = JobFile.Text.IndexOf("Software");
+            int sourceFileSoftwareIndex = JobFile.Text.IndexOf("Software");
+            string jobfile = JobFile.Text.Substring(jobFileSoftwareIndex + 9, JobFile.Text.Length - 9 - jobFileSoftwareIndex);
+            string sourcefile = SourceFile.Text.Substring(sourceFileSoftwareIndex + 9, SourceFile.Text.Length - 9 - sourceFileSoftwareIndex);
+            Content upgradeContent;
+
+            if (VersionUpgrade.IsChecked == true)
+            {
+                upgradeContent = new Content(sourcefile);
+            }
+            else
+            {
+                upgradeContent = new Content(jobfile);
+            }
+
+            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
+            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
+
+            string[] labelNumbers = { "", "2", "3", "4" };
+            
+            int GlobalRowCount = 0;
+
+            foreach (string ioLabel in inputLabels)
+            {
+                foreach (string labelNumber in labelNumbers)
+                {
+                    int byteCount = General.Get_Bytes_List(ioLabel + labelNumber + ":", upgradeContent.content).Count - 1;
+
+                    for(int labelRow = 0; labelRow < byteCount; labelRow++)
+                    {
+                        string rowBinary = "";
+
+                        for(int b = 0; b < 8; b++)
+                        {
+                            rowBinary += activeInputs[GlobalRowCount * 8 + b];
+                        }
+
+                        GlobalRowCount++;
+
+                        string rowHex = General.BinaryStringToHex(rowBinary);
+                        
+                        upgrade.Modify_Value(ioLabel + labelNumber + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1,2), "REPLACE", rowHex.PadLeft(3,'0') + "H");
+                    }
+                }
+            }
+
+            if(addedInputs.Count > 0)
+            {
+                CommentBox.Text += ";\t\t";
+                CommentBox.Text += "Enabled Spare Inputs: ";
+
+                foreach (string input in addedInputs)
+                {
+                    if (addedInputs.Last() == input)
+                    {
+                        CommentBox.Text += input + "\n";
+                    }
+                    else
+                    {
+                        CommentBox.Text += input + ", ";
+                    }
+                }
+            }
+
+            if(removedInputs.Count > 0)
+            {
+                CommentBox.Text += ";\t\t";
+                CommentBox.Text += "Disabled Spare Inputs: ";
+
+                foreach (string input in removedInputs)
+                {
+                    if (removedInputs.Last() == input)
+                    {
+                        CommentBox.Text += input + "\n";
+                    }
+                    else
+                    {
+                        CommentBox.Text += input + ", ";
+                    }
+                }
+            }
+
+            GlobalRowCount = 0;
+
+            foreach (string ioLabel in outputLabels)
+            {
+                foreach (string labelNumber in labelNumbers)
+                {
+                    int byteCount = General.Get_Bytes_List(ioLabel + labelNumber + ":", upgradeContent.content).Count - 1;
+
+                    for (int labelRow = 0; labelRow < byteCount; labelRow++)
+                    {
+                        string rowBinary = "";
+
+                        for (int b = 0; b < 8; b++)
+                        {
+                            rowBinary += activeOutputs[GlobalRowCount * 8 + b];
+                        }
+
+                        GlobalRowCount++;
+
+                        string rowHex = General.BinaryStringToHex(rowBinary);
+
+                        upgrade.Modify_Value(ioLabel + labelNumber + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1, 2), "REPLACE", rowHex.PadLeft(3, '0') + "H");
+                    }
+                }
+            }
+
+            if(addedOutputs.Count > 0)
+            {
+                CommentBox.Text += ";\t\t";
+                CommentBox.Text += "Enabled Spare Outputs: ";
+
+                foreach (string output in addedOutputs)
+                {
+                    if (addedOutputs.Last() == output)
+                    {
+                        CommentBox.Text += output + "\n";
+                    }
+                    else
+                    {
+                        CommentBox.Text += output + ", ";
+                    }
+                }
+            }
+            
+            if(removedOutputs.Count > 0)
+            {
+                CommentBox.Text += ";\t\t";
+                CommentBox.Text += "Disabled Spare Outputs: ";
+
+                foreach (string output in removedOutputs)
+                {
+                    if (removedOutputs.Last() == output)
+                    {
+                        CommentBox.Text += output + "\n";
+                    }
+                    else
+                    {
+                        CommentBox.Text += output + ", ";
+                    }
+                }
+            }
+        }
+
         public void NYC_DLM()
         {
             upgrade.Modify_Value("BOTTOM:", "10", "OR", "40H");
@@ -513,6 +671,45 @@ namespace mods
                 CRTLOCK.IsChecked = false;
                 PCHCSUpgrade.IsChecked = false;
             }
+        }
+
+        private void ModifyIO_Click(object sender, RoutedEventArgs e)
+        {
+            int jobFileSoftwareIndex = JobFile.Text.IndexOf("Software");
+            int sourceFileSoftwareIndex = JobFile.Text.IndexOf("Software");
+            string jobfile = JobFile.Text.Substring(jobFileSoftwareIndex + 9, JobFile.Text.Length - 9 - jobFileSoftwareIndex);
+            string sourcefile = SourceFile.Text.Substring(sourceFileSoftwareIndex + 9, SourceFile.Text.Length - 9 - sourceFileSoftwareIndex);
+
+            Content originalContent = new Content(jobfile);
+            Content upgradeContent;
+            
+            if(VersionUpgrade.IsChecked == true)
+            {
+                upgradeContent = new Content(sourcefile);
+            }
+            else
+            {
+                upgradeContent = new Content(jobfile);
+            }
+
+            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
+            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
+
+            List<string> inputs = upgradeContent.Build_IOmap(inputLabels);
+            List<string> outputs = upgradeContent.Build_IOmap(outputLabels);
+
+            VersionIO vio = new VersionIO(originalContent.inputs, originalContent.outputs);
+            vio.allowToggleActiveIO = true;
+            vio.PopulateIO(inputs, "inputs");
+            vio.PopulateIO(outputs, "outputs");
+            vio.ShowDialog();
+
+            this.activeInputs = vio.finalInputs;
+            this.activeOutputs = vio.finalOutputs;
+            this.addedInputs = vio.addedInputs;
+            this.removedInputs = vio.removedInputs;
+            this.addedOutputs = vio.addedOutputs;
+            this.removedOutputs = vio.removedOutputs;
         }
     }
 }

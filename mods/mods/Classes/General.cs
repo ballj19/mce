@@ -292,6 +292,61 @@ namespace mods
             }
             return lines;
         }
-        
+
+        public static List<string> Get_Bytes_List(string label, List<string> content)
+        {
+            List<string> bytes = new List<string>();
+            
+            int index = content.FindIndex(x => x.StartsWith(label));
+
+            if (index != -1)
+            {
+                bytes.Add(label);
+
+                int offset = 1;
+
+                while (content[index + offset].StartsWith("DB"))
+                {
+                    string value = Remove_Prefix(content[index + offset], "DB").Trim();
+
+                    while (value.IndexOf(',') != -1)
+                    {
+                        int commaIndex = value.IndexOf(',');
+                        string commaValue = value.Substring(0, commaIndex);
+
+                        if (!Is_Hex(commaValue))
+                        {
+                            commaValue = Dec_To_Hex(commaValue);
+                        }
+
+                        bytes.Add(commaValue);
+                        value = value.Substring(commaIndex + 1, value.Length - commaIndex - 1);
+                    }
+
+                    if (!Is_Hex(value))
+                    {
+                        value = Dec_To_Hex(value);
+                    }
+
+                    bytes.Add(value);
+
+                    offset++;
+                }
+            }
+            return bytes;
+        }
+
+        public static string BinaryStringToHex(string binary)
+        {
+            string hex = "";
+
+            for(int h = 0; h < binary.Length / 4; h++)
+            {
+                hex += binaryToHexCharacter[binary.Substring(h * 4, 4)];
+            }
+
+            return hex.ToUpper();
+        }
+
     }
 }

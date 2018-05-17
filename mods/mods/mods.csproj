@@ -59,6 +59,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\General.cs" />
+    <Compile Include="ProgramMotion.xaml.cs">
+      <DependentUpon>ProgramMotion.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\CustomMod.xaml.cs">
       <DependentUpon>CustomMod.xaml</DependentUpon>
     </Compile>
@@ -76,6 +79,10 @@
     <Compile Include="Windows\VersionIO.xaml.cs">
       <DependentUpon>VersionIO.xaml</DependentUpon>
     </Compile>
+    <Page Include="ProgramMotion.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\CustomMod.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -16,7 +16,6 @@ C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Flowchart.pdb
 C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Chart.g.cs
 C:\Users\Jacob.Ball\source\repos\Flowchart\Flowchart\obj\Debug\Chart.baml
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Flowchart.csprojResolveAssemblyReference.cache
-C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Chart.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\MainWindow.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\App.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Flowchart_MarkupCompile.cache
@@ -26,7 +25,6 @@ C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Flowchart.pdb
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\bin\Debug\Flowchart.exe.config
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\bin\Debug\Flowchart.exe
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\bin\Debug\Flowchart.pdb
-C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Chart.baml
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\MainWindow.baml
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Flowchart.g.resources
 C:\Users\Jacob.Ball\source\repos\mce\Flowchart\Flowchart\obj\Debug\Flowchart.Properties.Resources.resources

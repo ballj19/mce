@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Diagnostics;
+using System.IO;
+using System.ComponentModel;
+using System.Windows.Threading;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
+using IWshRuntimeLibrary;
 
 namespace mods
 {
@@ -17,11 +23,11 @@ namespace mods
         int index;
         Content content;
 
-        public Simulator(string filepath)
+        public Simulator(string filepath, string templateFile)
         {
             this.index = 0;
 
-            string[] lines = System.IO.File.ReadAllLines(@"C:\\Simulator\\default.sdf");
+            string[] lines = System.IO.File.ReadAllLines(templateFile);
             this.sim_base = lines.ToList();
 
             this.filepath = filepath;

@@ -5,9 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flowchart"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="600" Width="525">
     <Grid>
-        <Button x:Name="CreateFlowchart" Content="Create" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="CreateFlowchart_Click"/>
+        <Button x:Name="CreateFlowchart" Content="Create" HorizontalAlignment="Left" Margin="432,10,0,0" VerticalAlignment="Top" Width="75" Click="CreateFlowchart_Click"/>
+        <Button Content="^" HorizontalAlignment="Center" Margin="0,543,0,0" VerticalAlignment="Top" Width="74" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="180.0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <ScrollViewer x:Name="SV" Margin="0,37,0,42" >
+            <StackPanel x:Name="ContentWindowSP"  Orientation="Vertical" Width="329">
+                
+            </StackPanel>
+        </ScrollViewer>
+        <Button Content="^" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="74"/>
 
     </Grid>
 </Window>

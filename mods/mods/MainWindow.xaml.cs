@@ -27,7 +27,6 @@ namespace mods
         List<string> Trac_Mod_Jobs = new List<string>();
         string G_DRIVE = @"G:\";
         string file = "";
-        
 
         public MainWindow()
         {
@@ -324,7 +323,7 @@ namespace mods
 
         private bool MP2COC_JobInfo(string file)
         {
-            Content content = new mods.Content(file);
+            Content content = new Content(file);
 
             //Job Summary
             try
@@ -679,8 +678,31 @@ namespace mods
                 }
                 else
                 {
-                    Simulator sim = new Simulator(item.ToString());
-                    message += "File Created: " + sim.Write_File() + "\n";
+                    MessageBox.Show("Please select a template file for your simulator");
+
+                    // Create OpenFileDialog 
+                    Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+                    dlg.InitialDirectory = @"C:\Simulator\";
+
+                    // Set filter for file extension and default file extension 
+                    dlg.DefaultExt = ".sdf";
+
+                    // Display OpenFileDialog by calling ShowDialog method 
+                    Nullable<bool> result = dlg.ShowDialog();
+
+                    string templateFile = "";
+
+                    // Get the selected file name and display in a TextBox 
+                    if (result == true)
+                    {
+                        // Open document 
+                        string filename = dlg.FileName;
+                        templateFile = filename;
+
+                        Simulator sim = new Simulator(item.ToString(), templateFile);
+                        message += "File Created: " + sim.Write_File() + "\n";
+                    }
                 }
             }
 
@@ -1527,6 +1549,11 @@ namespace mods
                 StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin=new Thickness(10,15,10,0) };
                 for (int x = 15; x >= 0; x--)
                 {
+                    Thickness margin = new Thickness(0, -2, 0, 0);
+                    if(x == 7)
+                    {
+                        margin = new Thickness(0, 0, 0, 0);
+                    }
                     sp.Children.Add(
                         new TextBox
                         {
@@ -1538,7 +1565,7 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0,-2,0,0)
+                            Margin = margin
                         });
                     numOfCalls--;
                 }
@@ -1772,6 +1799,11 @@ namespace mods
                 StackPanel sp = new StackPanel { Orientation = Orientation.Vertical, Name = ("Column" + column), Margin = new Thickness(10, 15, 10, 0) };
                 for (int x = 15; x >= 0; x--)
                 {
+                    Thickness margin = new Thickness(0, -2, 0, 0);
+                    if (x == 7)
+                    {
+                        margin = new Thickness(0, 0, 0, 0);
+                    }
                     sp.Children.Add(
                         new TextBox
                         {
@@ -1783,7 +1815,7 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, -2, 0, 0)
+                            Margin = margin
                         });
                     numOfCalls--;
                 }
@@ -3485,6 +3517,14 @@ namespace mods
 
             System.IO.File.Copy(selectedPath, selectedFolder + newFileName, true);
 
+            if (System.Windows.Forms.MessageBox.Show("Remove Drive Option?", "Remove Drive Option", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            {
+                Upgrade upgrade = new Upgrade(selectedFolder + newFileName);
+                upgrade.No_Version_Upgrade();
+                upgrade.Modify_Value("LOBBY:", "21", "AND", "5F");
+                upgrade.Write_File(selectedFolder + newFileName);
+            }
+
             string cmd = "C:\\Windows\\explorer.exe";
             string arg = selectedFolder + newFileName;
             Process.Start(cmd, arg);
@@ -3511,7 +3551,7 @@ namespace mods
 
             string version = topVersion + "_" + midVersion + " " + botVersion;
 
-            args = file + " " + subfolder + " " + version;
+            args = Microsoft.VisualBasic.Interaction.InputBox("N_EPLNK args", "N_EPLNK", file + " " + subfolder + " " + version); 
 
             Process proc = Process.Start(cmd, args);
             proc.WaitForExit();
@@ -3535,7 +3575,9 @@ namespace mods
             List<string> inputs = content.Build_IOmap(inputLabels);
             List<string> outputs = content.Build_IOmap(outputLabels);
             
-            VersionIO vio = new VersionIO(inputs, outputs);
+            VersionIO vio = new VersionIO(content.inputs, content.outputs);
+            vio.PopulateIO(inputs, "inputs");
+            vio.PopulateIO(outputs, "outputs");
             vio.Title = "V" + selectedFileVersion + " Spare Inputs and Outputs";
             vio.Show();
         }

@@ -259,6 +259,11 @@ namespace mods
             return "C:\\ModUpgrades\\" + filename + ".ASM";
         }
 
+        public void Write_File(string location)
+        {
+            System.IO.File.WriteAllLines(location, new_lines.ToArray());
+        }
+
         private void Combine_Label(string label)
         {
              Replace_Values(label);

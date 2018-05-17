@@ -15,6 +15,7 @@ namespace mods
     {
         string jobNumber = "";
         string grepString = "";
+        string subFolder = "";
 
         public CustomMod(string jobNumber)
         {
@@ -31,7 +32,8 @@ namespace mods
             if (custom1or2 == "Custom")
             {
                 folder += @"Custom\MC-MP\";
-                folder += Microsoft.VisualBasic.Interaction.InputBox("Subfolder? (MPOLTM...etc)", "SubFolder", "MPOLTM");
+                subFolder = Microsoft.VisualBasic.Interaction.InputBox("Subfolder? (MPOLTM...etc)", "SubFolder", "MPOLTM");
+                folder += subFolder;
             }
             else
             {
@@ -42,15 +44,41 @@ namespace mods
             foreach(string customFolder in customFolders)
             {
                 string custFolder = customFolder;
+
                 if (custom1or2 == "Custom2")
                 {
-                    custFolder += "\\MP2COC";
+                    List<string> localOrGroup = Directory.GetDirectories(custFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+                    foreach (string localGroup in localOrGroup)
+                    {
+                        List<string> folders = Directory.GetDirectories(localGroup, "*", SearchOption.TopDirectoryOnly).ToList();
+
+                        foreach (string fold in folders)
+                        {
+                            OldComboBox.Items.Add(fold);
+                            NewComboBox.Items.Add(fold);
+                        }
+                    }
                 }
-                List<string> customVersions = Directory.GetDirectories(custFolder, "*", SearchOption.TopDirectoryOnly).ToList();
-                foreach(string customVersion in customVersions)
+                else
                 {
-                    OldComboBox.Items.Add(customVersion);
-                    NewComboBox.Items.Add(customVersion);
+                    List<string> folders = Directory.GetDirectories(customFolder, "*", SearchOption.TopDirectoryOnly).ToList();
+
+                    foreach (string fold in folders)
+                    {
+                        OldComboBox.Items.Add(fold);
+                        NewComboBox.Items.Add(fold);
+                    }
+                }
+                
+
+                if (System.Windows.Forms.MessageBox.Show("Open custom folder in VS Code?", "Open Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    var startInfo = new ProcessStartInfo();
+                    startInfo.WorkingDirectory = custFolder;
+                    startInfo.Arguments = "-r .";
+                    startInfo.FileName = "code";
+
+                    Process proc = Process.Start(startInfo);
                 }
             }
         }
@@ -192,6 +220,16 @@ namespace mods
             startInfo.WorkingDirectory = NewFolder.Text;
             startInfo.Arguments = "all";
             startInfo.FileName = "jbuild";
+
+            Process proc = Process.Start(startInfo);
+        }
+
+        private void EPRLNK_Click(object sender, RoutedEventArgs e)
+        {
+            var startInfo = new ProcessStartInfo();
+            startInfo.WorkingDirectory = NewFolder.Text;
+            startInfo.Arguments = Microsoft.VisualBasic.Interaction.InputBox("Arguments?", "Arguments", jobNumber + " " + subFolder);
+            startInfo.FileName = "eprlnk";
 
             Process proc = Process.Start(startInfo);
         }
