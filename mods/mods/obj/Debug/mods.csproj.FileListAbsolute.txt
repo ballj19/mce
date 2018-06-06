@@ -50,3 +50,7 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Interop.IWshRuntimeLibr
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Debug\Interop.IWshRuntimeLibrary.dll
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\CustomMod.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\CustomMod.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ModDoc.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ProgramMotion.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ModDoc.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ProgramMotion.baml

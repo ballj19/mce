@@ -58,10 +58,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CanUSB\CanMessage.cs" />
+    <Compile Include="CanUSB\CanUsbLibrary.cs" />
     <Compile Include="Classes\General.cs" />
-    <Compile Include="ProgramMotion.xaml.cs">
+    <Compile Include="CanUSB\FTD2XX_NETclass.cs" />
+    <Compile Include="Windows\ModDoc.xaml.cs">
+      <DependentUpon>ModDoc.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ProgramMotion.xaml.cs">
       <DependentUpon>ProgramMotion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CanUSB\UsbInterface.cs" />
     <Compile Include="Windows\CustomMod.xaml.cs">
       <DependentUpon>CustomMod.xaml</DependentUpon>
     </Compile>
@@ -79,7 +86,11 @@
     <Compile Include="Windows\VersionIO.xaml.cs">
       <DependentUpon>VersionIO.xaml</DependentUpon>
     </Compile>
-    <Page Include="ProgramMotion.xaml">
+    <Page Include="Windows\ModDoc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ProgramMotion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -150,6 +161,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -186,6 +198,24 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Outlook">
+      <Guid>{00062FFF-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>9</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
     <COMReference Include="VBIDE">
       <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>5</VersionMajor>
@@ -196,5 +226,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

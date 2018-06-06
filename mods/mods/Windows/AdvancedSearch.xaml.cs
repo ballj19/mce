@@ -25,7 +25,6 @@ namespace mods
     public partial class AdvancedSearch : Window
     {
         bool stopSearching = false;
-        int progress = 0;
 
         public AdvancedSearch()
         {

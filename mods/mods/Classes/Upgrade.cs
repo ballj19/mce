@@ -84,7 +84,7 @@ namespace mods
                     int labelNumber = upgrade_content.labels.IndexOf(label);
                     if (labelNumber + 1 == original_content.labels.Count)
                     {
-                        int EOFindex = original_content.lines.IndexOf("END");
+                        int EOFindex = original_content.lines.IndexOf("\tEND");
                         Write_Intermediate(original_content.labelsInt[labelNumber], EOFindex + 1);
                     }
                     else
@@ -236,7 +236,7 @@ namespace mods
                     int labelNumber = upgrade_content.labels.IndexOf(label);
                     if (labelNumber + 1 == original_content.labels.Count)
                     {
-                        int EOFindex = original_content.lines.IndexOf("END");
+                        int EOFindex = original_content.lines.IndexOf("\tEND");
                         Write_Intermediate(original_content.labelsInt[labelNumber], EOFindex + 1);
                     }
                     else
@@ -674,6 +674,8 @@ namespace mods
         public void Open_Files(string originalFile, string newFile)
         {
             string cmd = "C:\\Windows\\explorer.exe";
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(originalFile);
+            fileInfo.IsReadOnly = false;
             Process.Start(cmd, originalFile);
             Process.Start(cmd, newFile);
         }

@@ -12,5 +12,8 @@
     <Setting Name="TextEditor" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\\CW32\\cw32.exe</Value>
     </Setting>
+    <Setting Name="PMSoftwareSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

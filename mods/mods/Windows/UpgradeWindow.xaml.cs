@@ -483,9 +483,10 @@ namespace mods
         private void Chicago_Fire_Group()
         {
             upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'NFRC',  00H,   01H,  04H,  01H");
+            upgrade.Modify_Value("LOBBY:", "10", "OR", "22H");
 
             CommentBox.Text += ";\t\t";
-            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001";
+            CommentBox.Text += "Enabled Options for Chicago Fire Code 2001\n";
         }
 
         private void ANSI2K_Fire()

@@ -17,8 +17,18 @@ namespace mods
 
         public Content(string file)
         {
-            this.file = General.Get_File_From_Path(filepath + file);
-            this.filepath = General.Get_Folder_From_Path(filepath + file);
+            string path = "";
+
+            if (file.Contains(@"\Software\"))
+            {
+                path = file;
+            }
+            else
+            {
+                path = filepath + file;
+            }
+            this.file = General.Get_File_From_Path(path);
+            this.filepath = General.Get_Folder_From_Path(path);
             this.content = Get_Content();
             this.inputs = IO(inputLabels , 'I');
             this.outputs = IO(outputLabels, 'O');
@@ -30,8 +40,7 @@ namespace mods
 
             try
             {
-                string path = filepath + file;
-                lines = System.IO.File.ReadAllLines(@path).ToList();
+                lines = System.IO.File.ReadAllLines(filepath + file).ToList();
             }
             catch
             {

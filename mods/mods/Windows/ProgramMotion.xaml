@@ -1,0 +1,44 @@
+﻿<Window x:Class="mods.ProgramMotion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:mods"
+        mc:Ignorable="d"
+        Title="ProgramMotion" Height="800" Width="800" Closing="Close">
+    <Grid>
+        <TabControl>
+            <TabItem x:Name="ConfigTab" Header="Config">
+                <Grid>
+                    <ComboBox x:Name="CanUSB" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="ConnectButton" Content="Open" HorizontalAlignment="Left" Margin="143,10,0,0" VerticalAlignment="Top" Width="75" Click="ConnectButton_Click"/>
+                    <TextBox x:Name="SoftwareSource" Height="23" TextWrapping="Wrap" Text="" Margin="10,75,340,0" VerticalAlignment="Top"/>
+                    <Button Content="Browse" HorizontalAlignment="Left" Margin="447,75,0,0" VerticalAlignment="Top" Width="75" Click="Browse_Source_Click"/>
+                    <Label Content="Software Source Directory:" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="BasicTab" Header="Basic Features">
+                <Grid>
+                    <TextBlock Text="Controller Type" Width="100" Margin="10,10,672,694"/>
+                    <ComboBox x:Name="ControllerType" HorizontalAlignment="Left" Margin="110,14,0,0" VerticalAlignment="Top" Width="120"/>
+                    <TextBlock Text="Simplex/Local or Duplex" Margin="10,45,677,654" TextWrapping="Wrap"/>
+                    <ComboBox x:Name="Duplex" HorizontalAlignment="Left" Margin="110,51,0,0" VerticalAlignment="Top" Width="120"/>
+                    <TextBlock Text="Top Landing Served for this Car?" Margin="10,86,677,600" TextWrapping="Wrap"/>
+                    <ComboBox x:Name="TopLanding" HorizontalAlignment="Left" Margin="110,99,0,0" VerticalAlignment="Top" Width="120"/>
+                    <TextBlock Text="HC-RDR board on this car?" Margin="10,139,677,564" TextWrapping="Wrap"/>
+                    <ComboBox x:Name="HCRDR" HorizontalAlignment="Left" Margin="110,145,0,0" VerticalAlignment="Top" Width="120"/>
+                </Grid>
+            </TabItem>
+            <TabItem Name="SpareIOTab" Header="Spare I/O">
+                <StackPanel>
+                    <StackPanel x:Name="ImportProgRec" Orientation="Horizontal">
+                        <Button x:Name="ImportPRButton" Content="Import Programming Record" Height="30" Click="ImportPRButton_Click" Margin="10,10,10,0"></Button>
+                    </StackPanel>
+                    <StackPanel x:Name="SpareInputsSP" Orientation="Horizontal"></StackPanel>
+                    <StackPanel x:Name="SpareOutputSP" Orientation="Horizontal"></StackPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="Program" Content="Program" HorizontalAlignment="Left" Margin="707,738,0,0" VerticalAlignment="Top" Width="75" Click="Program_Click"/>
+    </Grid>
+</Window>

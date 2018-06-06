@@ -71,7 +71,7 @@ namespace mods
                             trimmedLine = trimmedLine.Trim();
                             if (trimmedLine == "END")
                             {
-                                lines.Add(trimmedLine);
+                                lines.Add('\t' + trimmedLine);
                             }
                             else
                             {

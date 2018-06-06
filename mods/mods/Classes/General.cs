@@ -100,11 +100,11 @@ namespace mods
             return HexStringToBinary(strippedHex);
         }
 
-        public static string Dec_To_Hex(string deci)
+        public static string Dec_To_Hex(string deci, int padding = 3)
         {
             string strippedDeci = Remove_Prefix(deci, "DB");
             int dec = Int32.Parse(strippedDeci);
-            return dec.ToString("X").PadLeft(3, '0');
+            return dec.ToString("X").PadLeft(padding, '0');
         }
 
         public static int HexStringToDecimal(string hex)

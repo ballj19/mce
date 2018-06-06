@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using IWshRuntimeLibrary;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace mods
 {
@@ -54,8 +55,7 @@ namespace mods
                     System.Windows.Application.Current.Shutdown();
                 }
             }
-
-            Username.Text = Properties.Settings.Default.Username;
+            
             CustomFoldersCheckBox.IsChecked = true;
             FilesListBox.SelectionMode = SelectionMode.Extended;
             FileExtension.Items.Add(".asm");
@@ -124,6 +124,11 @@ namespace mods
             }
             try
             {
+                if (System.Windows.Forms.MessageBox.Show("Would you like to generate a file to import?", "Generate File to Import?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    ModDoc md = new ModDoc(this.FilesListBox);
+                    md.ShowDialog();
+                }
                 string jobNumber = "*" + TextBox1.Text + "*.afm";
                 string folder = G_DRIVE + "Software\\Modification_docs";
                 List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
@@ -385,6 +390,26 @@ namespace mods
                     versionBot = versionBot.Substring(1, 1);
                 }
                 this.selectedFileVersion = versionTop + "." + versionMid + "." + versionBot;
+                string drivebit2 = content.Get_Bit("CPVAR", 2, 0, 1);
+                string drivebit3 = content.Get_Bit("CPVAR", 2, 0, 0);
+                string driveType = "";
+                if(drivebit2 == "YES" && drivebit3 == "YES")
+                {
+                    driveType = "IMC-AC";
+                }
+                else if(drivebit2 == "YES")
+                {
+                    driveType = "IMC-MG";
+                }
+                else if(drivebit3 == "YES")
+                {
+                    driveType = "IMC-SCR";
+                }
+                else
+                {
+                    driveType = "NONE";
+                }
+
 
                 //Job Info
                 JobInfo.Text = "";
@@ -398,6 +423,7 @@ namespace mods
                 JobInfo.Text += "Security: " + Security(content) + "\n";
                 JobInfo.Text += "False Floors: " + falseFloors + "\n";
                 JobInfo.Text += "Nudging: " + nudging + "\n";
+                JobInfo.Text += "Drive Type: " + driveType + "\n";
 
                 //Hardware
                 JobInfo.Text += "\n";
@@ -1053,7 +1079,7 @@ namespace mods
 
             string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
 
-            int number_of_cars = content.Get_Group_Num_Of_Cars();
+            int number_of_cars = Int32.Parse(content.Get_Byte("LOBBY:", 18));
 
             LandingNormalHeader.Width = 48 + 48 * number_of_cars;
             LandingNormalConfig.Width = 48 + 48 * number_of_cars;
@@ -3242,7 +3268,6 @@ namespace mods
 
         private void SaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Username = Username.Text;
             Update_Search_History();
         }
 
@@ -3379,7 +3404,7 @@ namespace mods
             {
                 int equalIndex = user.IndexOf("=");
                 string userName = user.Substring(0, equalIndex);
-                if(userName == environmentName)
+                if(userName.ToLower() == environmentName.ToLower())
                 {
                     this.permission = Int32.Parse(user.Substring(equalIndex + 1, user.Length - equalIndex - 1));
                 }
@@ -3393,7 +3418,7 @@ namespace mods
                 OpenSim.Visibility = Visibility.Hidden;
                 Mp2link.Visibility = Visibility.Hidden;
                 Emulink.Visibility = Visibility.Hidden;
-                SettingsTab.Visibility = Visibility.Hidden;
+                UtilityTab.Visibility = Visibility.Hidden;
                 TracModTab.Visibility = Visibility.Hidden;
                 OptionsTab.Visibility = Visibility.Hidden;
 
@@ -3644,6 +3669,24 @@ namespace mods
             string cmd = "C:\\Windows\\explorer.exe";
             string arg = jobPath;
             Process.Start(cmd, arg);
+
+            //KDM FOLDER
+            if (System.Windows.Forms.MessageBox.Show("KDM Job?", "KDM Job?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            {
+                string kdmpath = @"\\10.113.0.31\mce-public\MCE\Test\Motion Software\Custom Software";
+                string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
+
+                if (!Directory.Exists(kdmjobPath))
+                {
+                    if (System.Windows.Forms.MessageBox.Show("There is no existing folder for this job. Would you like to create one?", "Create Job Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        Directory.CreateDirectory(kdmjobPath);
+                    }
+                }
+
+                string kdmarg = kdmjobPath;
+                Process.Start(cmd, kdmarg);
+            }
         }
 
         public static void CreateShortcut(string shortcutName, string shortcutPath, string targetFileLocation)
@@ -3660,6 +3703,78 @@ namespace mods
         {
             CustomMod cm = new CustomMod(TextBox1.Text);
             cm.Show();
+        }
+
+        private void ProgramMotion_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramMotion pm = new ProgramMotion();
+            pm.Show();
+        }
+
+        private void BrowseFile_Click(object sender, RoutedEventArgs e)
+        {
+            // Create OpenFileDialog 
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            // Set filter for file extension and default file extension 
+            dlg.DefaultExt = ".sdf";
+
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = dlg.ShowDialog();
+
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
+            {
+                FilesListBox.Items.Clear();
+
+                string file = dlg.FileName;
+                string folder = General.Get_Folder_From_Path(file);
+
+                int locationIndex = folder.IndexOf("Software") + 9;
+                string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+
+                FilesListBox.Items.Add(jobFile);
+
+                string jobNumber = General.Get_Job_Number_From_Path(file);
+                TextBox1.Text = jobNumber;
+            }
+
+        }
+
+        private void KDMEmail_Click(object sender, RoutedEventArgs e)
+        {
+            string jobNumber = TextBox1.Text.Substring(5, 5);
+            string jobYear = TextBox1.Text.Substring(2, 2);
+            string kdmpath = @"\\10.113.0.31\mce-public\MCE\Test\Motion Software\Custom Software";
+            string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
+
+            Outlook.Application app = new Outlook.Application();
+            string body = "Alan and Eliud,\n\n" +
+                "Custom logic for the subject job is ready and the files are in the Custom Software folder on the KdM drive.\n\n";
+            body += kdmjobPath + "\n";
+            body += "Thanks,\nJake";
+            string subject = "Job " + jobYear + "-" + jobNumber;
+            string to = "alan.aranda@nidec-mce.com;eliud.jimenez@nidec-mce.com";
+            string cc = "emilio.garza@nidec-mce.com;bart.lewalski@nidec-mce.com";
+            Outlook.MAPIFolder sentContacts = (Outlook.MAPIFolder)
+                 app.ActiveExplorer().Session.GetDefaultFolder
+                 (Outlook.OlDefaultFolders.olFolderContacts);
+
+            
+            CreateEmailItem(subject, to, cc, body, app);
+        }
+
+        private void CreateEmailItem(string subjectEmail,string toEmail, string ccEmail, string bodyEmail, Outlook.Application app)
+        {
+            Outlook.MailItem eMail = (Outlook.MailItem)
+                app.CreateItem(Outlook.OlItemType.olMailItem);
+            eMail.Subject = subjectEmail;
+            eMail.To = toEmail;
+            eMail.CC = ccEmail;
+            eMail.Body = bodyEmail;
+            eMail.Importance = Outlook.OlImportance.olImportanceNormal;
+            ((Outlook._MailItem)eMail).Display();
         }
     }
 }

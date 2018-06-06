@@ -19,15 +19,12 @@
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
         <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged"/>
         <Button x:Name="OpenFile" Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
-        <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="298,201,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
-        <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="298,281,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
-        <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="298,254,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
+        <Button x:Name="BrowseFile" Content="Browse" HorizontalAlignment="Left" Margin="298,67,0,0" VerticalAlignment="Top" Width="99" Click="BrowseFile_Click" Height="22"/>
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,39,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
         <Button x:Name="OpenFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="OpenFolder_Click"/>
         <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
-        <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="298,227,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
-        <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,68,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
+        <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
         <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
         <Button x:Name="PrintPage" Content="Print Preview" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="PrintPage_Click" Height="22"/>
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="398" Height="450" Margin="18,310,0,0"></TextBlock>
@@ -92,14 +89,13 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-            <TabItem Name="SettingsTab" Header="Settings">
-                <StackPanel Orientation="Vertical">
-                    <Label Content="Username" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="27"/>
-                    <TextBox x:Name="Username" Text="" HorizontalAlignment="Left" Height="23" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="148"/>
-                    <Label Content="Add nicknames separated by ;" HorizontalAlignment="Left" Margin="158,-25,0,0" VerticalAlignment="Top" Height="25" RenderTransformOrigin="0.509,1.52"/>
-                    <Button x:Name="Update" Content="Check For Updates" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top" Width="112" Click="Update_Click"/>
-                    <Button x:Name="SaveSettings" Content="Save" HorizontalAlignment="Left" Margin="257,20,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
-                </StackPanel>
+            <TabItem Name="UtilityTab" Header="Utility">
+                <Grid>
+                    <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
+                    <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
+                    <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
+                    <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
+                </Grid>
             </TabItem>
             <TabItem Name="AdminTab" Header="Admin">
                 <Grid>
@@ -107,12 +103,14 @@
                     <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,37,0,0" Click="ArchiveButton_Click"/>
                     <Button x:Name="PersonalFileButton" Content="Create Personal" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,64,0,0" Click="CreatePersonalFile_Click"/>
                     <Button x:Name="N_EPLNK" Content="N_EPNLK" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,91,0,0" Click="N_EPLNK_Click"/>
-                    <Button x:Name="MotionDummyFolder" Content="Dummy Folder" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="242,10,0,0" Click="MotionDummyFolder_Click" />
+                    <Button x:Name="MotionDummyFolder" Content="Dummy Folder" Width="104" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="242,10,0,0" Click="MotionDummyFolder_Click" />
                     <Button x:Name="CustomModButton" Content="Custom Mod" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,118,0,0" Click="Custom_Mod_Click"/>
+                    <Button x:Name="ProgramMotion" Content="Program Motion" Width="104" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="242,37,0,0" Click="ProgramMotion_Click" />
+                    <Button x:Name="KDMEmail" Content="KDM Email" Width="104" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="242,64,0,0" Click="KDMEmail_Click" />
                 </Grid>
             </TabItem>
         </TabControl>
-    </Grid>
+        </Grid>
 </Window>
     
 
