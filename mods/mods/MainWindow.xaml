@@ -26,7 +26,7 @@
         <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
         <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
         <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
-        <Button x:Name="PrintPage" Content="Print Preview" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="PrintPage_Click" Height="22"/>
+        <Button x:Name="ExportExcel" Content="Export Excel" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="100" Click="Export_Excel_Click" Height="22"/>
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="398" Height="450" Margin="18,310,0,0"></TextBlock>
         <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged">
             <TabItem Name="LandingsTab" Header="Landings">

@@ -21,7 +21,6 @@ namespace mods
     {
         private ListBox jobList;
         List<byte> export_mod_base;
-        private int paramNum = 1;
 
         public ModDoc(ListBox jobList)
         {

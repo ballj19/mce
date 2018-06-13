@@ -253,10 +253,6 @@ namespace mods
             {
                 notificationNumber = job.Substring(notificationIndex + 16, job.Length - notificationIndex - 16);
             }
-            else
-            {
-                notificationNumber = "";
-            }
 
             string commentText = "";
             DateTime date = DateTime.Now;

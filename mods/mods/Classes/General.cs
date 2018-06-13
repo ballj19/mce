@@ -50,7 +50,7 @@ namespace mods
             }
         }
 
-        public static string Get_Job_Number_From_Path(string path)
+        public static string Get_Job_Number_From_Path(string path, bool fullJobNumber = false)
         {
             string file = Get_File_From_Path(path);
 
@@ -58,15 +58,26 @@ namespace mods
             string jobNumber = "";
             string onlyLettersJobNumber = "";
 
-            while(char.IsLetter(file[c]))
+            if(fullJobNumber)
             {
-                onlyLettersJobNumber += file[c];
-                c++;
+                while (c < file.Length && file[c] != '.')
+                {
+                    jobNumber += file[c];
+                    c++;
+                }
             }
-            while(c < file.Length && char.IsNumber(file[c]))
+            else
             {
-                jobNumber += file[c];
-                c++;
+                while (char.IsLetter(file[c]))
+                {
+                    onlyLettersJobNumber += file[c];
+                    c++;
+                }
+                while (c < file.Length && char.IsNumber(file[c]))
+                {
+                    jobNumber += file[c];
+                    c++;
+                }
             }
 
             if(jobNumber.Length < 1)

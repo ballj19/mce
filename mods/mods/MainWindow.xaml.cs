@@ -28,6 +28,7 @@ namespace mods
         List<string> Trac_Mod_Jobs = new List<string>();
         string G_DRIVE = @"G:\";
         string file = "";
+        Content content;
 
         public MainWindow()
         {
@@ -328,7 +329,7 @@ namespace mods
 
         private bool MP2COC_JobInfo(string file)
         {
-            Content content = new Content(file);
+            content = new Content(file);
 
             //Job Summary
             try
@@ -420,7 +421,7 @@ namespace mods
                 JobInfo.Text += "Top Floor: " + topFloorDecimal + "\n";
                 JobInfo.Text += "Bottom Floor: " + botFloorDecimal + "\n\n";
                 JobInfo.Text += "Independent Rear Doors: " + rearDoor + "\n";
-                JobInfo.Text += "Security: " + Security(content) + "\n";
+                JobInfo.Text += "Security: " + Security() + "\n";
                 JobInfo.Text += "False Floors: " + falseFloors + "\n";
                 JobInfo.Text += "Nudging: " + nudging + "\n";
                 JobInfo.Text += "Drive Type: " + driveType + "\n";
@@ -466,7 +467,7 @@ namespace mods
             //Landings
             try
             {
-                Draw_Landing_Preview(content);
+                Draw_Landing_Preview();
             }
             catch(Exception ex)
             {
@@ -476,7 +477,7 @@ namespace mods
             //Inputs and Outputs
             try
             {
-                Generate_IO(content);
+                Generate_IO();
             }
             catch (Exception ex)
             {
@@ -486,7 +487,7 @@ namespace mods
             //Headers
             try
             {
-                Generate_Headers(content);
+                Generate_Headers();
             }
             catch (Exception ex)
             {
@@ -498,7 +499,7 @@ namespace mods
 
         private bool MP2OGM_JobInfo(string file)
         {
-            Content content = new Content(file);
+            content = new Content(file);
 
             //Job Summary
             try
@@ -586,7 +587,7 @@ namespace mods
             //Headers
             try
             {
-                Generate_Headers_Group(content);
+                Generate_Headers_Group();
             }
             catch (Exception ex)
             {
@@ -596,7 +597,7 @@ namespace mods
             //IO
             try
             {
-                Generate_IO(content, true);
+                Generate_IO(true);
             }
             catch (Exception ex)
             {
@@ -606,7 +607,7 @@ namespace mods
             //Landings
             try
             {
-                Draw_Group_Landing_Preview(content);
+                Draw_Group_Landing_Preview();
             }
             catch (Exception ex)
             {
@@ -803,7 +804,7 @@ namespace mods
             }
         }
 
-        private string Security(Content content)
+        private string Security()
         {
             string security = "";
 
@@ -878,7 +879,7 @@ namespace mods
             return security;
         }
 
-        private void Draw_Landing_Preview(Content content)
+        private void Draw_Landing_Preview()
         {
             LandingNormalHeader.Width = 96;
             LandingNormalConfig.Width = 96;
@@ -1051,7 +1052,7 @@ namespace mods
             }
         }
 
-        private void Draw_Group_Landing_Preview(Content content)
+        private void Draw_Group_Landing_Preview()
         {
             int group_top_landing = content.Get_Group_Top_Level();
             List<string> piLabels = content.Get_PILabels();
@@ -1139,7 +1140,7 @@ namespace mods
             }
         }
 
-        private void Generate_Headers(Content content)
+        private void Generate_Headers()
         {
             HeaderSP.Children.Clear();
 
@@ -1601,7 +1602,7 @@ namespace mods
             } while (numOfCalls > 0);
         }
 
-        private void Generate_Headers_Group(Content content)
+        private void Generate_Headers_Group()
         {
             HeaderSP.Children.Clear();
 
@@ -1851,7 +1852,7 @@ namespace mods
             } while (numOfCalls > 0);
         }
 
-        private void Generate_IO(Content content, bool group = false)
+        private void Generate_IO(bool group = false)
         {
             IOInfoSP.Children.Clear();
 
@@ -3423,7 +3424,7 @@ namespace mods
                 OptionsTab.Visibility = Visibility.Hidden;
 
                 ShowPrints.Margin = new Thickness(ShowPrints.Margin.Left, ShowPrints.Margin.Top - 51, ShowPrints.Margin.Right, ShowPrints.Margin.Bottom);
-                PrintPage.Margin = new Thickness(PrintPage.Margin.Left, PrintPage.Margin.Top - 51, PrintPage.Margin.Right, PrintPage.Margin.Bottom);
+                ExportExcel.Margin = new Thickness(ExportExcel.Margin.Left, ExportExcel.Margin.Top - 51, ExportExcel.Margin.Right, ExportExcel.Margin.Bottom);
 
                 G_DRIVE = @"\\mceshared\shared\";
             }
@@ -3593,7 +3594,6 @@ namespace mods
 
         private void ViewVersionIO_Click(object sender, RoutedEventArgs e)
         {
-            Content content = new Content(file);
             List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
             List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
 
@@ -3775,6 +3775,225 @@ namespace mods
             eMail.Body = bodyEmail;
             eMail.Importance = Outlook.OlImportance.olImportanceNormal;
             ((Outlook._MailItem)eMail).Display();
+        }
+
+        private void Export_Excel_Click(object sender, RoutedEventArgs e)
+        {
+
+            System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+
+            saveFileDialog1.Filter = "Excel (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 1;
+            saveFileDialog1.RestoreDirectory = true;
+            saveFileDialog1.FileName = General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString(), true);
+
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Excel.Application excel;
+                Excel.Workbook workbook;
+                Excel.Worksheet worksheet;
+
+                excel = new Excel.Application();
+                excel.Visible = false;
+                excel.DisplayAlerts = false;
+                workbook = excel.Workbooks.Add(Type.Missing);
+
+                //LANDINGS WORKSHEET
+                worksheet = (Excel.Worksheet)workbook.ActiveSheet;
+                worksheet.Name = "Job Info";
+
+                Excel.Range jobinforange = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[47, 6]];
+                jobinforange.Merge();
+                jobinforange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
+                worksheet.Cells[1, 1] = JobInfo.Text;
+                worksheet.Cells.Font.Size = 11;
+
+                string[] levels;
+
+                if (LandingPIs.Visibility == Visibility.Visible)
+                {
+                    levels = LandingPIs.Text.Split('\n');
+                }
+                else
+                {
+                    levels = LandingLevels.Text.Split('\n');
+                }
+                string[] normalconfig = LandingNormalConfig.Text.Split('\n');
+                string[] altconfig = LandingAltConfig.Text.Split('\n');
+
+
+                worksheet.Cells[1, 7] = "Landing";
+                worksheet.Cells[1, 8] = "Normal";
+
+                if (LandingAltConfig.Visibility == Visibility.Visible)
+                {
+                    worksheet.Cells[1, 9] = "Alternate";
+                }
+
+                Excel.Range LandingRange = worksheet.Range[worksheet.Cells[1, 7], worksheet.Cells[levels.Length + 1, 9]];
+
+                LandingRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                for (int level = 0; level < levels.Length; level++)
+                {
+                    worksheet.Cells[2 + level, 7] = levels[level];
+                    if (level < normalconfig.Length)
+                    {
+                        worksheet.Cells[2 + level, 8] = normalconfig[level].Replace("\t", "     ");
+                    }
+                    if (level < altconfig.Length)
+                    {
+                        worksheet.Cells[2 + level, 9] = altconfig[level].Replace("\t", "     ");
+                    }
+                }
+
+                //INPUTS & OUTPUTS WORKSHEET
+                Excel.Worksheet ioworksheet;
+                ioworksheet = workbook.Sheets.Add(After: workbook.Sheets[workbook.Sheets.Count]);
+                ioworksheet.Name = "Inputs & Outputs";
+                ioworksheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                List<string> inputs = content.inputs;
+                List<string> outputs = content.outputs;
+
+                Excel.Range inputheader = ioworksheet.Range[ioworksheet.Cells[1, 1], ioworksheet.Cells[1, 8]];
+                inputheader.Merge();
+                ioworksheet.Cells[1, 1] = "SPARE INPUTS";
+
+                int inputCounter = 0;
+                int rowCounter = 2;
+                while (inputCounter < inputs.Count)
+                {
+                    for (int c = 8; c > 0; c--)
+                    {
+                        if (inputCounter < inputs.Count)
+                        {
+                            ioworksheet.Cells[rowCounter, c] = inputs[inputCounter];
+                            inputCounter++;
+                        }
+                    }
+                    rowCounter++;
+                }
+
+
+                Excel.Range outputheader = ioworksheet.Range[ioworksheet.Cells[rowCounter, 1], ioworksheet.Cells[rowCounter, 8]];
+                outputheader.Merge();
+                ioworksheet.Cells[rowCounter, 1] = "SPARE OUTPUTS";
+
+                rowCounter++;
+
+                int outputCounter = 0;
+                while (outputCounter < outputs.Count)
+                {
+                    for (int c = 1; c < 9; c++)
+                    {
+                        if (outputCounter < outputs.Count)
+                        {
+                            ioworksheet.Cells[rowCounter, c] = outputs[outputCounter];
+                            outputCounter++;
+                        }
+                    }
+                    rowCounter++;
+                }
+
+                //I40 & IOX WORKSHEET
+                Excel.Worksheet i4oioxworksheet;
+                i4oioxworksheet = workbook.Sheets.Add(After: workbook.Sheets[workbook.Sheets.Count]);
+                i4oioxworksheet.Name = "I40 & IOX";
+                i4oioxworksheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+
+                Excel.Range farleftColumn = i4oioxworksheet.Range[i4oioxworksheet.Cells[1, 1], i4oioxworksheet.Cells[1, 1]];
+                Excel.Range leftpaddingRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[1, 2], i4oioxworksheet.Cells[1, 2]];
+                Excel.Range rightpaddingRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[1, 11], i4oioxworksheet.Cells[1, 11]];
+                farleftColumn.ColumnWidth = 2.14;
+                leftpaddingRange.ColumnWidth = 2.14;
+                rightpaddingRange.ColumnWidth = 2.14;
+
+                rowCounter = 2;
+                int columnCounter = 3;
+
+                foreach (Border border in BoardSP.Children)
+                {
+                    int startingRow = rowCounter;
+
+                    StackPanel boardsp = border.Child as StackPanel;
+                    foreach (var child in boardsp.Children)
+                    {
+                        if (child.GetType() == typeof(Label))
+                        {
+                            Label label = child as Label;
+
+                            i4oioxworksheet.Cells[rowCounter, 3] = label.Content;
+                            Excel.Range labelRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[rowCounter, 3], i4oioxworksheet.Cells[rowCounter, 10]];
+                            labelRange.Merge();
+                            labelRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+                            labelRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                            labelRange.RowHeight = 24;
+                            rowCounter++;
+                        }
+                        if (child.GetType() == typeof(StackPanel))
+                        {
+                            StackPanel sp = child as StackPanel;
+                            columnCounter = 3;
+                            foreach (TextBox tb in sp.Children)
+                            {
+                                i4oioxworksheet.Cells[rowCounter, columnCounter] = tb.Text;
+                                Excel.Range ioRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[rowCounter, columnCounter], i4oioxworksheet.Cells[rowCounter, columnCounter]];
+                                ioRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlMedium);
+                                columnCounter++;
+                            }
+                            rowCounter++;
+                        }
+                    }
+
+                    Excel.Range botpaddingRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[rowCounter, 2], i4oioxworksheet.Cells[rowCounter, 11]];
+                    botpaddingRange.Merge();
+                    botpaddingRange.RowHeight = 15;
+
+                    rowCounter++;
+
+                    Excel.Range boardRange = i4oioxworksheet.Range[i4oioxworksheet.Cells[startingRow, 2], i4oioxworksheet.Cells[rowCounter - 1, 11]];
+                    boardRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlMedium);
+
+                    rowCounter++;
+                }
+
+                //HEADERS WORKSHEET
+                Excel.Worksheet headersworksheet;
+                headersworksheet = workbook.Sheets.Add(After: workbook.Sheets[workbook.Sheets.Count]);
+                headersworksheet.Name = "HEADERS";
+                headersworksheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                rowCounter = 2;
+                columnCounter = 2;
+                foreach(StackPanel childSP in HeaderSP.Children)
+                {
+                    foreach(TextBox tb in childSP.Children)
+                    {
+                        headersworksheet.Cells[rowCounter, columnCounter] = tb.Text;
+                        Excel.Range headerRange = headersworksheet.Range[headersworksheet.Cells[rowCounter, columnCounter], headersworksheet.Cells[rowCounter, columnCounter]];
+                        headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlMedium);
+                        rowCounter++;
+                    }
+                    rowCounter = 2;
+                    columnCounter++;
+
+                    Excel.Range botpaddingRange = headersworksheet.Range[headersworksheet.Cells[1, columnCounter], headersworksheet.Cells[1, columnCounter]];
+                    botpaddingRange.ColumnWidth = 2.14;
+
+                    columnCounter ++;
+                }
+
+
+                workbook.Sheets[1].Select();
+                workbook.SaveAs(saveFileDialog1.FileName);
+                workbook.Close();
+                excel.Quit();
+
+                string cmd = "C:\\Windows\\explorer.exe";
+                string arg = saveFileDialog1.FileName;
+                Process.Start(cmd, arg);
+            }
         }
     }
 }

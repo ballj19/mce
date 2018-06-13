@@ -39,11 +39,6 @@ namespace mods
 
             foreach (string line in rawLines)
             {
-                if(line.Contains("ELIGI:"))
-                {
-                    //debug
-                }
-
                 if (line == "")
                 {
                     lines.Add("");
@@ -60,7 +55,7 @@ namespace mods
                     }
                     else
                     {
-                        if(line.Trim().EndsWith(":"))
+                        if(General.Value(line.Trim()).EndsWith(":"))
                         {
                             lines.Add(line.Trim());
                         }
