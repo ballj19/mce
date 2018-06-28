@@ -11,13 +11,11 @@ using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using IWshRuntimeLibrary;
+using System.Globalization;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace mods
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
@@ -26,6 +24,8 @@ namespace mods
         int searchProgress = 0;
         string selectedFileVersion = "";
         List<string> Trac_Mod_Jobs = new List<string>();
+        List<string> Motion_Values = new List<string>();
+        List<string> Motion_Options = new List<string>();
         string G_DRIVE = @"G:\";
         string file = "";
         Content content;
@@ -68,6 +68,7 @@ namespace mods
             FileExtension.SelectedIndex = 0;
             Make_Controls_Invisible();
             Update_Search_History();
+            Legacy_Controls_Visible();
                 
             try
             {
@@ -106,7 +107,16 @@ namespace mods
                 foreach (var item in FilesListBox.SelectedItems)
                 {
                     string cmd = "C:\\Windows\\explorer.exe";
-                    string arg = G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
+                    string arg = "";
+
+                    if(FilesListBox.SelectedItem.ToString().Contains(".afm"))
+                    {
+                        arg = FilesListBox.SelectedItem.ToString();
+                    }
+                    else
+                    {
+                        arg = G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
+                    }
                     Process.Start(cmd, arg);
                 }
             }
@@ -186,44 +196,77 @@ namespace mods
             }
 
             searchProgress = 0;
-            if(CustomFoldersCheckBox.IsChecked == true)
-            {
-                SearchProgress.Maximum = 29;
-            }
-            else
-            {
-                SearchProgress.Maximum = 11;
-            }
 
-            if (Environment.UserName != "jacob.ball")
+            if (TextBox1.Text.Length <= 5) //Legacy Job
             {
-                using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\test.txt", true))
+                if (CustomFoldersCheckBox.IsChecked == true)
                 {
-                    DateTime now = DateTime.Now;
-                    file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
+                    SearchProgress.Maximum = 29;
                 }
+                else
+                {
+                    SearchProgress.Maximum = 11;
+                }
+
+                if (Environment.UserName != "jacob.ball")
+                {
+                    using (System.IO.StreamWriter file =
+                    new System.IO.StreamWriter(@"\\\\amrappfil01\\MCE-Rancho\\Jake Ball\\test.txt", true))
+                    {
+                        DateTime now = DateTime.Now;
+                        file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
+                    }
+                }
+
+                string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
+                string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGM", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM", "MC-MP2\\MP2COC", "MC-MP2\\MP2OGM" };
+                string[] custom_locations = new string[] { "MC-MP\\MPODH\\" + TextBox1.Text, "MC-MP\\MPODT\\" + TextBox1.Text, "MC-MP\\MPOGD\\" + TextBox1.Text, "MC-MP\\MPOGM\\" + TextBox1.Text, "MC-MP\\MPOLHD\\" + TextBox1.Text, "MC-MP\\MPOLHM\\" + TextBox1.Text, "MC-MP\\MPOLOM\\" + TextBox1.Text, "MC-MP\\MPOLTD\\" + TextBox1.Text, "MC-MP\\MPOLTM\\" + TextBox1.Text };
+                string[] custom2_locations = new string[] { TextBox1.Text };
+
+                SearchLocation(locations, "Product");
+                if (CustomFoldersCheckBox.IsChecked == true)
+                {
+                    SearchLocation(source_locations, "Source");
+                    SearchLocation(custom_locations, "Custom");
+                    SearchLocation(custom2_locations, "Custom2");
+                }
+
+                if (FilesListBox.Items.Count < 1)
+                {
+                    JobInfo.Visibility = Visibility.Visible;
+                    JobInfo.Text = "No preview available for this job.\n";
+                    JobInfo.Text += "This job may be custom and under a different Job Number.\n";
+                    JobInfo.Text += "Please consult the Software Department for more info on this job.";
+                }
+
+                Legacy_Controls_Visible();
             }
-
-            string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
-            string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGM", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM", "MC-MP2\\MP2COC", "MC-MP2\\MP2OGM" };
-            string[] custom_locations = new string[] { "MC-MP\\MPODH\\" + TextBox1.Text, "MC-MP\\MPODT\\" + TextBox1.Text, "MC-MP\\MPOGD\\" + TextBox1.Text, "MC-MP\\MPOGM\\" + TextBox1.Text, "MC-MP\\MPOLHD\\" + TextBox1.Text, "MC-MP\\MPOLHM\\" + TextBox1.Text, "MC-MP\\MPOLOM\\" + TextBox1.Text, "MC-MP\\MPOLTD\\" + TextBox1.Text, "MC-MP\\MPOLTM\\" + TextBox1.Text };
-            string[] custom2_locations = new string[] { TextBox1.Text };
-
-            SearchLocation(locations, "Product");
-            if (CustomFoldersCheckBox.IsChecked == true)
+            else //Motion Job
             {
-                SearchLocation(source_locations, "Source");
-                SearchLocation(custom_locations, "Custom");
-                SearchLocation(custom2_locations, "Custom2");
-            }
+                string fullNumber = TextBox1.Text;
+                string jobNumber = TextBox1.Text.Substring(5, 5);
+                string jobYear = TextBox1.Text.Substring(0, 4);
 
-            if(FilesListBox.Items.Count < 1)
-            {
-                JobInfo.Visibility = Visibility.Visible;
-                JobInfo.Text = "No preview available for this job.\n";
-                JobInfo.Text += "This job may be custom and under a different Job Number.\n";
-                JobInfo.Text += "Please consult the Software Department for more info on this job.";
+                string searchFolder = G_DRIVE + @"Test Dept\Controller Data\" + jobYear + "\\" + fullNumber;
+                string[] files = new string[1];
+
+                try
+                {
+                    files = Directory.GetFiles(@searchFolder, fullNumber + "*.afm", SearchOption.AllDirectories);
+                }
+                catch
+                {
+
+                }
+                foreach(string file in files)
+                {
+                    FilesListBox.Items.Add(file);
+                }
+
+                if(permission < 2)
+                {
+                    Motion_Controls_Visible();
+                }
             }
         }
 
@@ -638,10 +681,137 @@ namespace mods
             return true;
         }
 
+        private void Get_Motion_Values()
+        {
+            byte[] fileBytes = System.IO.File.ReadAllBytes(file);
+            string hex = BitConverter.ToString(fileBytes).Replace("-", string.Empty);
+
+            List<string> optionList = new List<string>();
+            List<string> englishOptions = new List<string>();
+
+            int inc = 0;
+            int findIndex = 0;
+
+            //Gather Options
+            while (hex.IndexOf("7CF912", inc) != -1)
+            {
+                findIndex = hex.IndexOf("7CF912", inc);
+
+                bool build = true;
+                int index = findIndex - 34;
+                string optionString = "";
+                int characterCount = 0;
+
+                while (build)
+                {
+                    string asciiCode = hex.Substring(index, 2);
+                    int asciiDec = General.HexStringToDecimal(asciiCode);
+
+                    if (asciiDec >= 32 && asciiDec <= 122)
+                    {
+                        characterCount++;
+                        index -= 2;
+                    }
+                    else
+                    {
+                        build = false;
+                        index += 2;
+                    }
+                }
+
+                for (int c = 0; c < characterCount; c++)
+                {
+                    optionString += hex.Substring(index, 2);
+                    index += 2;
+                }
+
+                optionList.Add(optionString);
+
+                inc = findIndex + 2;
+            }
+
+
+            foreach (string option in optionList)
+            {
+                string english = "";
+                for (int i = 0; i < option.Length; i += 2)
+                {
+                    int charInt = Int16.Parse(option.Substring(i, 2), NumberStyles.AllowHexSpecifier);
+                    english += (char)charInt;
+                }
+
+                englishOptions.Add(english);
+            }
+
+            //Data Values come 104 characters after last option
+            List<string> values = new List<string>();
+            string valueHex = hex.Substring(findIndex + 104, hex.Length - findIndex - 104);
+
+            string valueString = "";
+            for (int i = 0; i < valueHex.Length; i = i + 2)
+            {
+                string hexChar = valueHex.Substring(i, 2);
+
+                if (hexChar == "00")
+                {
+                    values.Add(valueString);
+                    valueString = "";
+                }
+                else
+                {
+                    valueString += hexChar;
+                }
+            }
+
+
+            List<string> valuesEnglish = new List<string>();
+            foreach (string value in values)
+            {
+                string english = "";
+                for (int i = 0; i < value.Length; i += 2)
+                {
+                    int charInt = Int16.Parse(value.Substring(i, 2), NumberStyles.AllowHexSpecifier);
+                    english += (char)charInt;
+                }
+
+                valuesEnglish.Add(english);
+            }
+
+            Motion_Values = valuesEnglish;
+            Motion_Options = englishOptions;
+        }
+
+        private string Motion_Value(string option)
+        {
+            int optionIndex = Motion_Options.IndexOf(option);
+
+            return Motion_Values[optionIndex];
+        }
+
+        private bool Motion_JobInfo()
+        {
+            //Get_Motion_Values();
+            
+            return true;
+        }
+
         private bool Generate_JobInfo(string file)
         {
             this.file = file;
-            if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
+            if(file.Contains(".afm"))
+            {
+                try
+                {
+                    return Motion_JobInfo();
+                }
+                catch(Exception ex)
+                {
+                    Write_Error_To_Log(file, ex);
+                    JobInfo.Text = "Job Info could not be generated for this file.";
+                    return false;
+                }
+            }
+            else if (file.Contains("MP2OGM") || file.Contains("MPOGM") || file.Contains("MPOGD"))
             {
 
                 try
@@ -3189,6 +3359,8 @@ namespace mods
             //release com objects to fully kill excel process from running in the background
             Marshal.ReleaseComObject(xlRange);
             Marshal.ReleaseComObject(xlWorksheet);
+            Marshal.ReleaseComObject(dlmRange);
+            Marshal.ReleaseComObject(dlmWorksheet);
 
             //close and release
             xlWorkbook.Close(false);
@@ -3252,7 +3424,17 @@ namespace mods
                 }
 
                 string cmd = "C:\\Windows\\explorer.exe";
-                string arg = G_DRIVE + "Software\\" + path;
+                string arg = "";
+                
+
+                if(FilesListBox.SelectedItem.ToString().Contains(".afm"))
+                {
+                    arg = General.Get_Folder_From_Path(FilesListBox.SelectedItem.ToString());
+                }
+                else
+                {
+                    arg = G_DRIVE + "Software\\" + path;
+                }
                 Process.Start(cmd, arg);
             }
             catch
@@ -3338,6 +3520,30 @@ namespace mods
             BottomOptionsBlock.Visibility = Visibility.Hidden;
             JobSummary.Visibility = Visibility.Hidden;
             ViewVersionIO.Visibility = Visibility.Hidden;
+        }
+
+        private void Motion_Controls_Visible()
+        {
+            KDMFolder.Visibility = Visibility.Visible;
+            MotionDummyFolder.Visibility = Visibility.Visible;
+            KDMEmail.Visibility = Visibility.Visible;
+
+            ExportExcel.Visibility = Visibility.Hidden;
+            AdvancedSearch.Visibility = Visibility.Hidden;
+            ShowPrints.Visibility = Visibility.Hidden;
+            BrowseFile.Visibility = Visibility.Hidden;
+        }
+
+        private void Legacy_Controls_Visible()
+        {
+            KDMFolder.Visibility = Visibility.Hidden;
+            MotionDummyFolder.Visibility = Visibility.Hidden;
+            KDMEmail.Visibility = Visibility.Hidden;
+
+            ExportExcel.Visibility = Visibility.Visible;
+            AdvancedSearch.Visibility = Visibility.Visible;
+            ShowPrints.Visibility = Visibility.Visible;
+            BrowseFile.Visibility = Visibility.Visible;
         }
 
         private bool Version_Check()
@@ -3648,45 +3854,47 @@ namespace mods
                 {
                     Directory.CreateDirectory(jobPath);
 
-                    // Create a file to write to.
-                    using (StreamWriter sw = System.IO.File.CreateText(jobPath + @"\Readme.txt"))
+                    if (response != "")
                     {
-                        DateTime now = DateTime.Now;
-                        sw.WriteLine("Date: " + now.ToString("MM-dd-yy"));
-                        sw.WriteLine("");
-                        sw.WriteLine("The Custom is the same as job " + response.Substring(0,4) + "-" + response.Substring(4,response.Length - 4));
-                    }
-                }
+                        string referenceYearSubFolder = response.Substring(0, 4);
+                        string referenceJobPath = path + referenceYearSubFolder + "\\" + response;
+                        CreateShortcut(response + " - Shortcut", jobPath + "\\", referenceJobPath);
 
-                if (response != "")
-                {
-                    string referenceYearSubFolder = response.Substring(0, 4);
-                    string referenceJobPath = path + referenceYearSubFolder + "\\" + response;
-                    CreateShortcut(response + " - Shortcut", jobPath + "\\", referenceJobPath);
+
+                        // Create a file to write to.
+                        using (StreamWriter sw = System.IO.File.CreateText(jobPath + @"\Readme.txt"))
+                        {
+                            DateTime now = DateTime.Now;
+                            sw.WriteLine("Date: " + now.ToString("MM-dd-yy"));
+                            sw.WriteLine("");
+                            sw.WriteLine("The Custom is the same as job " + response.Substring(0, 4) + "-" + response.Substring(4, response.Length - 4));
+                        }
+                    }
                 }
             }
 
             string cmd = "C:\\Windows\\explorer.exe";
             string arg = jobPath;
             Process.Start(cmd, arg);
+        }
 
+        private void KDMFolder_Click(object sender, RoutedEventArgs e)
+        {
             //KDM FOLDER
-            if (System.Windows.Forms.MessageBox.Show("KDM Job?", "KDM Job?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            string kdmpath = @"\\10.113.0.38\mce-public\MCE\Test\Motion Software\Custom Software";
+            string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
+
+            if (!Directory.Exists(kdmjobPath))
             {
-                string kdmpath = @"\\10.113.0.31\mce-public\MCE\Test\Motion Software\Custom Software";
-                string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
-
-                if (!Directory.Exists(kdmjobPath))
+                if (System.Windows.Forms.MessageBox.Show("There is no existing folder for this job. Would you like to create one?", "Create Job Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
-                    if (System.Windows.Forms.MessageBox.Show("There is no existing folder for this job. Would you like to create one?", "Create Job Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                    {
-                        Directory.CreateDirectory(kdmjobPath);
-                    }
+                    Directory.CreateDirectory(kdmjobPath);
                 }
-
-                string kdmarg = kdmjobPath;
-                Process.Start(cmd, kdmarg);
             }
+
+            string cmd = "C:\\Windows\\explorer.exe";
+            string kdmarg = kdmjobPath;
+            Process.Start(cmd, kdmarg);
         }
 
         public static void CreateShortcut(string shortcutName, string shortcutPath, string targetFileLocation)
@@ -3746,7 +3954,7 @@ namespace mods
         {
             string jobNumber = TextBox1.Text.Substring(5, 5);
             string jobYear = TextBox1.Text.Substring(2, 2);
-            string kdmpath = @"\\10.113.0.31\mce-public\MCE\Test\Motion Software\Custom Software";
+            string kdmpath = @"\\10.113.0.38\mce-public\MCE\Test\Motion Software\Custom Software";
             string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
 
             Outlook.Application app = new Outlook.Application();
@@ -3756,7 +3964,7 @@ namespace mods
             body += "Thanks,\nJake";
             string subject = "Job " + jobYear + "-" + jobNumber;
             string to = "alan.aranda@nidec-mce.com;eliud.jimenez@nidec-mce.com";
-            string cc = "emilio.garza@nidec-mce.com;bart.lewalski@nidec-mce.com";
+            string cc = "emilio.garza@nidec-mce.com;bart.lewalski@nidec-mce.com;jim.stuart@nidec-mce.com";
             Outlook.MAPIFolder sentContacts = (Outlook.MAPIFolder)
                  app.ActiveExplorer().Session.GetDefaultFolder
                  (Outlook.OlDefaultFolders.olFolderContacts);
@@ -3961,7 +4169,7 @@ namespace mods
                 //HEADERS WORKSHEET
                 Excel.Worksheet headersworksheet;
                 headersworksheet = workbook.Sheets.Add(After: workbook.Sheets[workbook.Sheets.Count]);
-                headersworksheet.Name = "HEADERS";
+                headersworksheet.Name = "Headers";
                 headersworksheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 rowCounter = 2;

@@ -231,7 +231,19 @@ namespace mods
             startInfo.Arguments = Microsoft.VisualBasic.Interaction.InputBox("Arguments?", "Arguments", jobNumber + " " + subFolder);
             startInfo.FileName = "eprlnk";
 
+            string[] args = startInfo.Arguments.Split(' ');
+
             Process proc = Process.Start(startInfo);
+            proc.WaitForExit();
+
+            if (args[0].ToUpper().StartsWith("G"))
+            {
+                System.IO.File.Copy(@"C:\EMULATION\TMPMPGRP.BIN", @"C:\EMULATION\" + args[0] + ".BIN", true);
+            }
+            else
+            {
+                System.IO.File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + args[0] + ".BIN", true);
+            }
         }
     }
 }

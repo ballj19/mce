@@ -234,6 +234,8 @@ namespace mods
             //release com objects to fully kill excel process from running in the background
             Marshal.ReleaseComObject(xlRange);
             Marshal.ReleaseComObject(xlWorksheet);
+            Marshal.ReleaseComObject(dlmRange);
+            Marshal.ReleaseComObject(dlmWorksheet);
 
             //close and release
             xlWorkbook.Close(false);
@@ -296,8 +298,25 @@ namespace mods
         {
             upgrade.Version_Upgrade(SourceFile.Text,CarType.SelectedItem.ToString(),ControllerType.SelectedItem.ToString());
 
+            int softInt = SourceFile.Text.IndexOf("Software");
+            string strippedPath = SourceFile.Text.Substring(softInt + 9, SourceFile.Text.Length - softInt - 9);
+            Content content = new Content(strippedPath);
+
+            string versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+            string versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+            string versionBot = content.Get_String("CUSTOM:", 1);
+            if (versionTop[0] == '0' && versionTop.Length > 1)
+            {
+                versionTop = versionTop.Substring(1, 1);
+            }
+            if (versionBot[0] == '0' && versionBot.Length > 1 && versionBot[1] != ' ')
+            {
+                versionBot = versionBot.Substring(1, 1);
+            }
+            string fileVersion = versionTop + "." + versionMid + "." + versionBot;
+
             CommentBox.Text += ";\t\t";
-            CommentBox.Text += "Upgraded Software to Version \n";
+            CommentBox.Text += "Upgraded Software to Version " + fileVersion + "\n";
         }
 
         private void Modify_IO()

@@ -21,5 +21,6 @@
         <CheckBox x:Name="DLMNormalBox" Content="DLM N" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="DLMFSPH1" Content="DLM FS PH1" HorizontalAlignment="Left" Margin="77,55,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="DLMFSPH2" Content="DLM FS PH2" HorizontalAlignment="Left" Margin="164,55,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="RearFR" Content="Rear Door Fire Return?" HorizontalAlignment="Left" Margin="251,38,0,0" VerticalAlignment="Top" Width="141"/>
     </Grid>
 </Window>

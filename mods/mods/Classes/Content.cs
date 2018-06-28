@@ -318,32 +318,8 @@ namespace mods
 
         public int Get_Group_Top_Level()
         {
-            string[] cars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
-
-            int number_of_cars = this.Get_Group_Num_Of_Cars();
-
-            List<int> top_landings = new List<int>();
-
-            for(int c = 0; c < number_of_cars; c++)
-            {
-                int eligiv_index = this.content.FindIndex(x => x.StartsWith("ELIGIV" + cars[c]));
-                int top_landing = 0;
-                int l = 1;
-
-                while(content[eligiv_index + l].StartsWith("DB"))
-                {
-                    if(this.Get_Byte("ELIGIV" + cars[c],l) != "00")
-                    {
-                        top_landing = l;
-                    }
-
-                    l++;
-                }
-
-                top_landings.Add(top_landing);
-            }
-
-            return top_landings.Max(); 
+            string top_string = Get_Byte("LOBBY:", 20);
+            return General.HexStringToDecimal(top_string);
         }
 
         public int Get_Group_Num_Of_Cars()

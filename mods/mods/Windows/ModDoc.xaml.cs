@@ -123,6 +123,8 @@ namespace mods
             //release com objects to fully kill excel process from running in the background
             Marshal.ReleaseComObject(xlRange);
             Marshal.ReleaseComObject(xlWorksheet);
+            Marshal.ReleaseComObject(dlmRange);
+            Marshal.ReleaseComObject(dlmWorksheet);
 
             //close and release
             xlWorkbook.Close(false);

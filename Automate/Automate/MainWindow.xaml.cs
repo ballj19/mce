@@ -33,6 +33,8 @@ namespace Automate
         public int top_landing;
         public int MainRecallFloor;
         public int FRBYP;
+        private string ForR_Recall;
+        
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -96,6 +98,15 @@ namespace Automate
             CarCalls calls = new CarCalls(car_calls, this.top_landing);
             calls.ShowDialog();
             car_calls = calls.car_calls;
+
+            if(RearFR.IsChecked == true)
+            {
+                ForR_Recall = "RDO";
+            }
+            else
+            {
+                ForR_Recall = "FDO";
+            }
         }
 
         private void Get_Content()
@@ -375,7 +386,7 @@ namespace Automate
 
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("Initiate Fire Phase 1 - Main\n");
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",1);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",1);
             UpdatePosition();
             MainRecallFloor = this.position;
 
@@ -566,7 +577,7 @@ namespace Automate
             //Get Fire Service Phase 1 Main Recall Floor
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("\nInitiate Fire Phase 1 - Main\n");
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",1);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",1);
             UpdatePosition();
             MainRecallFloor = this.position;
             Thread.Sleep(1000);
@@ -610,7 +621,7 @@ namespace Automate
                 LeftMouseClick(Buttons["INL"][0], Buttons["INL"][1]);
                 waitEvent(d + "DC", "DoorClosed", "Door Closed: Begin Recall\n", 4);
             }
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n", 4);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n", 4);
             Thread.Sleep(3000);
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("\t\t\tEnd Fire Phase 1\n");
@@ -648,7 +659,7 @@ namespace Automate
                 LeftMouseClick(Buttons["INL"][0], Buttons["INL"][1]);
                 waitEvent(d + "DC", "DoorClosed", "Door Closed: Begin Recall\n",4);
             }
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",4);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",4);
             Thread.Sleep(3000);
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("\t\t\tEnd Fire Phase 1\n");
@@ -692,7 +703,7 @@ namespace Automate
                 LeftMouseClick(Buttons["INL"][0], Buttons["INL"][1]);
                 waitEvent(d + "DC", "DoorClosed", "\t\t\t\tDoor Closed: Begin Recall\n",4);
             }
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",4);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",4);
             Thread.Sleep(3000);
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("\t\t\tEnd Fire Phase 1\n");
@@ -710,18 +721,32 @@ namespace Automate
 
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
             Log("Initiate Fire Phase 1 - Main\n");
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",1);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",1);
             UpdatePosition();
             MainRecallFloor = this.position;
 
-            //Part 1
-            LeftMouseClick(Buttons["FCSH"][0], Buttons["FCSH"][1]);
-            Log("\tInitiate Fire Phase 2\n");
-            Thread.Sleep(1000);
-            LeftMouseClick(Buttons["FDBCH"][0], Buttons["FDBCH"][1]);
-            waitEvent("FDC", "DoorClosed", "Door Closed\n",2);
-            LeftMouseClick(Buttons["FDBCH"][0], Buttons["FDBCH"][1]);
-            Thread.Sleep(1000);
+            if(ForR_Recall.StartsWith("R"))
+            {
+                //Part 1
+                LeftMouseClick(Buttons["FCSH"][0], Buttons["FCSH"][1]);
+                Log("\tInitiate Fire Phase 2\n");
+                Thread.Sleep(1000);
+                LeftMouseClick(Buttons["RDBCH"][0], Buttons["RDBCH"][1]);
+                waitEvent("RDC", "DoorClosed", "Door Closed\n", 2);
+                LeftMouseClick(Buttons["RDBCH"][0], Buttons["RDBCH"][1]);
+                Thread.Sleep(1000);
+            }
+            else
+            {
+                //Part 1
+                LeftMouseClick(Buttons["FCSH"][0], Buttons["FCSH"][1]);
+                Log("\tInitiate Fire Phase 2\n");
+                Thread.Sleep(1000);
+                LeftMouseClick(Buttons["FDBCH"][0], Buttons["FDBCH"][1]);
+                waitEvent("FDC", "DoorClosed", "Door Closed\n", 2);
+                LeftMouseClick(Buttons["FDBCH"][0], Buttons["FDBCH"][1]);
+                Thread.Sleep(1000);
+            }
 
             do
             {
@@ -809,7 +834,7 @@ namespace Automate
 
             //Part 12
             waitEvent(d + "DC", "DoorClosed", "Door Closed: Begin Recall\n",3, 5);
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",3);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",3);
             LeftMouseClick(Buttons[d + "HDH"][0], Buttons[d + "HDH"][1]);
             Log("\t\t\tHD Jumper Removed\n");
             Thread.Sleep(1000);
@@ -866,7 +891,7 @@ namespace Automate
                 LeftMouseClick(Buttons["INL"][0], Buttons["INL"][1]);
                 waitEvent(d + "DC", "DoorClosed", "Door Closed: Begin Recall\n",3);
             }
-            waitEvent("FDO", "DoorOpen", "Door Opened: Finished Recall\n",3);
+            waitEvent(ForR_Recall, "DoorOpen", "Door Opened: Finished Recall\n",3);
                 
             Thread.Sleep(1000);
             LeftMouseClick(Buttons["FRSL"][0], Buttons["FRSL"][1]);
