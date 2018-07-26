@@ -14,7 +14,7 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="SearchHistory" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="113,39,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="SearchHistory_SelectionChanged"/>
-        <Button Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
+        <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
         <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
         <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged"/>
@@ -31,6 +31,7 @@
         <Button x:Name="KDMFolder" Content="KdM Folder" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="298,173,0,0" Click="KDMFolder_Click" />
         <Button x:Name="KDMEmail" Content="KDM Email" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="298,200,0,0" Click="KDMEmail_Click" />
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="398" Height="450" Margin="18,310,0,0"></TextBlock>
+        <Button x:Name="DifferentJobNumber" Content="Search for this file in a different directory?" Visibility="Hidden" HorizontalAlignment="Left" Margin="60,385,0,0" VerticalAlignment="Top" Width="252" Height="37" Click="DifferentJobNumber_Click"/>
         <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged">
             <TabItem Name="LandingsTab" Header="Landings">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -69,7 +70,7 @@
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="JobSummaryTab" Header="Summary">
-                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                <ScrollViewer VerticalScrollBarVisibility="Visible" Margin="24,0,0,0">
                     <TextBlock x:Name="JobSummary" TextWrapping="Wrap" Width="640" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                 </ScrollViewer>
             </TabItem>
@@ -94,10 +95,14 @@
             </TabItem>
             <TabItem Name="UtilityTab" Header="Utility">
                 <Grid>
-                    <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
+                    <Button x:Name="ModDocs" Content="Mod Document" HorizontalAlignment="Left" Margin="10,117,0,0" VerticalAlignment="Top" Width="99" Click="ModDocs_Click" Height="21"/>
                     <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
                     <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
                     <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
+                    <ComboBox x:Name="PTHCProgRecordComboBox" HorizontalAlignment="Left" Margin="158,36,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="PTHCProgRecord" Content="PTHC Prog Rec" HorizontalAlignment="Left" Margin="283,36,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Prog_Record" Height="22"/>
+                    <Button x:Name="PTHCModDoc" Content="PTHC Mod Doc" HorizontalAlignment="Left" Margin="283,63,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Mod_Doc" Height="22"/>
+
                 </Grid>
             </TabItem>
             <TabItem Name="AdminTab" Header="Admin">

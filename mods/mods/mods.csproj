@@ -62,6 +62,7 @@
     <Compile Include="CanUSB\CanUsbLibrary.cs" />
     <Compile Include="Classes\General.cs" />
     <Compile Include="CanUSB\FTD2XX_NETclass.cs" />
+    <Compile Include="MotionContent.cs" />
     <Compile Include="Windows\ModDoc.xaml.cs">
       <DependentUpon>ModDoc.xaml</DependentUpon>
     </Compile>

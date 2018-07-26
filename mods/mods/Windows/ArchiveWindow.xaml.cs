@@ -23,12 +23,14 @@ namespace mods
         private string jobNumber;
         private string filePath;
         private string folder;
+        private string extension;
 
-        public ArchiveWindow(string filepath)
+        public ArchiveWindow(string filepath, string extension)
         {
             InitializeComponent();
 
             this.filePath = filepath;
+            this.extension = extension;
             FilePathBlock.Text = filePath;
 
             FileNameList.Text = "File Names\n";
@@ -48,8 +50,7 @@ namespace mods
                 this.jobNumber = jobFile.Substring(0, dotIndex);
             }
 
-            FileNameBlock.Text = jobNumber + ".";
-            FileExtensionBox.Text = "OLD";
+            FileNameBlock.Text = jobNumber + extension;
 
             Search_Files();
         }
@@ -80,7 +81,7 @@ namespace mods
 
         private void ArchiveButton_Click(object sender, RoutedEventArgs e)
         {
-            string newFile = folder + FileNameBlock.Text + FileExtensionBox.Text;
+            string newFile = folder + FileNameBlock.Text;
 
             if(File.Exists(newFile))
             {
@@ -91,7 +92,7 @@ namespace mods
             }
 
             File.Move(filePath, newFile);
-            File.Copy(newFile, folder + jobNumber + ".ASM");
+            File.Copy(newFile, folder + jobNumber + extension);
 
             this.Close();
         }

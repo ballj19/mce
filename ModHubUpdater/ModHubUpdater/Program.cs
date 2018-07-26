@@ -28,7 +28,7 @@ namespace ModHubUpdater
                 Thread.Sleep(4000);
 
                 List<string> versions = new List<string>();
-                versions = System.IO.File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\Versions.txt").ToList();
+                versions = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Versions.txt").ToList();
 
                 foreach (string version in versions)
                 {
@@ -50,7 +50,7 @@ namespace ModHubUpdater
             catch(Exception ex)
             {
                 using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\amrappfil01\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+                    new System.IO.StreamWriter(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Error_Log.txt", true))
                 {
                     DateTime now = DateTime.Now;
                     writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);

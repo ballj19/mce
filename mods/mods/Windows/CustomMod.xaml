@@ -19,7 +19,7 @@
         <ScrollViewer x:Name="MatchedLines" Margin="257,76,10,10">
             <StackPanel x:Name="MatchedLinesSP" Orientation="Vertical"></StackPanel>
         </ScrollViewer>
-        <Button Content="J Build" HorizontalAlignment="Left" Margin="170,49,0,0" VerticalAlignment="Top" Width="75" Click="JBuild_Click"/>
+        <Button Content="Assemble" HorizontalAlignment="Left" Margin="170,49,0,0" VerticalAlignment="Top" Width="75" Click="JBuild_Click"/>
         <Button Content="EPRLNK" HorizontalAlignment="Left" Margin="250,49,0,0" VerticalAlignment="Top" Width="75" Click="EPRLNK_Click"/>
     </Grid>
 </Window>

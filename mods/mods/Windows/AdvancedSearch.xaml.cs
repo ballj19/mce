@@ -256,7 +256,7 @@ namespace mods
             {
                 int progress = 0;
                 string jobNumber = "*.asm";
-                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\" + subfolder + "\\" + location;
+                string folder = @"\\10.113.32.45\shared\Software\" + subfolder + "\\" + location;
                 SearchFolderTB.Text = "Searching through " + folder + "...";
                 string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                 SearchProgress.Maximum = files.Count();
@@ -293,7 +293,7 @@ namespace mods
             {
                 int progress = 0;
                 string jobNumber = "*.asm";
-                string folder = "\\" + "\\" + "mceshared\\shared\\Software\\Custom2";
+                string folder = @"\\10.113.32.45\shared\Software\Custom2";
                 SearchFolderTB.Text = "Searching through " + folder + "...";
                 string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                 SearchProgress.Maximum = files.Count();

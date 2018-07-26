@@ -44,3 +44,11 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\SoftwareOptio
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\UpgradeWindow.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\VersionIO.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\VersionIO.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Release\Interop.IWshRuntimeLibrary.dll
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Interop.IWshRuntimeLibrary.dll
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ModDoc.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ProgramMotion.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\CustomMod.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ModDoc.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ProgramMotion.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\CustomMod.baml

@@ -59,7 +59,7 @@ namespace mods
 
         private void Upgrade_Click(object sender, RoutedEventArgs e)
         {
-            ArchiveWindow aw = new ArchiveWindow(JobFile.Text);
+            ArchiveWindow aw = new ArchiveWindow(JobFile.Text, ".ASM");
             aw.ShowDialog();
 
             this.upgrade = new Upgrade(JobFile.Text);

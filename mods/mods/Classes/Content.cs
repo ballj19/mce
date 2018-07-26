@@ -12,7 +12,7 @@ namespace mods
         public List<string> inputs, outputs;
         List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
         List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
-        string filepath =  "\\" + "\\" + "mceshared\\shared\\Software\\";
+        string filepath = @"\\10.113.32.45\shared\Software\";
         public string file;
 
         public Content(string file)
@@ -569,16 +569,7 @@ namespace mods
             List<string> lines = General.Get_Clean_Lines_From_Path(filepath + file);
             List<string> jobSummary = new List<string>();
 
-            int startIndex = 0;
             int endIndex = 0;
-            foreach(string line in lines)
-            {
-                if(General.Comment(line) != "")
-                {
-                    startIndex = lines.IndexOf(line);
-                    break;
-                }
-            }
 
             foreach(string line in lines)
             {
@@ -589,7 +580,7 @@ namespace mods
                 }
             }
 
-            for(int l = startIndex; l < endIndex; l++)
+            for(int l = 0; l < endIndex; l++)
             {
                 jobSummary.Add(lines[l]);
             }

@@ -218,8 +218,16 @@ namespace mods
         {
             var startInfo = new ProcessStartInfo();
             startInfo.WorkingDirectory = NewFolder.Text;
-            startInfo.Arguments = "all";
-            startInfo.FileName = "jbuild";
+            if (NewFolder.Text.Contains("Custom2"))
+            {
+                startInfo.Arguments = "all";
+                startInfo.FileName = "jbuild";
+            }
+            else
+            {
+                startInfo.Arguments = subFolder;
+                startInfo.FileName = "asmbl";
+            }
 
             Process proc = Process.Start(startInfo);
         }
