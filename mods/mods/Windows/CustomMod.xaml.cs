@@ -185,7 +185,7 @@ namespace mods
 
         private void FilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MatchedLinesSP.Children.Clear();
+            /*MatchedLinesSP.Children.Clear();
 
             if (FilesListBox.Items.Count > 0)
             {
@@ -211,7 +211,7 @@ namespace mods
                         MatchedLinesSP.Children.Add(tb);
                     }
                 }
-            }
+            }*/
         }
 
         private void JBuild_Click(object sender, RoutedEventArgs e)
@@ -236,7 +236,8 @@ namespace mods
         {
             var startInfo = new ProcessStartInfo();
             startInfo.WorkingDirectory = NewFolder.Text;
-            startInfo.Arguments = Microsoft.VisualBasic.Interaction.InputBox("Arguments?", "Arguments", jobNumber + " " + subFolder);
+            string file = FilesListBox.SelectedItem.ToString().Substring(0, FilesListBox.SelectedItem.ToString().Length - 4);
+            startInfo.Arguments = Microsoft.VisualBasic.Interaction.InputBox("Arguments?", "Arguments", file + " " + subFolder);
             startInfo.FileName = "eprlnk";
 
             string[] args = startInfo.Arguments.Split(' ');
@@ -251,6 +252,17 @@ namespace mods
             else
             {
                 System.IO.File.Copy(@"C:\EMULATION\TMPMPLCL.BIN", @"C:\EMULATION\" + args[0] + ".BIN", true);
+            }
+        }
+
+        private void List_Jobs_Click(object sender, RoutedEventArgs e)
+        {
+            string folder = NewFolder.Text;
+            string[] files = Directory.GetFiles(@folder, "*.asm", SearchOption.AllDirectories);
+
+            foreach(string file in files)
+            {
+                FilesListBox.Items.Add(General.Get_File_From_Path(file));
             }
         }
     }

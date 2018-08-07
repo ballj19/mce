@@ -17,7 +17,14 @@
         <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
         <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
-        <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged"/>
+        <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove" Click="Remove_From_Files_List"></MenuItem>
+                    <MenuItem Header="Clear All" Click="Clear_Files_List"></MenuItem>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
         <Button x:Name="OpenFile" Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
         <Button x:Name="BrowseFile" Content="Browse" HorizontalAlignment="Left" Margin="298,67,0,0" VerticalAlignment="Top" Width="99" Click="BrowseFile_Click" Height="22"/>
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,39,0,0" VerticalAlignment="Top" Width="75" Height="22"/>

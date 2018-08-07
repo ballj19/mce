@@ -10,8 +10,10 @@ namespace mods
     {
         public List<string> content = new List<string>();
         public List<string> inputs, outputs;
-        List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
-        List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
+        //List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
+        //List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
+        public List<string> inputLabels = new List<string>();
+        public List<string> outputLabels = new List<string>();
         string filepath = @"\\10.113.32.45\shared\Software\";
         public string file;
 
@@ -30,6 +32,7 @@ namespace mods
             this.file = General.Get_File_From_Path(path);
             this.filepath = General.Get_Folder_From_Path(path);
             this.content = Get_Content();
+            Get_IO_Labels();
             this.inputs = IO(inputLabels , 'I');
             this.outputs = IO(outputLabels, 'O');
         }
@@ -100,7 +103,24 @@ namespace mods
             return content;
         }
         
-        
+        private void Get_IO_Labels()
+        {
+            foreach(string line in content)
+            {
+                string value = General.Value(line);
+                if(value.EndsWith(":"))
+                {
+                    if (value.StartsWith("IOXI") || value.StartsWith("IOI"))
+                    {
+                        inputLabels.Add(value.Substring(0, value.Length - 1)); //Add without ending :
+                    }
+                    else if(value.StartsWith("IOXO") || value.StartsWith("IOO"))
+                    {
+                        outputLabels.Add(value.Substring(0, value.Length - 1)); //Add without ending :
+                    }
+                }
+            }
+        }
 
         public string Get_Bit(string label, int offset, int nibble, int bit)
         {
@@ -230,27 +250,29 @@ namespace mods
 
             List<string> lines = General.Get_Clean_Lines_From_Path(filepath + file);
 
-            string[] labelNumbers = { "", "2", "3", "4" };
-
             foreach (string ioLabel in ioLabels)
             {
-                foreach (string labelNumber in labelNumbers)
+                if (lines.FindIndex(x => x.StartsWith(ioLabel + ":")) != -1)
                 {
-                    if (lines.FindIndex(x => x.StartsWith(ioLabel + labelNumber + ":")) != -1)
-                    {
-                        int io_index = lines.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":"));
-                        int x = 0;
-                        int iomap_index = io_index + x + 1;
+                    int io_index = lines.FindIndex(i => i.StartsWith(ioLabel + ":"));
+                    int x = 0;
+                    int iomap_index = io_index + x + 1;
 
-                        while (!lines[iomap_index].Trim().EndsWith(":"))
+                    while (!lines[iomap_index].Trim().EndsWith(":"))
+                    {
+                        if(General.Value(lines[iomap_index]).StartsWith("DB"))
                         {
-                            if(General.Value(lines[iomap_index]).StartsWith("DB"))
+                            if (General.Value(lines[iomap_index]).Contains("0,"))
+                            {
+                                //Fix for comma separated zeros bugging IO
+                            }
+                            else
                             {
                                 iomap.AddRange(Crawl_Options(lines, iomap_index, 8));
                             }
-                            x++;
-                            iomap_index = io_index + x + 1;
                         }
+                        x++;
+                        iomap_index = io_index + x + 1;
                     }
                 }
             }
@@ -262,22 +284,24 @@ namespace mods
             List<string> ios = new List<string>();
             List<string> ioValues = new List<string>();
             List<string> iomap = Build_IOmap(ioLabels);
-
-            string[] labelNumbers = { "", "2", "3", "4" };
-
+            
             foreach(string ioLabel in ioLabels)
             {
-                foreach (string labelNumber in labelNumbers)
+                if (this.content.FindIndex(i => i.StartsWith(ioLabel + ":")) != -1)
                 {
-                    if (this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":")) != -1)
-                    {
-                        int io_index = this.content.FindIndex(i => i.StartsWith(ioLabel + labelNumber + ":")) + 1;
+                    int io_index = this.content.FindIndex(i => i.StartsWith(ioLabel + ":")) + 1;
 
-                        while(content[io_index].StartsWith("DB"))
+                    while(content[io_index].StartsWith("DB"))
+                    {
+                        if(content[io_index].Contains("0,"))
+                        {
+                            //Fix for comma separated zeros bugging IO
+                        }
+                        else
                         {
                             ioValues.Add(General.Value(content[io_index]));
-                            io_index++;
                         }
+                        io_index++;
                     }
                 }
             }

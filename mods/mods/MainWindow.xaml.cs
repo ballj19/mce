@@ -36,11 +36,10 @@ namespace mods
             Set_Permissions();
 
             this.Title = "Modification Hub by Jake Ball " + version;
-
-            Update_Auto_Updater();
-
+            
             if (Version_Check())
             {
+                Update_Auto_Updater();
                 if (System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     //To get the location the assembly normally resides on disk or the install directory
@@ -88,9 +87,9 @@ namespace mods
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             SearchButton.IsEnabled = false;
+            SearchFiles();
             blockSearchHistoryChange = true;
             Update_Search_History();
-            SearchFiles();
             blockSearchHistoryChange = false;
             SearchButton.IsEnabled = true;
         }
@@ -106,11 +105,11 @@ namespace mods
 
                     if (FilesListBox.SelectedItem.ToString().Contains(".afm"))
                     {
-                        arg = FilesListBox.SelectedItem.ToString();
+                        arg = item.ToString();
                     }
                     else
                     {
-                        arg = G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString();
+                        arg = G_DRIVE + "Software\\" + item.ToString();
                     }
                     Process.Start(cmd, arg);
                 }
@@ -192,7 +191,20 @@ namespace mods
 
             searchProgress = 0;
 
-            if (FileExtension.SelectedItem.ToString() != "Motion") //Legacy Job
+            if(FileExtension.SelectedItem.ToString() == "DDP")
+            {
+                FilesListBox.Items.Clear();
+                string jobNumber = "*" + TextBox1.Text + "*";
+
+                string folder = G_DRIVE + "Software\\Product\\MASTER.BIN\\DDP";
+                string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
+
+                foreach(string file in files)
+                {
+                    FilesListBox.Items.Add(file);
+                }
+            }
+            else if (FileExtension.SelectedItem.ToString() != "Motion") //Legacy Job
             {
                 if (CustomFoldersCheckBox.IsChecked == true)
                 {
@@ -238,7 +250,6 @@ namespace mods
             }
             else //Motion Job
             {
-
                 string fullNumber = "";
                 string jobNumber = "";
                 string jobYear = "";
@@ -286,6 +297,19 @@ namespace mods
                     Motion_Controls_Visible();
                 }
             }
+        }
+
+        private void Remove_From_Files_List(object sender, RoutedEventArgs e)
+        {
+            if(FilesListBox.SelectedIndex != -1)
+            {
+                FilesListBox.Items.Remove(FilesListBox.SelectedItem);
+            }
+        }
+
+        private void Clear_Files_List(object sender, RoutedEventArgs e)
+        {
+            FilesListBox.Items.Clear();
         }
 
         private int SearchLocation(string[] locations, string subfolder)
@@ -776,24 +800,27 @@ namespace mods
 
         private void FilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var addedItem = e.AddedItems;
-
-            if (addedItem.Count == 1)
+            if(FileExtension.SelectedItem.ToString() != "DDP")
             {
-                string file = addedItem[0].ToString();
+                var addedItem = e.AddedItems;
 
-                if (Generate_JobInfo(file))
+                if (addedItem.Count == 1)
                 {
-                    Make_Controls_Visible();
+                    string file = addedItem[0].ToString();
+
+                    if (Generate_JobInfo(file))
+                    {
+                        Make_Controls_Visible();
+                    }
+                    else
+                    {
+                        Make_Controls_Invisible();
+                        JobInfo.Visibility = Visibility.Visible;
+                    }
                 }
-                else
-                {
-                    Make_Controls_Invisible();
-                    JobInfo.Visibility = Visibility.Visible;
-                }
+
+                ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "Version I/O", DispatcherPriority.Background);
             }
-
-            ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "Version I/O", DispatcherPriority.Background);
         }
 
         private void OpenSim_Click(object sender, RoutedEventArgs e)
@@ -2439,7 +2466,7 @@ namespace mods
                 StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
                 StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 1; i <= 8; i++)
                 {
                     string ioText = "";
                     if (inputRow * 8 + (7 - inputCol) < inputs.Count)
@@ -2461,7 +2488,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "IN" + (9 - i)
                         });
                     inputCol++;
                 }
@@ -2469,7 +2497,7 @@ namespace mods
                 inputCol = 0;
                 inputRow++;
 
-                for (int o = 0; o < 8; o++)
+                for (int o = 1; o <= 8; o++)
                 {
                     string ioText = "";
                     if (outputRow * 8 + outputCol < outputs.Count)
@@ -2491,7 +2519,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "OUT" + o 
                         });
                     outputCol++;
                 }
@@ -2540,7 +2569,7 @@ namespace mods
                 StackPanel inputsp2 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, -2, 0, 0) };
                 StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 1; i <= 8; i++)
                 {
                     string ioText = "";
                     if (inputRow * 8 + (7 - inputCol) < inputs.Count)
@@ -2562,7 +2591,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "IN" + (9 - i)
                         });
 
                     inputCol++;
@@ -2574,7 +2604,7 @@ namespace mods
                     }
                 }
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 9; i <= 16; i++)
                 {
                     string ioText = "";
                     if (inputRow * 8 + (7 - inputCol) < inputs.Count)
@@ -2596,7 +2626,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "IN" + (25 - i),                            
                         });
 
                     inputCol++;
@@ -2608,7 +2639,7 @@ namespace mods
                     }
                 }
 
-                for (int o = 0; o < 4; o++)
+                for (int o = 1; o <= 4; o++)
                 {
                     string ioText = "";
                     if (outputRow * 8 + outputCol < outputs.Count)
@@ -2630,7 +2661,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "OUT" + o
                         });
 
                     outputCol++;
@@ -2684,7 +2716,7 @@ namespace mods
                 StackPanel inputsp1 = new StackPanel { Orientation = Orientation.Horizontal };
                 StackPanel outputsp1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 1; i <= 8; i++)
                 {
                     string ioText = "";
                     if (inputRow * 8 + (7 - inputCol) < inputs.Count)
@@ -2706,7 +2738,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "IN" + (9 - i)
                         });
                     inputCol++;
                 }
@@ -2714,7 +2747,7 @@ namespace mods
                 inputCol = 0;
                 inputRow++;
 
-                for (int o = 0; o < 8; o++)
+                for (int o = 1; o <= 8; o++)
                 {
                     string ioText = "";
                     if (outputRow * 8 + outputCol < outputs.Count)
@@ -2736,7 +2769,8 @@ namespace mods
                             IsReadOnly = true,
                             Background = System.Windows.Media.Brushes.Transparent,
                             TextAlignment = TextAlignment.Center,
-                            Margin = new Thickness(0, 0, -2, 0)
+                            Margin = new Thickness(0, 0, -2, 0),
+                            ToolTip = "OUT" + o
                         });
                     outputCol++;
 
@@ -3373,7 +3407,7 @@ namespace mods
                 string arg = "";
 
 
-                if (FilesListBox.SelectedItem.ToString().Contains(".afm"))
+                if (FileExtension.SelectedItem.ToString() == "Motion" || FileExtension.SelectedItem.ToString() == "DDP")
                 {
                     arg = General.Get_Folder_From_Path(FilesListBox.SelectedItem.ToString());
                 }
@@ -3564,6 +3598,7 @@ namespace mods
                 FileExtension.Items.Add(".old");
                 FileExtension.Items.Add("All Files");
                 FileExtension.Items.Add("Motion");
+                FileExtension.Items.Add("DDP");
             }
 
             if (permission > 1)
@@ -3751,11 +3786,8 @@ namespace mods
 
         private void ViewVersionIO_Click(object sender, RoutedEventArgs e)
         {
-            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
-            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
-
-            List<string> inputs = content.Build_IOmap(inputLabels);
-            List<string> outputs = content.Build_IOmap(outputLabels);
+            List<string> inputs = content.Build_IOmap(content.inputLabels);
+            List<string> outputs = content.Build_IOmap(content.outputLabels);
 
             VersionIO vio = new VersionIO(content.inputs, content.outputs);
             vio.PopulateIO(inputs, "inputs");

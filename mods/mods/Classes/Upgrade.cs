@@ -81,7 +81,8 @@ namespace mods
                 }
                 else
                 {
-                    int labelNumber = upgrade_content.labels.IndexOf(label);
+                    //int labelNumber = upgrade_content.labels.IndexOf(label);
+                    int labelNumber = original_content.labels.IndexOf(label);
                     if (labelNumber + 1 == original_content.labels.Count)
                     {
                         int EOFindex = original_content.lines.IndexOf("\tEND");
@@ -676,8 +677,8 @@ namespace mods
             string cmd = "C:\\Windows\\explorer.exe";
             System.IO.FileInfo fileInfo = new System.IO.FileInfo(originalFile);
             fileInfo.IsReadOnly = false;
-            Process.Start(cmd, originalFile);
             Process.Start(cmd, newFile);
+            Process.Start(cmd, originalFile);
         }
 
         public void Modify_Value(string label, string db, string operation, string operand)

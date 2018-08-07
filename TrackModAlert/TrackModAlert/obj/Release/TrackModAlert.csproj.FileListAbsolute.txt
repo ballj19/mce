@@ -8,8 +8,8 @@ C:\Users\Jacob.Ball\source\repos\TrackModAlert\TrackModAlert\obj\Release\TrackMo
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Release\TrackModAlert.exe.config
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Release\TrackModAlert.exe
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Release\TrackModAlert.pdb
-C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.csprojResolveAssemblyReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.csproj.ResolveComReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.exe
 C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.pdb
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Release\TrackModAlert.csprojAssemblyReference.cache

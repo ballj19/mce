@@ -336,34 +336,29 @@ namespace mods
                 upgradeContent = new Content(jobfile);
             }
 
-            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
-            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
-
-            string[] labelNumbers = { "", "2", "3", "4" };
+            List<string> inputLabels = upgradeContent.inputLabels;
+            List<string> outputLabels = upgradeContent.outputLabels;
             
             int GlobalRowCount = 0;
 
             foreach (string ioLabel in inputLabels)
             {
-                foreach (string labelNumber in labelNumbers)
+                int byteCount = General.Get_Bytes_List(ioLabel + ":", upgradeContent.content).Count - 1;
+
+                for(int labelRow = 0; labelRow < byteCount; labelRow++)
                 {
-                    int byteCount = General.Get_Bytes_List(ioLabel + labelNumber + ":", upgradeContent.content).Count - 1;
+                    string rowBinary = "";
 
-                    for(int labelRow = 0; labelRow < byteCount; labelRow++)
+                    for(int b = 0; b < 8; b++)
                     {
-                        string rowBinary = "";
-
-                        for(int b = 0; b < 8; b++)
-                        {
-                            rowBinary += activeInputs[GlobalRowCount * 8 + b];
-                        }
-
-                        GlobalRowCount++;
-
-                        string rowHex = General.BinaryStringToHex(rowBinary);
-                        
-                        upgrade.Modify_Value(ioLabel + labelNumber + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1,2), "REPLACE", rowHex.PadLeft(3,'0') + "H");
+                        rowBinary += activeInputs[GlobalRowCount * 8 + b];
                     }
+
+                    GlobalRowCount++;
+
+                    string rowHex = General.BinaryStringToHex(rowBinary);
+                        
+                    upgrade.Modify_Value(ioLabel + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1,2), "REPLACE", rowHex.PadLeft(3,'0') + "H");
                 }
             }
 
@@ -407,25 +402,22 @@ namespace mods
 
             foreach (string ioLabel in outputLabels)
             {
-                foreach (string labelNumber in labelNumbers)
+                int byteCount = General.Get_Bytes_List(ioLabel + ":", upgradeContent.content).Count - 1;
+
+                for (int labelRow = 0; labelRow < byteCount; labelRow++)
                 {
-                    int byteCount = General.Get_Bytes_List(ioLabel + labelNumber + ":", upgradeContent.content).Count - 1;
+                    string rowBinary = "";
 
-                    for (int labelRow = 0; labelRow < byteCount; labelRow++)
+                    for (int b = 0; b < 8; b++)
                     {
-                        string rowBinary = "";
-
-                        for (int b = 0; b < 8; b++)
-                        {
-                            rowBinary += activeOutputs[GlobalRowCount * 8 + b];
-                        }
-
-                        GlobalRowCount++;
-
-                        string rowHex = General.BinaryStringToHex(rowBinary);
-
-                        upgrade.Modify_Value(ioLabel + labelNumber + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1, 2), "REPLACE", rowHex.PadLeft(3, '0') + "H");
+                        rowBinary += activeOutputs[GlobalRowCount * 8 + b];
                     }
+
+                    GlobalRowCount++;
+
+                    string rowHex = General.BinaryStringToHex(rowBinary);
+
+                    upgrade.Modify_Value(ioLabel + ":", General.Dec_To_Hex(labelRow.ToString()).Substring(1, 2), "REPLACE", rowHex.PadLeft(3, '0') + "H");
                 }
             }
 
@@ -489,6 +481,10 @@ namespace mods
             if(CarType.SelectedItem.ToString() == "Local")
             {
                 upgrade.Modify_Value("LOBBY:", "0A", "OR", "08H");
+            }
+            else
+            {
+                upgrade.Modify_Value("LOBBY:", "13", "OR", "02H");
             }
 
             CommentBox.Text += ";\t\t";
@@ -708,11 +704,8 @@ namespace mods
                 upgradeContent = new Content(jobfile);
             }
 
-            List<string> inputLabels = new List<string> { "IOINPE", "IOXINE", "IOIA", "IOELIG" };
-            List<string> outputLabels = new List<string> { "IOOUTE", "IOXOUTE", "IOOA" };
-
-            List<string> inputs = upgradeContent.Build_IOmap(inputLabels);
-            List<string> outputs = upgradeContent.Build_IOmap(outputLabels);
+            List<string> inputs = upgradeContent.Build_IOmap(upgradeContent.inputLabels);
+            List<string> outputs = upgradeContent.Build_IOmap(upgradeContent.outputLabels);
 
             VersionIO vio = new VersionIO(originalContent.inputs, originalContent.outputs);
             vio.allowToggleActiveIO = true;

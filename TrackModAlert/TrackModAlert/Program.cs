@@ -19,7 +19,7 @@ namespace TrackModAlert
                 DateTime now = DateTime.Now;
 
                 Console.WriteLine("Scanning " + now.ToString("HH:mm") + ".....");
-
+                
                 List<string> jobs = File.ReadAllLines(@"\\amrappfil01\MCE-Rancho\Jake Ball\jobs.txt").ToList();
                 
                 //OPEN EXCEL
