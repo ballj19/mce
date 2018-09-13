@@ -108,9 +108,9 @@ namespace mods
             foreach(string line in content)
             {
                 string value = General.Value(line);
-                if(value.EndsWith(":"))
+                if (value.EndsWith(":"))
                 {
-                    if (value.StartsWith("IOXI") || value.StartsWith("IOI"))
+                    if (value.StartsWith("IOXI") || value.StartsWith("IOI") || value.StartsWith("IOELIG"))
                     {
                         inputLabels.Add(value.Substring(0, value.Length - 1)); //Add without ending :
                     }

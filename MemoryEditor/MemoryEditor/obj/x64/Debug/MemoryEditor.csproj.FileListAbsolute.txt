@@ -1,0 +1,15 @@
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.csprojAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MainWindow.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\App.g.cs
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor_MarkupCompile.cache
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor_MarkupCompile.lref
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\bin\x64\Debug\MemoryEditor.exe.config
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\bin\x64\Debug\MemoryEditor.exe
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\bin\x64\Debug\MemoryEditor.pdb
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MainWindow.baml
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.g.resources
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.Properties.Resources.resources
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.csproj.GenerateResource.cache
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.exe
+C:\Users\Jacob.Ball\source\repos\mce\MemoryEditor\MemoryEditor\obj\x64\Debug\MemoryEditor.pdb

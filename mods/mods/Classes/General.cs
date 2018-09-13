@@ -120,27 +120,35 @@ namespace mods
 
         public static int HexStringToDecimal(string hex)
         {
-            hex = Remove_Suffix(hex, "H").Trim();
-            
-            //Need to reverse the hex string for the math to work out better
-            char[] charArray = hex.ToCharArray();
-            Array.Reverse(charArray);
-            hex = new string(charArray);
-
             int dec_value = 0;
-            int x = 0;
-            foreach (char c in hex)
+            try
             {
-                if (x == 0)
+                hex = Remove_Suffix(hex, "H").Trim();
+
+                //Need to reverse the hex string for the math to work out better
+                char[] charArray = hex.ToCharArray();
+                Array.Reverse(charArray);
+                hex = new string(charArray);
+
+                int x = 0;
+                foreach (char c in hex)
                 {
-                    dec_value += hexCharacterToDecimal[char.ToLower(c)];
+                    if (x == 0)
+                    {
+                        dec_value += hexCharacterToDecimal[char.ToLower(c)];
+                    }
+                    else
+                    {
+                        dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
+                    }
+                    x++;
                 }
-                else
-                {
-                    dec_value += 16 * x * hexCharacterToDecimal[char.ToLower(c)];
-                }
-                x++;
             }
+            catch
+            {
+                dec_value = 0;
+            }
+            
             return dec_value;
         }
 
@@ -358,6 +366,5 @@ namespace mods
 
             return hex.ToUpper();
         }
-
     }
 }

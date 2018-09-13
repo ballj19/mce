@@ -22,6 +22,7 @@
                 <ContextMenu>
                     <MenuItem Header="Remove" Click="Remove_From_Files_List"></MenuItem>
                     <MenuItem Header="Clear All" Click="Clear_Files_List"></MenuItem>
+                    <MenuItem Header="Reload File" Click="Reload_File"></MenuItem>
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
@@ -30,9 +31,9 @@
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,39,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
         <Button x:Name="OpenFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="298,120,0,0" VerticalAlignment="Top" Width="99" Click="OpenFolder_Click"/>
-        <Button x:Name="ShowPrints" Content="Job Prints" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="ShowPrints_Click" Height="22"/>
+        <Button x:Name="LDrive" Content="L Drive" HorizontalAlignment="Left" Margin="298,147,0,0" VerticalAlignment="Top" Width="99" Click="LDrive_Click" Height="22"/>
         <Button x:Name="AdvancedSearch" Content="Advanced Search" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" Width="99" Click="AdvancedSearch_Click"/>
-        <CheckBox x:Name="CustomFoldersCheckBox" Content="Include Custom Folders in Search" HorizontalAlignment="Left" Margin="201,18,0,0" VerticalAlignment="Top" Width="196"/>
+        <CheckBox x:Name="AllJobNumbersCheckBox" Content="Search Under All Job Numbers (Takes ~1 Minute)" HorizontalAlignment="Left" Margin="30,19,0,0" VerticalAlignment="Top" Width="282"/>
         <Button x:Name="ExportExcel" Content="Export Excel" HorizontalAlignment="Left" Margin="298,174,0,0" VerticalAlignment="Top" Width="99" Click="Export_Excel_Click" Height="22"/>
         <Button x:Name="MotionDummyFolder" Content="Dummy Folder" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="298,147,0,0" Click="MotionDummyFolder_Click" />
         <Button x:Name="KDMFolder" Content="KdM Folder" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="298,173,0,0" Click="KDMFolder_Click" />
@@ -109,7 +110,9 @@
                     <ComboBox x:Name="PTHCProgRecordComboBox" HorizontalAlignment="Left" Margin="158,36,0,0" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="PTHCProgRecord" Content="PTHC Prog Rec" HorizontalAlignment="Left" Margin="283,36,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Prog_Record" Height="22"/>
                     <Button x:Name="PTHCModDoc" Content="PTHC Mod Doc" HorizontalAlignment="Left" Margin="283,63,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Mod_Doc" Height="22"/>
-
+                    <Button x:Name="PrintsFolder" Content="Job Prints" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="99" Click="Job_Prints_Click" Height="22"/>
+                    <ListBox x:Name="ModPrintsBox" Margin="10,170,287,408"/>
+                    <Button x:Name="OpenModFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="387,170,0,0" VerticalAlignment="Top" Width="99" Click="Open_Mod_Folder_Click" Height="22"/>
                 </Grid>
             </TabItem>
             <TabItem Name="AdminTab" Header="Admin">

@@ -127,6 +127,7 @@ namespace mods
             }
             string newFile = upgrade.Write_File();
             upgrade.Open_Files(JobFile.Text, newFile);
+            Clipboard.SetText(Generate_Comment());
         }
 
         private void Browse_Click(object sender, RoutedEventArgs e)

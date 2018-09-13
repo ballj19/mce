@@ -189,7 +189,7 @@ namespace mods
             string engineer = track_mod_list[4];
             string todayDate = DateTime.Now.ToString("yyyyMMdd");
 
-            Replace_Data("importJobNumber", jobNum);
+            /*Replace_Data("importJobNumber", jobNum);
             Replace_Data("importJobName", jobName);
             Replace_Data("importEngineer", engineer);
             Replace_Data("importNotif", notif);
@@ -201,7 +201,22 @@ namespace mods
 
             Handle_Data_Length_Bytes(initial_length);
 
-            File.WriteAllBytes(@"C:\Users\jacob.ball\Desktop\Experimental\export_mod_base.afd", export_mod_base.ToArray());
+            File.WriteAllBytes(@"C:\Users\jacob.ball\Desktop\Experimental\export_mod_base.afd", export_mod_base.ToArray());*/
+
+            MemoryEditor me = new MemoryEditor("AcroFill", "ASCII");
+
+            //me.Scan_Range((int)0x19AA268, (int)0x19AE47D);
+
+            me.Replace_String("importJobNumber", jobNum);
+            /*me.Replace_String("importJobName", jobName);
+            me.Replace_String("importEngineer", engineer);
+            me.Replace_String("importNotif", notif);
+            me.Replace_String("20100605", duedate);
+            me.Replace_String("importDriveType", driveType);
+            me.Replace_String("20110605", dateRcvd);
+            me.Replace_String("20120605", todayDate);
+            me.Replace_String("importCarMP", selectedFileVersion);*/
+
             this.Close();
         }
 

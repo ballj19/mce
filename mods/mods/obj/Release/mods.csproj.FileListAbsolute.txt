@@ -19,7 +19,6 @@ C:\Users\Jacob.Ball\source\repos\mods\mods\obj\Release\SettingsWindow.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Release\mods.exe.config
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Release\mods.exe
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Release\mods.pdb
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods.csprojResolveAssemblyReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods.csproj.ResolveComReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\MainWindow.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods_MarkupCompile.cache
@@ -52,3 +51,4 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\CustomMod.g.c
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ModDoc.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\ProgramMotion.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\Windows\CustomMod.baml
+C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Release\mods.csprojAssemblyReference.cache

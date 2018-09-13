@@ -6,3 +6,11 @@ C:\Users\Jacob.Ball\source\repos\TrackModAlert\TrackModAlert\obj\Debug\TrackModA
 C:\Users\Jacob.Ball\source\repos\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.exe
 C:\Users\Jacob.Ball\source\repos\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.pdb
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Debug\TrackModAlert.exe.config
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Debug\TrackModAlert.exe
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\bin\Debug\TrackModAlert.pdb
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.csprojAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.csproj.ResolveComReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.exe
+C:\Users\Jacob.Ball\source\repos\mce\TrackModAlert\TrackModAlert\obj\Debug\TrackModAlert.pdb
