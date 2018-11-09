@@ -10,7 +10,8 @@
 
     <Grid Height="770" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="941*"/>
+            <ColumnDefinition Width="151*"/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="SearchHistory" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="113,39,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="SearchHistory_SelectionChanged"/>
@@ -40,7 +41,7 @@
         <Button x:Name="KDMEmail" Content="KDM Email" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="298,200,0,0" Click="KDMEmail_Click" />
         <TextBlock x:Name="JobInfo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="398" Height="450" Margin="18,310,0,0"></TextBlock>
         <Button x:Name="DifferentJobNumber" Content="Search for this file in a different directory?" Visibility="Hidden" HorizontalAlignment="Left" Margin="60,385,0,0" VerticalAlignment="Top" Width="252" Height="37" Click="DifferentJobNumber_Click"/>
-        <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged">
+        <TabControl x:Name="InfoTabControl" Margin="413,18,0,0" SelectionChanged="InfoTabControl_SelectionChanged" Grid.ColumnSpan="2">
             <TabItem Name="LandingsTab" Header="Landings">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Orientation="Vertical" x:Name="LandingConfig">
@@ -100,6 +101,9 @@
                         <StackPanel x:Name="TracModContentSP" Orientation="Vertical"></StackPanel>
                     </ScrollViewer>
                 </Grid>
+            </TabItem>
+            <TabItem Name="TracJobTab" Header="Trac Job">
+                <Button x:Name="TracJobRefresh" Content="Refresh" Height="23" Width="76" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="158,10,0,0" Click="TracJobRefresh_Click"/>
             </TabItem>
             <TabItem Name="UtilityTab" Header="Utility">
                 <Grid>

@@ -19,7 +19,7 @@ namespace mods
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.04.1";
+        string version = "V1.04.2";
         int permission = 1000;
         int searchProgress = 0;
         List<string> Trac_Mod_Jobs = new List<string>();
@@ -34,50 +34,65 @@ namespace mods
 
         public MainWindow()
         {
-            InitializeComponent();
-
-            Set_Permissions();            
-
-            this.Title = "Modification Hub by Jake Ball " + version;
-            
-            if (Version_Check())
-            {
-                Update_Auto_Updater();
-                if (System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    //To get the location the assembly normally resides on disk or the install directory
-                    string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-
-                    //once you have the path you get the directory with:
-                    string directory = System.IO.Path.GetDirectoryName(path);
-
-                    string updatepath = directory + "\\ModHubUpdater.exe";
-                    string cmd = "C:\\Windows\\explorer.exe";
-                    Process.Start(cmd, updatepath);
-                    System.Windows.Application.Current.Shutdown();
-                }
-            }
-
-            FilesListBox.SelectionMode = SelectionMode.Extended;
-            FileExtension.SelectedIndex = 0;
-            Make_Controls_Invisible();
-            Update_Search_History();
-            Legacy_Controls_Visible();
-
             try
             {
-                if (SearchHistory.Items[1].ToString().StartsWith("-"))
+                InitializeComponent();
+
+                Set_Permissions();            
+
+                this.Title = "Modification Hub by Jake Ball " + version;
+            
+
+                if (Version_Check())
                 {
-                    TextBox1.Text = "";
+                    Update_Auto_Updater();
+                    if (System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        //To get the location the assembly normally resides on disk or the install directory
+                        string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                        //once you have the path you get the directory with:
+                        string directory = System.IO.Path.GetDirectoryName(path);
+
+                        string updatepath = directory + "\\ModHubUpdater.exe";
+                        string cmd = "C:\\Windows\\explorer.exe";
+                        Process.Start(cmd, updatepath);
+                        System.Windows.Application.Current.Shutdown();
+                    }
                 }
-                else
+
+                try
                 {
-                    TextBox1.Text = SearchHistory.Items[1].ToString();
+                    FilesListBox.SelectionMode = SelectionMode.Extended;
+                    FileExtension.SelectedIndex = 0;
+                    Make_Controls_Invisible();
+                    Update_Search_History();
+                    Legacy_Controls_Visible();
+                }
+                catch(Exception ex)
+                {
+                    Write_Error_To_Log("Visibility Setup", ex);
+                }
+
+                try
+                {
+                    if (SearchHistory.Items[1].ToString().StartsWith("-"))
+                    {
+                        TextBox1.Text = "";
+                    }
+                    else
+                    {
+                        TextBox1.Text = SearchHistory.Items[1].ToString();
+                    }
+                }
+                catch
+                {
+
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Write_Error_To_Log("Initialize Component", ex);
             }
         }
 
@@ -89,6 +104,14 @@ namespace mods
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             SearchButton.IsEnabled = false;
+
+            if(TextBox1.Text.Contains("-"))
+            {
+                int dashindex = TextBox1.Text.IndexOf("-");
+
+                TextBox1.Dispatcher.Invoke(() => TextBox1.Text = TextBox1.Text.Substring(dashindex + 1, TextBox1.Text.Length - dashindex - 1), DispatcherPriority.Background);
+            }
+
             SearchFiles();
             blockSearchHistoryChange = true;
             Update_Search_History();
@@ -131,11 +154,12 @@ namespace mods
             }
             try
             {
-                if (System.Windows.Forms.MessageBox.Show("Would you like to generate a file to import?", "Generate File to Import?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                /*if (System.Windows.Forms.MessageBox.Show("Would you like to generate a file to import?", "Generate File to Import?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     ModDoc md = new ModDoc(this.FilesListBox);
                     md.ShowDialog();
                 }
+                */
                 string jobNumber = "*" + TextBox1.Text + "*.afm";
                 string folder = G_DRIVE + "Software\\Modification_docs";
                 List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
@@ -176,7 +200,78 @@ namespace mods
 
         private void Mp2link_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("Y:\\MP2Link.exe");
+            string cmd = @"Y:\EPRLNK7";
+            string args = "";
+
+            Controller temp_controller;
+            string jobNum = "";
+
+            if(controller == null)
+            {
+
+                jobNum =  Microsoft.VisualBasic.Interaction.InputBox("Job Number?", "Job Number?", "").ToUpper();
+                if(jobNum.StartsWith("C"))
+                {
+                    if(System.IO.File.Exists(G_DRIVE + @"Software\Product\MP2COC\" + jobNum + ".asm"))
+                    {
+                        temp_controller = new Local(@"Product\MP2COC\" + jobNum + ".asm");
+                    }
+                    else
+                    {
+                        MessageBox.Show("File not found");
+                        return;
+                    }
+                }
+                else if(jobNum.StartsWith("G"))
+                {
+                    if (System.IO.File.Exists(G_DRIVE + @"Software\Product\MP2OGM\" + jobNum + ".asm"))
+                    {
+                        temp_controller = new Local(@"Product\MP2OGM\" + jobNum + ".asm");
+                    }
+                    else
+                    {
+                        MessageBox.Show("File not found");
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("File not found");
+                    return;
+                }
+            }
+            else
+            {
+                jobNum = General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString());
+
+                temp_controller = controller;
+            }
+
+            string version = temp_controller.versionTop + "_" + temp_controller.versionMid + " " + temp_controller.versionBot;
+
+            if (jobNum.StartsWith("C"))
+            {
+                args = file + " " + "MP2COC" + " " + version;
+            }
+            else if (jobNum.StartsWith("G"))
+            {
+                args = file + " " + "MP2OGM" + " " + version;
+            }
+            else
+            {
+                MessageBox.Show("File not found");
+                return;
+            }
+
+            var startInfo = new ProcessStartInfo();
+            startInfo.WorkingDirectory = G_DRIVE + "Software\\Product";
+            startInfo.Arguments = args;
+            startInfo.FileName = cmd;
+            
+            Process proc = Process.Start(startInfo);
+            proc.WaitForExit();
+
+            //Process.Start("Y:\\MP2Link.exe");
         }
 
         private void SearchFiles()
@@ -259,8 +354,11 @@ namespace mods
                 {
                     SearchProgress.Maximum += 9; //9 Custom Locations
                     SearchProgress.Maximum += 1; //1 Custom2 Location
+                    SearchProgress.Maximum += 10; //PUBLIK Locations
                 }
 
+                Thread publik = new Thread(() => SearchLocation(G_DRIVE + "Software\\Publik\\", 10));
+                publik.Start();
 
                 foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP\\"))
                 {
@@ -1318,15 +1416,266 @@ namespace mods
             Marshal.ReleaseComObject(xlApp);
         }
 
+        private void TracJobRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            //OPEN EXCEL
+            Excel.Application xlApp = new Excel.Application();
+            xlApp.Visible = false;
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Mod.xlsm", 0, true);
+            Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Excel._Worksheet dlmWorksheet = xlWorkbook.Sheets[2];
+            Excel.Range xlRange = xlWorksheet.UsedRange;
+            Excel.Range dlmRange = dlmWorksheet.UsedRange;
+
+
+            for (int row = 4; row < 100; row++)
+            {
+                string notificationNumber = "";
+                string jobNumber = "";
+
+                if (xlRange.Cells[row, 5].Value2 != null)
+                {
+                    try
+                    {
+                        notificationNumber = xlRange.Cells[row, 4].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        jobNumber = xlRange.Cells[row, 5].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    Trac_Job(jobNumber, notificationNumber);
+                }
+
+            }
+
+            for (int row = 4; row < 100; row++)
+            {
+                string notificationNumber = "";
+                string jobNumber = "";
+
+                if (dlmRange.Cells[row, 5].Value2 != null)
+                {
+                    try
+                    {
+                        notificationNumber = xlRange.Cells[row, 4].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        jobNumber = xlRange.Cells[row, 5].Value2.ToString();
+                    }
+                    catch
+                    {
+
+                    }
+
+                    Trac_Job(jobNumber, notificationNumber);
+                }
+            }
+
+            //cleanup
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            //rule of thumb for releasing com objects:
+            //  never use two dots, all COM objects must be referenced and released individually
+            //  ex: [somthing].[something].[something] is bad
+
+            //release com objects to fully kill excel process from running in the background
+            Marshal.ReleaseComObject(xlRange);
+            Marshal.ReleaseComObject(xlWorksheet);
+            Marshal.ReleaseComObject(dlmRange);
+            Marshal.ReleaseComObject(dlmWorksheet);
+
+            //close and release
+            xlWorkbook.Close(false);
+            Marshal.ReleaseComObject(xlWorkbook);
+
+            //quit and release
+            xlApp.Quit();
+            Marshal.ReleaseComObject(xlApp);
+        }
+
+        private void Trac_Job(string jobNumber, string notificationNumber)
+        {
+            List<string> files = Broad_Job_Search(jobNumber);
+
+            //OPEN EXCEL
+            Excel.Application xlApp = new Excel.Application();
+            xlApp.Visible = false;
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("F:\\Software\\Product\\Trac_Job.xlsx", 0, true);
+            Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Excel.Range xlRange = xlWorksheet.UsedRange;
+
+            bool jobFound = false;
+
+            int row = 2;
+
+            while(xlRange.Cells[row, 1].Value2 != null)
+            {
+                if (xlRange.Cells[row, 1].Value2 == jobNumber)
+                {
+                    jobFound = true;
+                }
+
+                row++;
+            }
+
+            if(!jobFound)
+            {
+                files = Broad_Job_Search(jobNumber);
+
+                xlWorksheet.Cells[row, 1] = JobInfo.Text;
+            }
+
+
+            xlWorkbook.Save();
+
+
+            //cleanup
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            //rule of thumb for releasing com objects:
+            //  never use two dots, all COM objects must be referenced and released individually
+            //  ex: [somthing].[something].[something] is bad
+
+            //release com objects to fully kill excel process from running in the background
+            Marshal.ReleaseComObject(xlRange);
+            Marshal.ReleaseComObject(xlWorksheet);
+
+            //close and release
+            xlWorkbook.Close(false);
+            Marshal.ReleaseComObject(xlWorkbook);
+
+            //quit and release
+            xlApp.Quit();
+            Marshal.ReleaseComObject(xlApp);
+        }
+
+        private List<string> Broad_Job_Search(string jobNumber)
+        {
+            List<string> locations = new List<string> { "Software\\Publik\\", "Software\\Source\\MC-MP\\", "Software\\Source\\MC-MP2\\", "Software\\Custom2\\", "Software\\Custom\\MC-MP\\", "Software\\Product\\" };
+
+            List<Thread> threads = new List<Thread>();
+
+            List<string> files = new List<string>();
+
+            foreach(string location in locations)
+            {
+                foreach(string directory in Directory.GetDirectories(G_DRIVE + location))
+                {
+                    if(!directory.Contains("MASTER.BIN"))
+                    {
+                        Thread t = new Thread(
+                            () =>
+                            {
+                                files.AddRange(Find_Job(directory, jobNumber));
+                            });
+                        t.Start();
+                        threads.Add(t);
+                    }
+                }
+            }
+
+            foreach(var thread in threads)
+            {
+                thread.Join();
+            }
+
+            return files;
+        }
+
+        private List<string> Find_Job(string location, string jobNumber)
+        {
+            List<string> files_list = new List<string>();
+
+            try
+            {
+                string jobNum = jobNumber.Substring(3, jobNumber.Length - 3);
+                string[] files = Directory.GetFiles(@location, "*" + jobNum + "*", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    bool validFile = false;
+
+                    string fileExtension = General.Get_FileExtension_From_Path(file);
+
+                    if (jobNum.ToUpper() == General.Get_Job_Number_From_Path(file))
+                    {
+                        if (fileExtension.ToUpper() == ".ASM" || fileExtension == "")
+                        {
+                            validFile = true;
+                        }
+                    }
+                    
+                    if (validFile)
+                    {
+                        int locationIndex = location.IndexOf("Software") + 9;
+                        string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                        files_list.Add(jobFile);
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return files_list;
+        }
+
         private void Write_Error_To_Log(string file, Exception ex)
         {
-            using (System.IO.StreamWriter writefile =
-                    new System.IO.StreamWriter(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+            try
             {
-                DateTime now = DateTime.Now;
-                writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
-                writefile.WriteLine(file);
-                writefile.WriteLine(ex.ToString() + "\n");
+                using (System.IO.StreamWriter writefile =
+                    new System.IO.StreamWriter(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Error_Log.txt", true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("Modhub[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
+            catch
+            {
+
+            }
+
+            try
+            {
+                //To get the location the assembly normally resides on disk or the install directory
+                string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+                //once you have the path you get the directory with:
+                string directory = System.IO.Path.GetDirectoryName(path);
+
+                string logpath = directory.Substring(6, directory.Length - 6) + "\\Error_Log.txt";
+
+                using (System.IO.StreamWriter writefile =
+                        new System.IO.StreamWriter(logpath, true))
+                {
+                    DateTime now = DateTime.Now;
+                    writefile.WriteLine("[" + now.ToString() + "] " + Environment.UserName);
+                    writefile.WriteLine(file);
+                    writefile.WriteLine(ex.ToString() + "\n");
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -1491,32 +1840,40 @@ namespace mods
 
         private bool Version_Check()
         {
-            string versionPath = "";
-            string newVersion = "";
-
-            List<string> versions = new List<string>();
-            versions = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Versions.txt").ToList();
-
-            foreach (string version in versions)
+            try
             {
-                if (version.StartsWith("ModHub"))
+                string versionPath = "";
+                string newVersion = "";
+
+                List<string> versions = new List<string>();
+                versions = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Versions.txt").ToList();
+
+                foreach (string version in versions)
                 {
-                    int colonIndex = version.IndexOf(":");
-                    versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
-                    int semicolonIndex = versionPath.IndexOf(";");
-                    newVersion = versionPath.Substring(semicolonIndex + 1, versionPath.Length - semicolonIndex - 1);
-                    versionPath = versionPath.Substring(0, semicolonIndex);
+                    if (version.StartsWith("ModHub"))
+                    {
+                        int colonIndex = version.IndexOf(":");
+                        versionPath = version.Substring(colonIndex + 1, version.Length - colonIndex - 1);
+                        int semicolonIndex = versionPath.IndexOf(";");
+                        newVersion = versionPath.Substring(semicolonIndex + 1, versionPath.Length - semicolonIndex - 1);
+                        versionPath = versionPath.Substring(0, semicolonIndex);
+                    }
+                }
+
+                if (newVersion != this.version)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            if (newVersion != this.version)
+            catch(Exception ex)
             {
-                return true;
+                Write_Error_To_Log("Version Check", ex);
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
@@ -1545,53 +1902,60 @@ namespace mods
 
         private void Set_Permissions()
         {
-            List<string> users = new List<string>();
-            users = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Permissions.txt").ToList();
-            string environmentName = Environment.UserName;
-
-            foreach (string user in users)
+            try
             {
-                int equalIndex = user.IndexOf("=");
-                string userName = user.Substring(0, equalIndex);
-                if (userName.ToLower() == environmentName.ToLower())
+                List<string> users = new List<string>();
+                users = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Permissions.txt").ToList();
+                string environmentName = Environment.UserName;
+
+                foreach (string user in users)
                 {
-                    this.permission = Int32.Parse(user.Substring(equalIndex + 1, user.Length - equalIndex - 1));
+                    int equalIndex = user.IndexOf("=");
+                    string userName = user.Substring(0, equalIndex);
+                    if (userName.ToLower() == environmentName.ToLower())
+                    {
+                        this.permission = Int32.Parse(user.Substring(equalIndex + 1, user.Length - equalIndex - 1));
+                    }
+                }
+
+                FileExtension.Items.Add(".asm");
+                if (permission < 2)
+                {
+                    FileExtension.Items.Add(".old");
+                    FileExtension.Items.Add("All Files");
+                    FileExtension.Items.Add("Motion");
+                    FileExtension.Items.Add("DDP");
+                }
+
+                if (permission > 1)
+                {
+                    OpenFile.Visibility = Visibility.Hidden;
+                    OpenFolder.Visibility = Visibility.Hidden;
+                    ModDocs.Visibility = Visibility.Hidden;
+                    OpenSim.Visibility = Visibility.Hidden;
+                    Mp2link.Visibility = Visibility.Hidden;
+                    Emulink.Visibility = Visibility.Hidden;
+                    BrowseFile.Visibility = Visibility.Hidden;
+                    UtilityTab.Visibility = Visibility.Hidden;
+                    TracModTab.Visibility = Visibility.Hidden;
+                    OptionsTab.Visibility = Visibility.Hidden;
+                    AdvancedSearch.Visibility = Visibility.Hidden;
+
+                    LDrive.Margin = new Thickness(LDrive.Margin.Left, LDrive.Margin.Top - 51, LDrive.Margin.Right, LDrive.Margin.Bottom);
+                    ExportExcel.Margin = new Thickness(ExportExcel.Margin.Left, ExportExcel.Margin.Top - 51, ExportExcel.Margin.Right, ExportExcel.Margin.Bottom);
+                    //AdvancedSearch.Margin = new Thickness(AdvancedSearch.Margin.Left, AdvancedSearch.Margin.Top - 51, AdvancedSearch.Margin.Right, AdvancedSearch.Margin.Bottom);
+
+                    G_DRIVE = @"\\10.113.32.45\shared\";
+                }
+
+                if (permission > 0)
+                {
+                    AdminTab.Visibility = Visibility.Hidden;
                 }
             }
-
-            FileExtension.Items.Add(".asm");
-            if (permission < 2)
+            catch(Exception ex)
             {
-                FileExtension.Items.Add(".old");
-                FileExtension.Items.Add("All Files");
-                FileExtension.Items.Add("Motion");
-                FileExtension.Items.Add("DDP");
-            }
-
-            if (permission > 1)
-            {
-                OpenFile.Visibility = Visibility.Hidden;
-                OpenFolder.Visibility = Visibility.Hidden;
-                ModDocs.Visibility = Visibility.Hidden;
-                OpenSim.Visibility = Visibility.Hidden;
-                Mp2link.Visibility = Visibility.Hidden;
-                Emulink.Visibility = Visibility.Hidden;
-                BrowseFile.Visibility = Visibility.Hidden;
-                UtilityTab.Visibility = Visibility.Hidden;
-                TracModTab.Visibility = Visibility.Hidden;
-                OptionsTab.Visibility = Visibility.Hidden;
-                AdvancedSearch.Visibility = Visibility.Hidden;
-
-                LDrive.Margin = new Thickness(LDrive.Margin.Left, LDrive.Margin.Top - 51, LDrive.Margin.Right, LDrive.Margin.Bottom);
-                ExportExcel.Margin = new Thickness(ExportExcel.Margin.Left, ExportExcel.Margin.Top - 51, ExportExcel.Margin.Right, ExportExcel.Margin.Bottom);
-                //AdvancedSearch.Margin = new Thickness(AdvancedSearch.Margin.Left, AdvancedSearch.Margin.Top - 51, AdvancedSearch.Margin.Right, AdvancedSearch.Margin.Bottom);
-
-                G_DRIVE = @"\\10.113.32.45\shared\";
-            }
-
-            if (permission > 0)
-            {
-                AdminTab.Visibility = Visibility.Hidden;
+                Write_Error_To_Log("Set Permissions", ex);
             }
         }
 
@@ -1635,11 +1999,14 @@ namespace mods
             TracModContentSP.Children.Clear();
             TracModLabelSP.Children.Clear();
             Track_Mod();
+            TracModFilter_TextChanged(null, null);
         }
 
         private void ModUpgrade_Click(object sender, RoutedEventArgs e)
         {
-            UpgradeWindow uw = new UpgradeWindow();
+            string jobnum = General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString());
+
+            UpgradeWindow uw = new UpgradeWindow(jobnum);
 
             try
             {
@@ -1938,7 +2305,6 @@ namespace mods
 
         private void Export_Excel_Click(object sender, RoutedEventArgs e)
         {
-
             System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 
             saveFileDialog1.Filter = "Excel (*.xlsx)|*.xlsx|All files (*.*)|*.*";
@@ -2218,6 +2584,7 @@ namespace mods
 
         private void Job_Prints_Click(object sender, RoutedEventArgs e)
         {
+            ModPrintsBox.Items.Clear();
             string notif = Microsoft.VisualBasic.Interaction.InputBox("Notif #?", "Notification #", "");
             string jobNumber = Microsoft.VisualBasic.Interaction.InputBox("Job #?", "Job #", "");
             string engineer = Microsoft.VisualBasic.Interaction.InputBox("Engineer?", "Engineer", "");
@@ -2226,13 +2593,48 @@ namespace mods
             {
                 PrintsFolder.IsEnabled = false;
                 Find_Mod_Notif_Folder(@"F:\!!Mods Cabinet\Review Pending (Do not move to L)", notif, jobNumber, engineer);
+                //test(@"F:\!!Mods Cabinet\Review Pending (Do not move to L)", notif, jobNumber, engineer);
             }
             PrintsFolder.IsEnabled = true;
         }
 
+        private void test(string dir, string notif, string jobNumber, string engineer)
+        {
+            foreach(string engineerDir in Directory.GetDirectories(dir))
+            {
+                if(engineer == "" || engineerDir.Contains(engineer))
+                {
+                    try
+                    {
+                        foreach (string jobDir in Directory.GetDirectories(engineerDir))
+                        {
+                            if (jobNumber == "" || jobDir.Contains(jobNumber))
+                            {
+                                try
+                                {
+                                    if (Directory.Exists(jobDir + "\\Documents"))
+                                    {
+                                        foreach (string notifDir in Directory.GetDirectories(jobDir + "\\Documents"))
+                                        {
+                                            try
+                                            {
+                                                if (notif == "" || notifDir.Contains(notif))
+                                                {
+                                                    ModPrintsBox.Items.Add(notifDir);
+                                                }
+                                            }catch{}
+                                        }
+                                    }
+                                }catch{}
+                            }
+                        }
+                    }catch{}
+                }
+            }
+        }
+
         private void Find_Mod_Notif_Folder(string dir, string notif, string jobNumber, string engineer)
         {
-
             try
             {
                 foreach (string subDir in Directory.GetDirectories(dir))

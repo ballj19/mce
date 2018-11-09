@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModHubInstaller"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="600">
+        Title="Installer" Height="300" Width="600">
     <Grid>
         <StackPanel Orientation="Vertical">
             <Label HorizontalAlignment="Center" Margin="0,40,0,0" FontSize="30" VerticalAlignment="Top" Content="ModHub Installer"></Label>

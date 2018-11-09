@@ -17,7 +17,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 namespace mods
 {
     class Group : Controller
-    {
+    {        
         public Group(string file)
         {
             content = new Content(file);

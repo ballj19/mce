@@ -38,9 +38,9 @@ namespace mods
         protected string ftBoard;
         protected string dlmBoard;
         public string fileVersion;
-        protected string versionTop;
-        protected string versionMid;
-        protected string versionBot;
+        public string versionTop;
+        public string versionMid;
+        public string versionBot;
         protected string drivebit2;
         protected string drivebit3;
         protected string driveType;
@@ -98,7 +98,7 @@ namespace mods
 
             string front = "False";
             string rear = "False";
-
+            
             window.LandingLevels.Text = "";
             window.LandingLevels.Height = 16 * top_Landing + 10;
             window.LandingLevels.BorderThickness = new System.Windows.Thickness(2);

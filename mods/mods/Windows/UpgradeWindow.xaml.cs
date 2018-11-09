@@ -30,7 +30,7 @@ namespace mods
         private List<string> addedOutputs;
         private List<string> removedOutputs;
 
-        public UpgradeWindow()
+        public UpgradeWindow(string jobnum)
         {
             InitializeComponent();
 
@@ -42,8 +42,15 @@ namespace mods
             {
                 JobComboBox.Items.RemoveAt(0);
             }
-
+            
             JobComboBox.SelectedIndex = 0;
+            foreach (string item in JobComboBox.Items)
+            {
+                if(item.Contains(jobnum))
+                {
+                    JobComboBox.SelectedIndex = JobComboBox.Items.IndexOf(item);
+                }
+            }
 
             SourceFile.Text = "F:\\Software\\Source\\MC-MP2\\MP2COC\\V8_06\\V8_06_1\\Mp2cocvar.ASM";
 
@@ -477,13 +484,18 @@ namespace mods
         {
             upgrade.Modify_Value("LOBBY:", "14", "OR", "01H");
             upgrade.Modify_Value("LOBBY:", "18", "OR", "04H");
-            upgrade.Modify_Value("LOBBY:", "15", "OR", "02H");
 
             if(CarType.SelectedItem.ToString() == "Local")
             {
                 upgrade.Modify_Value("LOBBY:", "0A", "OR", "08H");
             }
-            else
+
+            if (CarType.SelectedItem.ToString() == "Local" || ControllerType.SelectedItem.ToString() == "MP2")
+            {
+                upgrade.Modify_Value("LOBBY:", "15", "OR", "02H");
+            }
+            
+            if(CarType.SelectedItem.ToString() == "Simplex" && ControllerType.SelectedItem.ToString() == "MP")
             {
                 upgrade.Modify_Value("LOBBY:", "13", "OR", "02H");
             }
@@ -494,6 +506,7 @@ namespace mods
 
         private void Chicago_Fire_Group()
         {
+            string message = "";
             upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'NFRC',  00H,   01H,  04H,  01H");
             upgrade.Modify_Value("LOBBY:", "10", "OR", "22H");
 

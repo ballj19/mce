@@ -8,9 +8,6 @@ using System.IO;
 
 namespace mods
 {
-    /// <summary>
-    /// Interaction logic for CustomMod.xaml
-    /// </summary>
     public partial class CustomMod : Window
     {
         string jobNumber = "";

@@ -395,7 +395,8 @@ namespace mods
             int b = 1;
             while(!General.Value(upgrade_content.lines[uSelect_labelIndex + b]).EndsWith(":"))
             {
-                if(General.Value(upgrade_content.lines[uSelect_labelIndex + b]).StartsWith("DB"))
+                string test = upgrade_content.lines[uSelect_labelIndex + b];
+                if (General.Value(upgrade_content.lines[uSelect_labelIndex + b]).StartsWith("DB"))
                 {
                     string comment = General.Comment(upgrade_content.lines[uSelect_labelIndex + b]);
                     string value = "";
@@ -449,7 +450,8 @@ namespace mods
                 }
                 else
                 {
-                    Write_Line(General.Comment(upgrade_content.lines[uSelect_labelIndex + b]));
+                    //Write_Line(General.Comment(upgrade_content.lines[uSelect_labelIndex + b]));
+                    Write_Line(upgrade_content.lines[uSelect_labelIndex + b]);
                 }
                 b++;
             }
@@ -542,7 +544,7 @@ namespace mods
             {
                 Write_Line(upgrade_content.lines[uIndex]);
                 uIndex++;
-            } while (!General.Value(upgrade_content.lines[uIndex]).EndsWith(":"));
+            } while (uIndex < upgrade_content.lines.Count() && !General.Value(upgrade_content.lines[uIndex]).EndsWith(":"));
         }
 
         private void Replace_Values(string label)

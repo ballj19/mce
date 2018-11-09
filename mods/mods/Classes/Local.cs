@@ -453,88 +453,88 @@ namespace mods
                         }
                     }
                 }
+            }
 
-                //ELIGI: Front Down Hall Calls
-                for (int x = 0; x < 8; x++)
+            //ELIGI: Front Down Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
                 {
-                    for (int b = 3; b >= 0; b--)
+                    if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
                     {
-                        if (content.Get_Bit("ELIGI:", x + 17, 0, b) == "YES")
-                        {
-                            int callNum = 500 + x * 8 + (3 - b) + 1;
-                            calls.Add(callNum.ToString());
-                        }
-                    }
-                    for (int b = 3; b >= 0; b--)
-                    {
-                        if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
-                        {
-                            int callNum = 500 + x * 8 + (3 - b) + 5;
-                            calls.Add(callNum.ToString());
-                        }
+                        int callNum = 500 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString());
                     }
                 }
-
-                //ELIGI: Rear Down Hall Calls
-                for (int x = 0; x < 8; x++)
+                for (int b = 3; b >= 0; b--)
                 {
-                    for (int b = 3; b >= 0; b--)
+                    if (content.Get_Bit("ELIGI:", x + 17, 1, b) == "YES")
                     {
-                        if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
-                        {
-                            int callNum = 500 + x * 8 + (3 - b) + 1;
-                            calls.Add(callNum.ToString() + "R");
-                        }
-                    }
-                    for (int b = 3; b >= 0; b--)
-                    {
-                        if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
-                        {
-                            int callNum = 500 + x * 8 + (3 - b) + 5;
-                            calls.Add(callNum.ToString() + "R");
-                        }
+                        int callNum = 500 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString());
                     }
                 }
+            }
 
-                //ELIGI: Front Up Hall Calls
-                for (int x = 0; x < 8; x++)
+            //ELIGI: Rear Down Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
                 {
-                    for (int b = 3; b >= 0; b--)
+                    if (content.Get_Bit("ELIGI:", x + 25, 0, b) == "YES")
                     {
-                        if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
-                        {
-                            int callNum = 600 + x * 8 + (3 - b) + 1;
-                            calls.Add(callNum.ToString());
-                        }
-                    }
-                    for (int b = 3; b >= 0; b--)
-                    {
-                        if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
-                        {
-                            int callNum = 600 + x * 8 + (3 - b) + 5;
-                            calls.Add(callNum.ToString());
-                        }
+                        int callNum = 500 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString() + "R");
                     }
                 }
-
-                //ELIGI: Rear Up Hall Calls
-                for (int x = 0; x < 8; x++)
+                for (int b = 3; b >= 0; b--)
                 {
-                    for (int b = 3; b >= 0; b--)
+                    if (content.Get_Bit("ELIGI:", x + 25, 1, b) == "YES")
                     {
-                        if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
-                        {
-                            int callNum = 600 + x * 8 + (3 - b) + 1;
-                            calls.Add(callNum.ToString() + "R");
-                        }
+                        int callNum = 500 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString() + "R");
                     }
-                    for (int b = 3; b >= 0; b--)
+                }
+            }
+
+            //ELIGI: Front Up Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 33, 0, b) == "YES")
                     {
-                        if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
-                        {
-                            int callNum = 600 + x * 8 + (3 - b) + 5;
-                            calls.Add(callNum.ToString() + "R");
-                        }
+                        int callNum = 600 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 33, 1, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString());
+                    }
+                }
+            }
+
+            //ELIGI: Rear Up Hall Calls
+            for (int x = 0; x < 8; x++)
+            {
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 41, 0, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 1;
+                        calls.Add(callNum.ToString() + "R");
+                    }
+                }
+                for (int b = 3; b >= 0; b--)
+                {
+                    if (content.Get_Bit("ELIGI:", x + 41, 1, b) == "YES")
+                    {
+                        int callNum = 600 + x * 8 + (3 - b) + 5;
+                        calls.Add(callNum.ToString() + "R");
                     }
                 }
             }

@@ -1,0 +1,56 @@
+[9/19/2018 8:19:45 AM] jacob.ball
+Product\MPOLTM\DL5099AB.ASM
+System.ArgumentOutOfRangeException: startIndex cannot be larger than length of string.
+Parameter name: startIndex
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 409
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 197
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 551
+
+[9/26/2018 10:53:45 AM] jacob.ball
+Product\MPOLTM\DL5099AB.OLD
+System.ArgumentOutOfRangeException: startIndex cannot be larger than length of string.
+Parameter name: startIndex
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 409
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 197
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 551
+
+[9/26/2018 12:31:20 PM] jacob.ball
+Product\MPOLTM\DL5099AB.OLD
+System.ArgumentOutOfRangeException: startIndex cannot be larger than length of string.
+Parameter name: startIndex
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 409
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 197
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 551
+
+[9/26/2018 12:32:20 PM] jacob.ball
+Product\MPOLTM\DL5099AB.OLD
+System.ArgumentOutOfRangeException: startIndex cannot be larger than length of string.
+Parameter name: startIndex
+   at System.String.Substring(Int32 startIndex, Int32 length)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 409
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 197
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 551
+
+[10/23/2018 8:59:08 AM] jacob.ball
+Custom\MC-MP\MPOLHM\31695\CUSTOM_A\HL31695.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 430
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 196
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 633
+
+[10/23/2018 8:59:21 AM] jacob.ball
+Custom\MC-MP\MPOLHM\31695\CUSTOM_A\HL31695.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 430
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 196
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 633
+

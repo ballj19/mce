@@ -1,0 +1,7 @@
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\bin\Release\SoftwareTrackerUpdater.exe.config
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\bin\Release\SoftwareTrackerUpdater.exe
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\bin\Release\SoftwareTrackerUpdater.pdb
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\obj\Release\SoftwareTrackerUpdater.csprojAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\obj\Release\SoftwareTrackerUpdater.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\obj\Release\SoftwareTrackerUpdater.exe
+C:\Users\Jacob.Ball\source\repos\mce\SoftwareTrackerUpdater\SoftwareTrackerUpdater\obj\Release\SoftwareTrackerUpdater.pdb
