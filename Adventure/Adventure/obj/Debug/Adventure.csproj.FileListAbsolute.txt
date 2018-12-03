@@ -1,0 +1,7 @@
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\bin\Debug\Adventure.exe.config
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\bin\Debug\Adventure.exe
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\bin\Debug\Adventure.pdb
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\obj\Debug\Adventure.csprojResolveAssemblyReference.cache
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\obj\Debug\Adventure.csproj.CoreCompileInputs.cache
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\obj\Debug\Adventure.exe
+C:\Users\Jake\Documents\Visual Studio 2017\Projects\Adventure\Adventure\obj\Debug\Adventure.pdb
