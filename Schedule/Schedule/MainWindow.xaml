@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Schedule"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Closing="MainWindow_Closing">
+        Title="MainWindow" Height="350" Width="525">
     <Grid>
         <ComboBox x:Name="Hour" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="85,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
         <ComboBox x:Name="Minute" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="200,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
         <ComboBox x:Name="AMPM" FontSize="40" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="314,115,0,0" VerticalAlignment="Top" Width="86" Height="63"/>
-        <Button x:Name="ClockIn" Content="Clock In" HorizontalAlignment="Left" Margin="200,223,0,0" VerticalAlignment="Top" Width="86" Height="39" Click="ClockIn_Click"/>
+        <Button x:Name="ClockIn" Content="Clock In" HorizontalAlignment="Left" Margin="160,223,0,0" VerticalAlignment="Top" Width="86" Height="39" Click="ClockIn_Click"/>
+        <Button x:Name="ClockOut" Content="Clock Out" HorizontalAlignment="Left" Margin="251,223,0,0" VerticalAlignment="Top" Width="86" Height="39" Click="ClockOut_Click"/>
 
     </Grid>
 </Window>

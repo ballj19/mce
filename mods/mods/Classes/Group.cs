@@ -20,21 +20,31 @@ namespace mods
     {        
         public Group(string file)
         {
-            content = new Content(file);
             Initialize_Controller(file);
+        }
+
+        public Group(string file, Content content)
+        {
+            Initialize_Controller(file, content);
+        }
+
+        protected override string Get_Fire_Code()
+        {
+                return "NONE";
         }
 
         protected override void Set_Variables()
         {
             if (content.content.IndexOf("END") != -1)
             {
-                lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
-                jobName = content.Get_String("JBNAME:", 1);
+                //lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
+                //jobName = content.Get_String("JBNAME:", 1);
                 iox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 0));
                 i4o = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 6, 1));
                 aiox = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 8, 0));
                 callbnu = General.HexStringToDecimal(content.Get_Nibble("LOBBY:", 7, 0));
-                versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                referenceJob = content.Get_String("JOB_REF", 1).Substring(1, 5);
+                /*versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
                 versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
                 versionBot = content.Get_String("CUSTOM:", 1);
                 if (versionTop[0] == '0' && versionTop.Length > 1)
@@ -52,12 +62,13 @@ namespace mods
                 else
                 {
                     fileVersion = versionTop + "." + versionMid + "." + versionBot;
-                }
+                }*/
             }
         }
 
         public override void Job_Info()
         {
+            window = Application.Current.Windows.OfType<MainWindow>().First();
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";
             window.JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";

@@ -19,16 +19,20 @@ namespace mods
     {
         public Local(string file)
         {
-            content = new Content(file);
             Initialize_Controller(file);
         }
-        
+
+        public Local(string file, Content content)
+        {
+            Initialize_Controller(file, content);
+        }
+
         protected override void Set_Variables()
         {
             if (content.content.IndexOf("END") != -1)
             {
-                lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
-                jobName = content.Get_String("JBNAME:", 1);
+                //lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
+                //jobName = content.Get_String("JBNAME:", 1);
                 topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
                 topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
                 botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
@@ -44,7 +48,8 @@ namespace mods
                 ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
                 ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
                 dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
-                versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                referenceJob = content.Get_String("JOB_REF", 1).Substring(1, 5);
+                /*versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
                 versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
                 versionBot = content.Get_String("CUSTOM:", 1);
                 if (versionTop[0] == '0' && versionTop.Length > 1)
@@ -62,7 +67,7 @@ namespace mods
                 else
                 {
                     fileVersion = versionTop + "." + versionMid + "." + versionBot;
-                }
+                }*/
                 drivebit2 = content.Get_Bit("CPVAR", 2, 0, 1);
                 drivebit3 = content.Get_Bit("CPVAR", 2, 0, 0);
                 driveType = "";
@@ -85,8 +90,61 @@ namespace mods
             }
         }
 
+        protected override string Get_Fire_Code()
+        {
+            string CHIOPT = content.Get_Bit("LOBBY:", 21, 0, 3);
+            string CHIOPT01 = content.Get_Bit("LOBBY:", 22, 0, 2);
+            string ANSI85 = content.Get_Bit("LOBBY:", 8, 0, 3);
+            string ANSI89 = content.Get_Bit("LOBBY:", 8, 0, 1);
+            string ANSI2K = content.Get_Bit("LOBBY:", 12, 1, 3);
+            string AUST = content.Get_Bit("LOBBY:", 8, 1, 1);
+            string DETROIT = content.Get_Bit("LOBBY:", 43, 1, 0);
+            string HAWAII = content.Get_Bit("LOBBY:", 21, 0, 1);
+            string MASS2K = content.Get_Bit("LOBBY:", 12, 1, 0);
+            string NYOPT91 = content.Get_Bit("LOBBY:", 8, 0, 0);
+            string NYOPT = content.Get_Bit("LOBBY:", 21, 1, 0);
+
+            if (CHIOPT == "YES")
+            {
+                if(CHIOPT01 == "YES")
+                    return "Chicago 2001";
+                else
+                    return "Chicago";
+            }
+            else if(AUST == "YES")
+            {
+                return "Australia";
+            }
+            else if(DETROIT == "YES")
+            {
+                return "Detroit";
+            }
+            else if(HAWAII == "YES")
+            {
+                return "Hawaii";
+            }
+            else if(MASS2K == "YES")
+            {
+                return "Massachusets 2K";
+            }
+            else if(NYOPT == "YES" || NYOPT91 == "YES")
+            {
+                return "New York City";
+            }
+            else if(ANSI85 == "YES" && ANSI89 == "YES")
+            {
+                if (ANSI2K == "YES")
+                    return "ANSI 2K";
+                else
+                    return "ANSI 85-89 or 96";
+            }
+            return "NONE";
+        }
+
         public override void Job_Info()
         {
+            window = Application.Current.Windows.OfType<MainWindow>().First();
+
             //Job Info
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";
@@ -100,6 +158,8 @@ namespace mods
             window.JobInfo.Text += "False Floors: " + falseFloors + "\n";
             window.JobInfo.Text += "Nudging: " + nudging + "\n";
             window.JobInfo.Text += "Drive Type: " + driveType + "\n";
+            window.JobInfo.Text += "Fire Code: " + firecode + "\n";
+            //window.JobInfo.Text += "VersionInt: " + fileVersionInt + "\n";
 
             //Hardware
             window.JobInfo.Text += "\n";

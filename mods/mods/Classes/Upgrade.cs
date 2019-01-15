@@ -255,6 +255,11 @@ namespace mods
 
         public string Write_File()
         {
+            if(!Directory.Exists(@"C:\\ModUpgrades\\"))
+            {
+                Directory.CreateDirectory(@"C:\\ModUpgrades\\");
+            }
+
             System.IO.File.WriteAllLines(@"C:\\ModUpgrades\\" + filename + ".ASM", new_lines.ToArray());
 
             return "C:\\ModUpgrades\\" + filename + ".ASM";

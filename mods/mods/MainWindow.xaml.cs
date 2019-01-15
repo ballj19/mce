@@ -13,13 +13,15 @@ using System.Runtime.InteropServices;
 using IWshRuntimeLibrary;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace mods
 {
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.04.2";
+        string version = "V1.04.3";
         int permission = 1000;
         int searchProgress = 0;
         List<string> Trac_Mod_Jobs = new List<string>();
@@ -34,6 +36,7 @@ namespace mods
 
         public MainWindow()
         {
+            
             try
             {
                 InitializeComponent();
@@ -42,7 +45,6 @@ namespace mods
 
                 this.Title = "Modification Hub by Jake Ball " + version;
             
-
                 if (Version_Check())
                 {
                     Update_Auto_Updater();
@@ -226,7 +228,7 @@ namespace mods
                 {
                     if (System.IO.File.Exists(G_DRIVE + @"Software\Product\MP2OGM\" + jobNum + ".asm"))
                     {
-                        temp_controller = new Local(@"Product\MP2OGM\" + jobNum + ".asm");
+                        temp_controller = new Group(@"Product\MP2OGM\" + jobNum + ".asm");
                     }
                     else
                     {
@@ -242,20 +244,38 @@ namespace mods
             }
             else
             {
-                jobNum = General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString());
+                jobNum = Path.GetFileName(FilesListBox.SelectedItem.ToString());
 
                 temp_controller = controller;
             }
 
             string version = temp_controller.versionTop + "_" + temp_controller.versionMid + " " + temp_controller.versionBot;
 
-            if (jobNum.StartsWith("C"))
+            if (jobNum.StartsWith("C") || jobNum.StartsWith("c"))
             {
-                args = file + " " + "MP2COC" + " " + version;
+                char versionbot = temp_controller.versionBot[0];
+                
+                if(char.IsLetter(versionbot))
+                {
+                    args = Path.GetFileNameWithoutExtension(file) + " " + "MP2COC" + " " + temp_controller.referenceJob + " " + versionbot + " " + General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString());
+                }
+                else
+                {
+                    args = Path.GetFileNameWithoutExtension(file) + " " + "MP2COC" + " " + version;
+                }
             }
-            else if (jobNum.StartsWith("G"))
+            else if (jobNum.StartsWith("G") || jobNum.StartsWith("g"))
             {
-                args = file + " " + "MP2OGM" + " " + version;
+                char versionbot = temp_controller.versionBot[0];
+
+                if (char.IsLetter(versionbot))
+                {
+                    args = Path.GetFileNameWithoutExtension(file) + " " + "MP2OGM" + " " + temp_controller.referenceJob + " " + versionbot + " " + General.Get_Job_Number_From_Path(FilesListBox.SelectedItem.ToString());
+                }
+                else
+                {
+                    args = Path.GetFileNameWithoutExtension(file) + " " + "MP2OGM" + " " + version;
+                }
             }
             else
             {
@@ -594,18 +614,6 @@ namespace mods
 
         private bool Job_Info()
         {
-            //Job Summary
-            try
-            {
-                controller.Job_Summary();
-            }
-            catch (Exception ex)
-            {
-                Write_Error_To_Log(file, ex);
-                JobSummary.Text = "Job Summary could not be created for this file";
-                Dispatcher.BeginInvoke((Action)(() => InfoTabControl.SelectedIndex = 3));
-            }
-
             try
             {
                 if (controller.content.content.IndexOf("END") == -1)
@@ -627,6 +635,18 @@ namespace mods
                 Write_Error_To_Log(file, ex);
                 JobInfo.Text = "Job Info could not be created for this file";
             }
+
+            //Job Summary
+            try
+            {
+                controller.Job_Summary();
+            }
+            catch (Exception ex)
+            {
+                Write_Error_To_Log(file, ex);
+                JobSummary.Text = "Job Summary could not be created for this file";
+                Dispatcher.BeginInvoke((Action)(() => InfoTabControl.SelectedIndex = 3));
+            }            
 
             //Options
             try
@@ -727,26 +747,39 @@ namespace mods
 
         private void FilesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(FileExtension.SelectedItem.ToString() != "DDP")
+            try
             {
-                var addedItem = e.AddedItems;
-
-                if (addedItem.Count == 1)
+                if (!System.IO.File.Exists(G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString()))
                 {
-                    string file = addedItem[0].ToString();
-
-                    if (Generate_JobInfo(file))
-                    {
-                        Make_Controls_Visible();
-                    }
-                    else
-                    {
-                        Make_Controls_Invisible();
-                        JobInfo.Visibility = Visibility.Visible;
-                    }
+                    FilesListBox.Items.Remove(FilesListBox.SelectedItem);
+                    return;
                 }
 
-                ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "Version I/O", DispatcherPriority.Background);
+                if (FileExtension.SelectedItem.ToString() != "DDP")
+                {
+                    var addedItem = e.AddedItems;
+
+                    if (addedItem.Count == 1)
+                    {
+                        string file = addedItem[0].ToString();
+
+                        if (Generate_JobInfo(file))
+                        {
+                            Make_Controls_Visible();
+                        }
+                        else
+                        {
+                            Make_Controls_Invisible();
+                            JobInfo.Visibility = Visibility.Visible;
+                        }
+                    }
+
+                    ViewVersionIO.Dispatcher.Invoke(() => ViewVersionIO.Content = "Version I/O", DispatcherPriority.Background);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -860,7 +893,7 @@ namespace mods
                 }
             }
         }
-
+        
         private void Track_Mod()
         {
             //OPEN EXCEL
@@ -975,8 +1008,11 @@ namespace mods
                     try
                     {
                         string rawDate = xlRange.Cells[row, 1].Value2.ToString();
-                        double d = double.Parse(rawDate);
-                        dateReceived = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        bool result = double.TryParse(rawDate, out double d);
+                        if (result)
+                            dateReceived = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        else
+                            dateReceived = "";
 
                     }
                     catch
@@ -986,8 +1022,11 @@ namespace mods
                     try
                     {
                         string rawDate = xlRange.Cells[row, 2].Value2.ToString();
-                        double d = double.Parse(rawDate);
-                        shipDate = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        bool result = double.TryParse(rawDate, out double d);
+                        if (result)
+                            shipDate = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        else
+                            shipDate = "";
                     }
                     catch
                     {
@@ -1196,8 +1235,11 @@ namespace mods
                     try
                     {
                         string rawDate = dlmRange.Cells[row, 1].Value2.ToString();
-                        double d = double.Parse(rawDate);
-                        dateReceived = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        bool result = double.TryParse(rawDate, out double d);
+                        if (result)
+                            dateReceived = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        else
+                            dateReceived = "";
 
                     }
                     catch
@@ -1207,8 +1249,11 @@ namespace mods
                     try
                     {
                         string rawDate = dlmRange.Cells[row, 2].Value2.ToString();
-                        double d = double.Parse(rawDate);
-                        shipDate = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        bool result = double.TryParse(rawDate, out double d);
+                        if (result)
+                            shipDate = DateTime.FromOADate(d).ToString("MM/dd/yy");
+                        else
+                            shipDate = "";
                     }
                     catch
                     {
@@ -1951,6 +1996,7 @@ namespace mods
                 if (permission > 0)
                 {
                     AdminTab.Visibility = Visibility.Hidden;
+                    TracJobTab.Visibility = Visibility.Hidden;
                 }
             }
             catch(Exception ex)
@@ -2017,7 +2063,6 @@ namespace mods
             {
                 Write_Error_To_Log("MODUPGRADE", ex);
             }
-
         }
 
         private void InfoTabControl_SelectionChanged(object sender, RoutedEventArgs e)
@@ -2102,6 +2147,11 @@ namespace mods
             string version = topVersion + "_" + midVersion + " " + botVersion;
 
             args = Microsoft.VisualBasic.Interaction.InputBox("N_EPLNK args", "N_EPLNK", file + " " + subfolder + " " + version);
+
+            if(args == "")
+            {
+                return;
+            }
 
             Process proc = Process.Start(cmd, args);
             proc.WaitForExit();
@@ -2523,7 +2573,7 @@ namespace mods
 
         private void Populate_PTHC()
         {
-            List<string> prfiles = Directory.GetFiles(@"G:\Software\Programming_Record_Templetes\PTHC\PRECORD", " *.afm").ToList();
+            List<string> prfiles = Directory.GetFiles(@"G:\Software\Programming_Record_Templetes\PTHC\PRECORD", "*.afm").ToList();
 
             foreach (string file in prfiles)
             {
@@ -2706,6 +2756,27 @@ namespace mods
             catch
             {
                 MessageBox.Show("Please Select an Item from the List");
+            }
+        }
+
+        private void Update_DB_Click(object sender, RoutedEventArgs e)
+        {
+            SqlConnection conn = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Controllers.mdf; Integrated Security = True");
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO controller (filepath) VALUES ('test.txt')", conn);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                conn.Close();
             }
         }
     }

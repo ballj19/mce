@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace mods
 {
@@ -17,7 +18,7 @@ namespace mods
         string filepath = @"\\10.113.32.45\shared\Software\";
         public string file;
 
-        public Content(string file)
+        public Content(string file, bool GetIO = true)
         {
             string path = "";
 
@@ -32,36 +33,38 @@ namespace mods
             this.file = General.Get_File_From_Path(path);
             this.filepath = General.Get_Folder_From_Path(path);
             this.content = Get_Content();
-            Get_IO_Labels();
-            this.inputs = IO(inputLabels , 'I');
-            this.outputs = IO(outputLabels, 'O');
+            if(GetIO)
+            {
+                Get_IO_Labels();
+                this.inputs = IO(inputLabels, 'I');
+                this.outputs = IO(outputLabels, 'O');
+            }
         }
 
         private List<string> Get_Content()
         {
-            List<string> lines = new List<string>();
+            IEnumerable<string> lines;
 
             try
             {
-                lines = System.IO.File.ReadAllLines(filepath + file).ToList();
+                lines = System.IO.File.ReadLines(filepath + file);
             }
             catch
             {
-
+                lines = new string[0];
             }
-
             int x = 0;
-            string[] uncommentedLines = new string[lines.Count];
+            string[] uncommentedLines = new string[lines.Count()];
             foreach (string line in lines)
             {
-                if (lines[x].IndexOf(";") == -1) //indexOf returns -1 if string not found
+                if (line.IndexOf(";") == -1) //indexOf returns -1 if string not found
                 {
-                    uncommentedLines[x] = lines[x];  //do nothing
+                    uncommentedLines[x] = line;  //do nothing
                 }
                 else
                 {
-                    int commentIndex = lines[x].IndexOf(";");
-                    uncommentedLines[x] = lines[x].Substring(0, lines[x].IndexOf(";"));
+                    int commentIndex = line.IndexOf(";");
+                    uncommentedLines[x] = line.Substring(0, line.IndexOf(";"));
                 }
                 uncommentedLines[x] = uncommentedLines[x].Trim();
                 x++;
@@ -99,7 +102,6 @@ namespace mods
                     }
                 }
             }
-
             return content;
         }
         

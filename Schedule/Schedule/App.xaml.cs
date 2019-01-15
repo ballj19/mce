@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Schedule
 {
@@ -17,20 +18,21 @@ namespace Schedule
     {
         void App_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
-            if(!Check_Clocked_Out())
+            try
             {
-                ClockOut clockout = new ClockOut();
-                clockout.Show();
-
-                // Ask the user if they want to allow the session to end
                 string msg = string.Format("{0}. End session?", e.ReasonSessionEnding);
                 MessageBoxResult result = MessageBox.Show(msg, "Session Ending", MessageBoxButton.YesNo);
 
-                // End session, if specified
-                if (result == MessageBoxResult.No)
+                if(result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
+                    Window main = MainWindow;
+                    main.Show();
                 }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -78,26 +80,11 @@ namespace Schedule
                 day = 10;
             }
 
-            for (int row = 2; row < 200; row++)
-            {
-                var rowDate = xlRange.Cells[row, 2].Value2;
 
-                if (rowDate != null)
-                {
-                    if (xlRange.Cells[row, 1].Value2 == "Arrival")
-                    {
-                        if (compareDates(date, xlRange.Cells[row, 2].Value2.ToString()) > 0)
-                        {
-                            if (compareDates(date, xlRange.Cells[row + 1, 2].Value2.ToString()) < 2)
-                            {
-                                if (xlRange.Cells[row + 1, day].Value.ToString() != "")
-                                {
-                                    clocked_out = true;
-                                }
-                            }
-                        }
-                    }
-                }
+            int row = Convert_Todays_Date_To_Row_Number();
+            if(Convert.ToString(xlRange.Cells[row + 1, day].Value2) != "")
+            {
+                clocked_out = true;
             }
 
             //cleanup
@@ -113,7 +100,6 @@ namespace Schedule
             Marshal.ReleaseComObject(xlWorksheet);
 
             //close and release
-            xlWorkbook.Save();
             xlWorkbook.Close(true);
             Marshal.ReleaseComObject(xlWorkbook);
 
@@ -165,6 +151,15 @@ namespace Schedule
             }
 
             return 0;
+        }
+
+        private int Convert_Todays_Date_To_Row_Number()
+        {
+            DateTime today = DateTime.Now;
+
+            int day = today.DayOfYear + 2;  //We need to add 2 because The first friday is the 5th and we need it to be 7 for the offset to work out
+
+            return (int)(2 * Math.Floor(day / 7.0)) + 2;  //2 is the row offset for the first week
         }
     }
 }

@@ -1,0 +1,45 @@
+[12/20/2018 1:22:39 PM] jacob.ball
+Product\MPODH\H2406.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 432
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 218
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
+
+[12/20/2018 1:22:41 PM] jacob.ball
+Product\MPODH\H2406.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 432
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 218
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
+
+[12/21/2018 10:02:04 AM] jacob.ball
+Custom\MC-MP\MPOLOM\1070238\CUSTOM_B\O70238.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 432
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 256
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
+
+[12/21/2018 11:21:36 AM] jacob.ball
+Product\MP2COC\c_ASP1_AC.ASM
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 432
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 257
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
+
+[12/21/2018 11:21:42 AM] jacob.ball
+Custom\MC-MP\MPOLHM\15396\Custom_A\HLvick.asm
+System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+   at mods.Content.Build_OptionsMap(String label) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Content.cs:line 432
+   at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 256
+   at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
+

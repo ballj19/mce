@@ -30,10 +30,15 @@ namespace Schedule
                 Hour.Items.Add(i.ToString());
             }
 
-            Minute.Items.Add("00");
-            Minute.Items.Add("15");
-            Minute.Items.Add("30");
-            Minute.Items.Add("45");
+            for (int i = 0; i < 10; i++)
+            {
+                Minute.Items.Add("0" + i);
+            }
+
+            for (int i = 10; i < 60; i++)
+            {
+                Minute.Items.Add(i);
+            }
 
             AMPM.Items.Add("AM");
             AMPM.Items.Add("PM");

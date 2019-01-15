@@ -1,0 +1,14 @@
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.exe.config
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.exe
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.pdb
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.csprojAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.exe
+C:\Users\Jacob.Ball\source\repos\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.pdb
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.csprojAssemblyReference.cache
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.csproj.CoreCompileInputs.cache
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.exe
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\obj\Debug\ConcealedSquare.pdb
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.exe.config
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.exe
+C:\Users\Jacob.Ball\source\repos\mce\ConcealedSquare\ConcealedSquare\bin\Debug\ConcealedSquare.pdb

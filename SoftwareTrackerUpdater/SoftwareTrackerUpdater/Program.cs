@@ -25,7 +25,7 @@ namespace SoftwareTrackerUpdater
                 modsPath = modsPath.Substring(6, modsPath.Length - 6);
 
                 Console.Write("Fetching Update");
-                Thread.Sleep(8000);
+                Thread.Sleep(15000);
 
                 List<string> versions = new List<string>();
                 versions = System.IO.File.ReadAllLines(@"\\10.112.10.28\MCE-Rancho\Jake Ball\Versions.txt").ToList();

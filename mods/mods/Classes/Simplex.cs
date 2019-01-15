@@ -20,16 +20,20 @@ namespace mods
     {
         public Simplex(string file)
         {
-            content = new Content(file);
             Initialize_Controller(file);
+        }
+
+        public Simplex(string file, Content content)
+        {
+            Initialize_Controller(file, content);
         }
 
         protected override void Set_Variables()
         {
             if (content.content.IndexOf("END") != -1)
             {
-                lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
-                jobName = content.Get_String("JBNAME:", 1);
+                //lastModified = System.IO.File.GetLastWriteTime(@"\\10.113.32.45\shared\Software\" + file);
+                //jobName = content.Get_String("JBNAME:", 1);
                 topFloor = content.Get_Byte("BOTTOM:", 2) + 'H';
                 topFloorDecimal = (General.HexStringToDecimal(topFloor) + 1).ToString();
                 botFloor = content.Get_Byte("BOTTOM:", 1) + 'H';
@@ -44,7 +48,7 @@ namespace mods
                 ceBoard = content.Get_Bit("BOTTOM:", 12, 1, 1);
                 ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
                 ftBoard = content.Get_Bit("BOTTOM:", 8, 1, 3);
-                versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                /*versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
                 versionMid = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
                 versionBot = content.Get_String("CUSTOM:", 1);
                 if (versionTop[0] == '0' && versionTop.Length > 1)
@@ -62,7 +66,7 @@ namespace mods
                 else
                 {
                     fileVersion = versionTop + "." + versionMid + "." + versionBot;
-                }
+                }*/
                 drivebit2 = content.Get_Bit("LOBBY", 26, 0, 1);
                 drivebit3 = content.Get_Bit("LOBBY", 26, 0, 0);
                 driveType = "";
@@ -85,8 +89,14 @@ namespace mods
             }
         }
 
+        protected override string Get_Fire_Code()
+        {
+            return "NONE";
+        }
+
         public override void Job_Info()
         {
+            window = Application.Current.Windows.OfType<MainWindow>().First();
             //Job Info
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";

@@ -68,7 +68,7 @@ namespace mods
                 }
                 
 
-                if (System.Windows.Forms.MessageBox.Show("Open custom folder in VS Code?", "Open Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                /*if (System.Windows.Forms.MessageBox.Show("Open custom folder in VS Code?", "Open Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     var startInfo = new ProcessStartInfo();
                     startInfo.WorkingDirectory = custFolder;
@@ -76,7 +76,7 @@ namespace mods
                     startInfo.FileName = "code";
 
                     Process proc = Process.Start(startInfo);
-                }
+                }*/
             }
         }
 

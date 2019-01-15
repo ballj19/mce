@@ -17,11 +17,23 @@ namespace mods
 {
     public abstract class Controller
     {
-        protected string file;
+        public string file;
         public Content content;
-        protected MainWindow window;
-        protected DateTime lastModified;
-        protected string jobName;
+        public MainWindow window;
+        public DateTime lastModified
+        {
+            get
+            {
+                return System.IO.File.GetLastWriteTime(file);
+            }
+        }
+        public string jobName
+        {
+            get
+            {
+                return content.Get_String("JBNAME:", 1);
+            }
+        }
         protected string topFloor;
         protected string topFloorDecimal;
         protected string botFloor;
@@ -37,19 +49,112 @@ namespace mods
         protected string ncBoard;
         protected string ftBoard;
         protected string dlmBoard;
-        public string fileVersion;
-        public string versionTop;
-        public string versionMid;
-        public string versionBot;
+        public string versionBot
+        {
+            get
+            {
+                string vb = content.Get_String("CUSTOM:", 1);
+                if (vb[0] == '0' && vb.Length > 1 && vb[1] != ' ')
+                {
+                    vb = vb.Substring(1, 1);
+                }
+                return vb;
+            }
+        }
+
+        public string versionTop
+        {
+            get
+            {
+                string vt = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
+                if (vt[0] == '0' && vt.Length > 1)
+                {
+                    vt = vt.Substring(1, 1);
+                }
+                return vt;
+            }
+        }
+
+        public string versionMid
+        {
+            get
+            {
+                return content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 1);
+            }
+        }
+
+        public string fileVersion
+        {
+            get
+            {
+                return versionTop + "." + versionMid + "." + versionBot;
+            }
+        }
+        public int fileVersionInt
+        {
+            get
+            {
+                try
+                {
+                    bool vbot_passed = Int32.TryParse(versionBot, out int vbot);
+                    bool vmid_passed = Int32.TryParse(versionMid, out int vmid);
+                    bool vtop_passed = Int32.TryParse(versionTop, out int vtop);
+
+                    if (vbot_passed && vmid_passed && vtop_passed)
+                    {
+                        return vtop * 10000 + vmid * 100 + vbot;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                catch
+                {
+                    return 0;
+                }
+
+            }
+        }
         protected string drivebit2;
         protected string drivebit3;
         protected string driveType;
+        public string referenceJob;
+        public string firecode
+        {
+            get
+            {
+                return Get_Fire_Code();
+            }
+        }
+
+        protected abstract string Get_Fire_Code();
 
         protected void Initialize_Controller(string file)
         {
-            this.file = file;
-            window = Application.Current.Windows.OfType<MainWindow>().First();
+            if(file.ToUpper().Contains("SOFTWARE"))
+            {
+                this.file = file;
+            }
+            else
+            {
+                this.file = @"\\10.113.32.45\shared\Software\" + file;
+            }
+            content = new Content(file);
             Set_Variables();
+        }
+
+        protected void Initialize_Controller(string file, Content content)
+        {
+            if (file.ToUpper().Contains("SOFTWARE"))
+            {
+                this.file = file;
+            }
+            else
+            {
+                this.file = @"\\10.113.32.45\shared\Software\" + file;
+            }
+            this.content = content;
         }
 
         protected abstract void Set_Variables();

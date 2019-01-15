@@ -14,5 +14,6 @@
         <StackPanel x:Name="Filters" Orientation="Vertical" HorizontalAlignment="Left" Height="492" Margin="16,90,0,0" VerticalAlignment="Top" Width="754"/>
         <Button Content="Add Filter" x:Name="AddFilter" HorizontalAlignment="Left" Margin="356,100,0,0" VerticalAlignment="Top" Width="74" Click="AddFilter_Click"/>
         <Button Content="Clear Filters" x:Name="ClearFitlers" HorizontalAlignment="Left" Margin="683,54,0,0" VerticalAlignment="Top" Width="75" Click="ClearFitlers_Click"/>
+        <Button x:Name="UpdateDB" Content="Update DB" HorizontalAlignment="Left" Margin="683,14,0,0" VerticalAlignment="Top" Width="75" Click="UpdateDB_Click"/>
     </Grid>
 </Window>

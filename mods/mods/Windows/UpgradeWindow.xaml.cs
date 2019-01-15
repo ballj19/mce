@@ -548,6 +548,7 @@ namespace mods
             }
             else if (result == 1)
             {
+                upgrade.Modify_Value("L_TABLE:", "1A", "REPLACE", "'A2K5',  000H,  001H,  004H,  001H");
                 upgrade.Modify_Value("L_TABLE:", "1B", "REPLACE", "'A2K7',  000H,  001H,  004H,  001H");
                 upgrade.Modify_Value("LOBBY:", "0A", "AND", "0BH");
             }
@@ -582,10 +583,12 @@ namespace mods
 
             if (result == 0)
             {
+                upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'A2K5',  000H,  001H,  004H,  001H");
                 upgrade.Modify_Value("LOBBY:", "01", "AND", "B0H");
             }
             else if (result == 1)
             {
+                upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'A2K5',  000H,  001H,  004H,  001H");
                 upgrade.Modify_Value("LOBBY:", "01", "AND", "B0H");
             }
             else
@@ -596,7 +599,7 @@ namespace mods
             CommentBox.Text += ";\t\t";
             CommentBox.Text += "Enabled Options for ANSI 2K Fire\n";
         }
-
+        
         public void Group_CRTLOCK()
         {
             upgrade.Modify_Value("CPVAR:", "06", "OR", "01H");

@@ -16,7 +16,6 @@ C:\Users\Jacob.Ball\source\repos\Schedule\Schedule\obj\Release\Schedule.csproj.C
 C:\Users\Jacob.Ball\source\repos\Schedule\Schedule\obj\Release\Schedule.exe
 C:\Users\Jacob.Ball\source\repos\Schedule\Schedule\obj\Release\Schedule.pdb
 C:\Users\Jacob.Ball\source\repos\Schedule\Schedule\obj\Release\Schedule.csprojResolveAssemblyReference.cache
-C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.csprojResolveAssemblyReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.csproj.ResolveComReference.cache
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\ClockOut.g.cs
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\MainWindow.g.cs
@@ -34,3 +33,4 @@ C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.Prop
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.csproj.GenerateResource.cache
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.csproj.CoreCompileInputs.cache
 C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\bin\Release\Schedule.pdb
+C:\Users\Jacob.Ball\source\repos\mce\Schedule\Schedule\obj\Release\Schedule.csprojAssemblyReference.cache

@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 
@@ -28,19 +16,24 @@ namespace Schedule
 
             for(int i = 1; i <= 12; i++)
             {
-                Hour.Items.Add(i.ToString());
+                Hour.Items.Add(i);
             }
 
-            Minute.Items.Add("00");
-            Minute.Items.Add("15");
-            Minute.Items.Add("30");
-            Minute.Items.Add("45");
+            for(int i = 0; i < 10; i++)
+            {
+                Minute.Items.Add("0" + i);
+            }
+
+            for(int i = 10; i < 60; i++)
+            {
+                Minute.Items.Add(i);
+            }
 
             AMPM.Items.Add("AM");
             AMPM.Items.Add("PM");
 
-            Hour.SelectedIndex = 7;
-            Minute.SelectedIndex = 0;
+            Hour.SelectedIndex = 5;
+            Minute.SelectedIndex = 30;
             AMPM.SelectedIndex = 0;
 
             System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
@@ -53,11 +46,7 @@ namespace Schedule
                     this.WindowState = WindowState.Normal;
                 };
         }
-
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-        }
-
+        
         protected override void OnStateChanged(EventArgs e)
         {
             if (WindowState == System.Windows.WindowState.Minimized)
@@ -66,8 +55,11 @@ namespace Schedule
             base.OnStateChanged(e);
         }
 
-        private void ClockIn_Click(object sender, RoutedEventArgs e)
+        private void Enter_Data(int clock_int_or_out)
         {
+            //Clock in = 0
+            //Clock out = 1
+
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open("C:\\Users\\Jacob.Ball\\Desktop\\Schedule.xlsx");
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
@@ -85,11 +77,11 @@ namespace Schedule
 
             int day = 4;
 
-            if(weekday == "Saturday")
+            if (weekday == "Saturday")
             {
                 day = 4;
             }
-            if(weekday == "Sunday")
+            if (weekday == "Sunday")
             {
                 day = 5;
             }
@@ -113,25 +105,9 @@ namespace Schedule
             {
                 day = 10;
             }
-
-            for (int row = 2; row < 200; row++)
-            {
-                var rowDate = xlRange.Cells[row, 2].Value2;
-
-                if (rowDate != null)
-                {
-                    if (xlRange.Cells[row, 1].Value2 == "Arrival")
-                    {
-                        if (compareDates(date, xlRange.Cells[row, 2].Value2.ToString()) > 0)
-                        {
-                            if (compareDates(date, xlRange.Cells[row + 1, 2].Value2.ToString()) < 2)
-                            {
-                                xlRange.Cells[row, day].Value = timeString;
-                            }
-                        }
-                    }
-                }
-            }
+                        
+            int row = Convert_Todays_Date_To_Row_Number();
+            xlRange.Cells[row + clock_int_or_out, day].Value = timeString;
 
             //cleanup
             GC.Collect();
@@ -153,6 +129,22 @@ namespace Schedule
             //quit and release
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
+        }
+
+        private void ClockIn_Click(object sender, RoutedEventArgs e)
+        {
+            Enter_Data(0);
+
+            Hour.SelectedIndex = 2;
+            Minute.SelectedIndex = 0;
+            AMPM.SelectedIndex = 1;
+        }
+
+        private void ClockOut_Click(object sender, RoutedEventArgs e)
+        {
+            Enter_Data(1);
+
+            this.Close();
         }
 
         private int compareDates(string date1, string date2)
@@ -196,6 +188,15 @@ namespace Schedule
             }
 
             return 0;
+        }
+
+        private int Convert_Todays_Date_To_Row_Number()
+        {
+            DateTime today = DateTime.Now;
+
+            int day = today.DayOfYear + 2;  //We need to add 2 because The first friday is the 5th and we need it to be 7 for the offset to work out
+
+            return (int)(2 * Math.Floor(day / 7.0)) + 2;  //2 is the row offset for the first week
         }
     }
 }
