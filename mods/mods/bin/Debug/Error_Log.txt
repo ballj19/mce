@@ -380,3 +380,50 @@ Parameter name: index
    at mods.Local.Options() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Local.cs:line 256
    at mods.MainWindow.Job_Info() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 654
 
+[1/17/2019 7:23:45 AM] jacob.ball
+Initialize Component
+System.InvalidOperationException: Object 'System.Double' cannot be used as an accessor parameter for a PropertyPath. An accessor parameter must be DependencyProperty, PropertyInfo, or PropertyDescriptor.
+   at System.Windows.PropertyPath.ResolvePropertyName(String name, Object item, Type ownerType, Object context, Boolean throwOnError)
+   at System.Windows.PropertyPath.ResolvePathParts(ITypeDescriptorContext typeDescriptorContext)
+   at System.Windows.PropertyPath.PrepareSourceValueInfo(ITypeDescriptorContext typeDescriptorContext)
+   at System.Windows.PropertyPath..ctor(String path, Object[] pathParameters)
+   at System.Windows.PropertyPath..ctor(Object parameter)
+   at mods.MainWindow.Apply_Animations() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 118
+   at mods.MainWindow..ctor() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 97
+
+[1/18/2019 7:58:16 AM] jacob.ball
+F:\Test Dept\Controller Data\2012\2012073961\2012073961.afm
+System.ArgumentException: An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at mods.MotionContent.Generate_Dictionary() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\MotionContent.cs:line 41
+   at mods.MotionContent..ctor(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\MotionContent.cs:line 34
+   at mods.Motion..ctor(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 30
+   at mods.MainWindow.Generate_JobInfo(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 745
+
+[1/18/2019 8:05:52 AM] jacob.ball
+F:\Test Dept\Controller Data\2012\2012073961\2012073961.afm
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at mods.Motion.Draw_Landing_Preview() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 108
+   at mods.MainWindow.Motion_JobInfo() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 732
+   at mods.MainWindow.Generate_JobInfo(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 746
+
+[1/18/2019 9:00:22 AM] jacob.ball
+F:\Test Dept\Controller Data\2012\2012073961\2012073961.afm
+System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at mods.Motion.Get_Value(String option) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 213
+   at mods.Motion.Generate_Headers() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 49
+   at mods.MainWindow.Motion_JobInfo() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 734
+   at mods.MainWindow.Generate_JobInfo(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 746
+
+[1/18/2019 9:01:45 AM] jacob.ball
+F:\Test Dept\Controller Data\2012\2012073961\2012073961.afm
+System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at mods.Motion.Get_Value(String option) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 213
+   at mods.Motion.Generate_Headers() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\Classes\Motion.cs:line 49
+   at mods.MainWindow.Motion_JobInfo() in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 734
+   at mods.MainWindow.Generate_JobInfo(String file) in C:\Users\Jacob.Ball\source\repos\mce\mods\mods\MainWindow.xaml.cs:line 746
+

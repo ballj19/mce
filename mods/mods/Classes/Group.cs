@@ -17,7 +17,15 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 namespace mods
 {
     class Group : Controller
-    {        
+    {       
+        public override int topLandingHeight
+        {
+            get
+            {
+                return 16 * content.Get_Group_Top_Level() + 26;
+            }
+        }
+
         public Group(string file)
         {
             Initialize_Controller(file);
@@ -68,7 +76,6 @@ namespace mods
 
         public override void Job_Info()
         {
-            window = Application.Current.Windows.OfType<MainWindow>().First();
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";
             window.JobInfo.Text += "Last Modified: " + lastModified.ToString("MM/dd/yy HH:mm:ss") + "\n\n";

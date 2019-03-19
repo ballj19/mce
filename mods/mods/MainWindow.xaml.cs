@@ -15,20 +15,21 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Windows.Media.Animation;
 
 namespace mods
 {
     public partial class MainWindow : Window
     {
         bool blockSearchHistoryChange = false;
-        string version = "V1.04.3";
+        string version = "V1.04.4";
         int permission = 1000;
         int searchProgress = 0;
         List<string> Trac_Mod_Jobs = new List<string>();
         List<string> Motion_Values = new List<string>();
         List<string> Motion_Options = new List<string>();
         string G_DRIVE = @"G:\";
-        string file = "";
+        string file = ""; 
         Controller controller;
         string jobNumber = "";
         string fileExtension = "";
@@ -36,15 +37,15 @@ namespace mods
 
         public MainWindow()
         {
-            
             try
             {
                 InitializeComponent();
 
-                Set_Permissions();            
-
+                Set_Permissions();
+                
                 this.Title = "Modification Hub by Jake Ball " + version;
             
+                //Check for new version on startup
                 if (Version_Check())
                 {
                     Update_Auto_Updater();
@@ -78,24 +79,40 @@ namespace mods
 
                 try
                 {
-                    if (SearchHistory.Items[1].ToString().StartsWith("-"))
-                    {
-                        TextBox1.Text = "";
-                    }
-                    else
-                    {
-                        TextBox1.Text = SearchHistory.Items[1].ToString();
-                    }
-                }
-                catch
-                {
+                      TextBox1.Text = SearchHistory.Items[1].ToString();
+                }catch{}
 
-                }
             }
             catch (Exception ex)
             {
                 Write_Error_To_Log("Initialize Component", ex);
             }
+        }
+        
+        private void Landing_Config_Animation(object sender, RoutedEventArgs e)
+        {
+            double height = controller.topLandingHeight;
+
+            Add_Landing_Animation("LandingNormalConfig", height);
+            Add_Landing_Animation("LandingAltConfig", height);
+            Add_Landing_Animation("LandingLevels", height);
+            Add_Landing_Animation("LandingPIs", height);
+
+            landing_config_storyboard.Begin(this);
+        }
+
+        private void Add_Landing_Animation(string name, double height)
+        {
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = 0.0,
+                To = height,
+                Duration = new Duration(TimeSpan.FromSeconds(1.5)),
+            };
+
+            landing_config_storyboard.Children.Add(animation);
+            Storyboard.SetTargetName(animation, name);
+            Storyboard.SetTargetProperty(animation, new PropertyPath(HeightProperty));
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -105,20 +122,28 @@ namespace mods
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SearchButton.IsEnabled = false;
-
-            if(TextBox1.Text.Contains("-"))
+            try
             {
-                int dashindex = TextBox1.Text.IndexOf("-");
+                SearchButton.IsEnabled = false;
 
-                TextBox1.Dispatcher.Invoke(() => TextBox1.Text = TextBox1.Text.Substring(dashindex + 1, TextBox1.Text.Length - dashindex - 1), DispatcherPriority.Background);
+                if (TextBox1.Text.Contains("-"))
+                {
+                    int dashindex = TextBox1.Text.IndexOf("-");
+
+                    TextBox1.Dispatcher.Invoke(() => TextBox1.Text = TextBox1.Text.Substring(dashindex + 1, TextBox1.Text.Length - dashindex - 1), DispatcherPriority.Background);
+                }
+
+                SearchFiles();
+                blockSearchHistoryChange = true;
+                Update_Search_History();
+                blockSearchHistoryChange = false;
+                SearchButton.IsEnabled = true;
             }
-
-            SearchFiles();
-            blockSearchHistoryChange = true;
-            Update_Search_History();
-            blockSearchHistoryChange = false;
-            SearchButton.IsEnabled = true;
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Write_Error_To_Log("Search", ex);
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -167,7 +192,7 @@ namespace mods
                 List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
                 foreach (string file in files)
                 {
-                    Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                    Process.Start("C:\\Program Files (x86)\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
                 }
 
                 if (files.Count < 1)
@@ -176,7 +201,7 @@ namespace mods
                     {
                         string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
                         System.IO.File.Copy(folder + "\\" + "Mod_Base.afm", file);
-                        Process.Start("C:\\Program Files\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                        Process.Start("C:\\Program Files (x86)\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
                     }
                 }
             }
@@ -377,54 +402,11 @@ namespace mods
                     SearchProgress.Maximum += 10; //PUBLIK Locations
                 }
 
-                Thread publik = new Thread(() => SearchLocation(G_DRIVE + "Software\\Publik\\", 10));
-                publik.Start();
-
-                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP\\"))
-                {
-                    Thread t = new Thread(() => SearchLocation(directory));
-                    t.Start();
-                }
-
-                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP2\\"))
-                {
-                    Thread t = new Thread(() => SearchLocation(directory));
-                    t.Start();
-                }
-
-                if (AllJobNumbersCheckBox.IsChecked == false)
-                {
-                    Thread t = new Thread(() => SearchLocation(G_DRIVE + "Software\\Custom2\\" + jobNumber));
-                    t.Start();
-                }
-                else
-                {
-                    foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Custom2\\"))
-                    {
-                        Thread t = new Thread(() => SearchLocation(directory));
-                        t.Start();
-                    }
-                }
-
-                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Custom\\MC-MP\\"))
-                {
-                    if (AllJobNumbersCheckBox.IsChecked == false)
-                    {
-                        Thread t = new Thread(() => SearchLocation(directory + "\\" + jobNumber));
-                        t.Start();
-                    }
-                    else
-                    {
-                        Thread t = new Thread(() => SearchLocation(directory, 100));
-                        t.Start();
-                    }
-                }
-
                 foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Product\\"))
                 {
                     if (!directory.Contains("MASTER.BIN"))
                     {
-                        Thread t = new Thread(() => SearchLocation(directory));
+                        Task t = new Task(() => SearchLocation(directory));
                         t.Start();
                     }
                     else
@@ -434,6 +416,48 @@ namespace mods
                     }
                 }
 
+                Task publik = new Task(() => SearchLocation(G_DRIVE + "Software\\Publik\\", 10));
+                publik.Start();
+
+                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP\\"))
+                {
+                    Task t = new Task(() => SearchLocation(directory));
+                    t.Start();
+                }
+
+                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP2\\"))
+                {
+                    Task t = new Task(() => SearchLocation(directory));
+                    t.Start();
+                }
+
+                if (AllJobNumbersCheckBox.IsChecked == false)
+                {
+                    Task t = new Task(() => SearchLocation(G_DRIVE + "Software\\Custom2\\" + jobNumber));
+                    t.Start();
+                }
+                else
+                {
+                    foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Custom2\\"))
+                    {
+                        Task t = new Task(() => SearchLocation(directory));
+                        t.Start();
+                    }
+                }
+
+                foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Custom\\MC-MP\\"))
+                {
+                    if (AllJobNumbersCheckBox.IsChecked == false)
+                    {
+                        Task t = new Task(() => SearchLocation(directory + "\\" + jobNumber));
+                        t.Start();
+                    }
+                    else
+                    {
+                        Task t = new Task(() => SearchLocation(directory, 100));
+                        t.Start();
+                    }
+                }
                 _search.Release(100);
 
                 /*if (FilesListBox.Items.Count < 1)
@@ -694,11 +718,9 @@ namespace mods
 
         private bool Motion_JobInfo()
         {
-            MotionContent content = new MotionContent(file);
-
-            content.Draw_Landing_Preview();
-            content.Generate_Job_Info();
-
+            controller.Draw_Landing_Preview();
+            controller.Job_Info();
+            controller.Generate_Headers();
             return true;
         }
 
@@ -709,7 +731,9 @@ namespace mods
             {
                 try
                 {
-                    return Motion_JobInfo();
+                    controller = new Motion(file);
+                    Motion_JobInfo();
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -751,8 +775,11 @@ namespace mods
             {
                 if (!System.IO.File.Exists(G_DRIVE + "Software\\" + FilesListBox.SelectedItem.ToString()))
                 {
-                    FilesListBox.Items.Remove(FilesListBox.SelectedItem);
-                    return;
+                    if(!System.IO.File.Exists(FilesListBox.SelectedItem.ToString()))
+                    {
+                        FilesListBox.Items.Remove(FilesListBox.SelectedItem);
+                        return;
+                    }
                 }
 
                 if (FileExtension.SelectedItem.ToString() != "DDP")
@@ -865,7 +892,6 @@ namespace mods
 
             Properties.Settings.Default.SearchHistory.Clear();
             SearchHistory.Items.Clear();
-            SearchHistory.Items.Add("----- Recents -----");
 
             foreach (string search in tempSearchHistory)
             {
@@ -1085,6 +1111,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = dateReceived,
@@ -1097,6 +1124,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = shipDate,
@@ -1109,6 +1137,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notificationNumber,
@@ -1121,6 +1150,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = jobNumber,
@@ -1133,6 +1163,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = type,
@@ -1145,6 +1176,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = custom,
@@ -1157,6 +1189,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = engineer,
@@ -1169,6 +1202,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notes,
@@ -1312,6 +1346,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = dateReceived,
@@ -1324,6 +1359,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = shipDate,
@@ -1336,6 +1372,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notificationNumber,
@@ -1348,6 +1385,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = jobNumber,
@@ -1360,6 +1398,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = type,
@@ -1372,6 +1411,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = custom,
@@ -1384,6 +1424,7 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = engineer,
@@ -1403,6 +1444,7 @@ namespace mods
                         TextWrapping = TextWrapping.Wrap,
                         VerticalContentAlignment = VerticalAlignment.Center,
                         Background = System.Windows.Media.Brushes.Transparent,
+                        Foreground = T_Foreground,
                     };
 
                     Button tracModSearchButton = new Button
@@ -1866,6 +1908,7 @@ namespace mods
             KDMFolder.Visibility = Visibility.Visible;
             MotionDummyFolder.Visibility = Visibility.Visible;
             KDMEmail.Visibility = Visibility.Visible;
+            CustList.Visibility = Visibility.Visible;
 
             ExportExcel.Visibility = Visibility.Hidden;
             //AdvancedSearch.Visibility = Visibility.Hidden;
@@ -1877,6 +1920,7 @@ namespace mods
             KDMFolder.Visibility = Visibility.Hidden;
             MotionDummyFolder.Visibility = Visibility.Hidden;
             KDMEmail.Visibility = Visibility.Hidden;
+            CustList.Visibility = Visibility.Hidden;
 
             ExportExcel.Visibility = Visibility.Visible;
             //AdvancedSearch.Visibility = Visibility.Visible;
@@ -2306,13 +2350,21 @@ namespace mods
                 {
                     string folder = General.Get_Folder_From_Path(file);
 
-                    int locationIndex = folder.IndexOf("Software") + 9;
-                    string jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                    string jobFile;
+                    if(folder.Contains("Software"))
+                    {
+                        int locationIndex = folder.IndexOf("Software") + 9;
+                        jobFile = file.Substring(locationIndex, file.Length - locationIndex);
+                        string jobNumber = General.Get_Job_Number_From_Path(file);
+                        TextBox1.Text = jobNumber;
+                    }
+                    else
+                    {
+                        jobFile = file;
+                    }
 
                     FilesListBox.Items.Add(jobFile);
 
-                    string jobNumber = General.Get_Job_Number_From_Path(file);
-                    TextBox1.Text = jobNumber;
                 }
             }
 
@@ -2778,6 +2830,89 @@ namespace mods
             {
                 conn.Close();
             }
+        }
+
+        private void Set_Theme()
+        {
+            if(Properties.Settings.Default.Theme == "Dark")
+            {
+                T_Background = System.Windows.Media.Brushes.Black;
+                T_Foreground = System.Windows.Media.Brushes.White;
+
+                T_Border = System.Windows.Media.Brushes.White;
+            }
+
+            Background = T_Background;
+            Foreground = T_Foreground;
+
+            foreach(TextBox x in FindVisualChildren<TextBox>(this))
+            {
+                x.Foreground = T_Foreground;
+                x.Background = T_Background;
+                x.BorderBrush = T_Border;
+            }
+
+            foreach (ListBox x in FindVisualChildren<ListBox>(this))
+            {
+                x.Foreground = T_Foreground;
+                x.Background = T_Background;
+                x.BorderBrush = T_Border;
+            }
+
+            foreach (TabControl x in FindVisualChildren<TabControl>(this))
+            {
+                x.Foreground = T_Foreground;
+                x.Background = T_Background;
+                x.BorderBrush = T_Border;
+            }
+
+            foreach (Label x in FindVisualChildren<Label>(this))
+            {
+                x.Foreground = T_Foreground;
+                x.Background = T_Background;
+                x.BorderBrush = T_Border;
+            }
+
+            foreach (TextBlock x in FindVisualChildren<TextBlock>(this))
+            {
+                if(x.Parent != null && x.Parent.GetType() != typeof(Button))
+                {
+                    x.Foreground = T_Foreground;
+                    x.Background = T_Background;
+                }
+            }
+        }
+
+        private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+           // Set_Theme();
+        }
+
+        private void CustList_Click(object sender, RoutedEventArgs e)
+        {
+            string path = @"F:\Software\Source\MC-2000\SW\FAT_FREE CUSTOM JOBS";
+            string cmd = "C:\\Windows\\explorer.exe";
+            Process.Start(cmd, path);
         }
     }
 }

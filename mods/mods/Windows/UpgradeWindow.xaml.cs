@@ -86,7 +86,14 @@ namespace mods
 
             if (DLMUpgrade.IsChecked == true)
             {
-                NYC_DLM();
+                if (CarType.SelectedItem.ToString() == "Local")
+                {
+                    NYC_DLM();
+                }
+                else
+                {
+                    MessageBox.Show("DLM Options not supported for this controller type");
+                }
             }
             if (CRTLOCK.IsChecked == true)
             {
@@ -482,6 +489,7 @@ namespace mods
 
         private void Chicago_Fire()
         {
+            MessageBox.Show("Check for CCINHLD and Set Bit on SPARE 2");
             upgrade.Modify_Value("LOBBY:", "14", "OR", "01H");
             upgrade.Modify_Value("LOBBY:", "18", "OR", "04H");
 
@@ -506,7 +514,6 @@ namespace mods
 
         private void Chicago_Fire_Group()
         {
-            string message = "";
             upgrade.Modify_Value("L_TABLE:", "06", "REPLACE", "'NFRC',  00H,   01H,  04H,  01H");
             upgrade.Modify_Value("LOBBY:", "10", "OR", "22H");
 

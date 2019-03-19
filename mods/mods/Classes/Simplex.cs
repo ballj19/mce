@@ -18,6 +18,14 @@ namespace mods
 {
     class Simplex : Controller
     {
+        public override int topLandingHeight
+        {
+            get
+            {
+                return 16 * (General.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1) + 10;
+            }
+        }
+
         public Simplex(string file)
         {
             Initialize_Controller(file);
@@ -96,7 +104,6 @@ namespace mods
 
         public override void Job_Info()
         {
-            window = Application.Current.Windows.OfType<MainWindow>().First();
             //Job Info
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";

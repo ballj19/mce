@@ -19,7 +19,14 @@ namespace mods
     {
         public string file;
         public Content content;
-        public MainWindow window;
+        public MotionContent motioncontent;
+        public MainWindow window
+        {
+            get
+            {
+                return Application.Current.Windows.OfType<MainWindow>().First();
+            }
+        }
         public DateTime lastModified
         {
             get
@@ -49,6 +56,7 @@ namespace mods
         protected string ncBoard;
         protected string ftBoard;
         protected string dlmBoard;
+        public abstract int topLandingHeight { get; }
         public string versionBot
         {
             get

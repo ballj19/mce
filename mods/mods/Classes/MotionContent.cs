@@ -16,10 +16,11 @@ using System.Globalization;
 
 namespace mods
 {
-    class MotionContent
+    public class MotionContent
     {
-        public List<string> values = new List<string>();
-        public List<string> options = new List<string>();
+        public Dictionary<string, string> values = new Dictionary<string, string>();
+        private List<string> vals = new List<string>();
+        private List<string> options = new List<string>();
         private string file = "";
         private MainWindow window = Application.Current.MainWindow as MainWindow;
 
@@ -29,6 +30,17 @@ namespace mods
 
             int endIndex = Get_Motion_Options();
             Get_Motion_Values(endIndex);
+
+            Generate_Dictionary();
+        }
+
+        private void Generate_Dictionary()
+        {
+            for(int i = 0; i < options.Count; i++)
+            {
+                if(!values.ContainsKey(options[i]))
+                    values.Add(options[i], vals[i]);
+            }
         }
 
         private int Get_Motion_Options()
@@ -125,14 +137,14 @@ namespace mods
                 valuesEnglish.Add(english);
             }
 
-            values = valuesEnglish;
+            vals = valuesEnglish;
         }
 
         public string Get_Value(string option)
         {
             int optionIndex = options.IndexOf(option);
 
-            return values[optionIndex];
+            return vals[optionIndex];
         }
 
         public void Generate_Job_Info()
@@ -270,57 +282,6 @@ namespace mods
                 */
         }
 
-        public void Draw_Landing_Preview()
-        {
-            int top_landing = Int32.Parse(Get_Value("3. Top Landing Served (This car)"));
-
-            window.LandingNormalHeader.Width = 96;
-            window.LandingNormalConfig.Width = 96;
-            window.LandingAltHeader.Width = 96;
-            window.LandingAltConfig.Width = 96;
-
-            window.LandingNormalConfig.Text = "";
-            window.LandingNormalConfig.Height = 0;
-            window.LandingNormalConfig.BorderThickness = new Thickness(0);
-            window.LandingAltConfig.Text = "";
-            window.LandingAltConfig.Height = 0;
-            window.LandingAltConfig.BorderThickness = new Thickness(0);
-
-            window.LandingLevels.Text = "";
-            window.LandingLevels.Height = 16 * top_landing + 10;
-            window.LandingLevels.BorderThickness = new Thickness(2);
-            window.LandingPIs.Text = "";
-            window.LandingPIs.Height = 16 * top_landing + 10;
-            window.LandingPIs.BorderThickness = new Thickness(2);
-
-            window.LandingNormalConfig.Text = "";
-            window.LandingNormalConfig.Height = 16 * top_landing + 10;
-            window.LandingNormalConfig.BorderThickness = new Thickness(2);
-
-            for(int f = top_landing; f >= 1; f--)
-            {
-                window.LandingLevels.Text += f + "\n";
-
-                string frontlevelValue = Get_Value("Serves Front1_BOX" + f);
-                string rearlevelValue = Get_Value("Serves Rear1_BOX" + f);
-
-                string front = ".";
-                string rear = ".";
-
-                if(frontlevelValue == "1")
-                {
-                    front = "F";
-                }
-                if(rearlevelValue == "1")
-                {
-                    rear = "R";
-                }
-
-                window.LandingNormalConfig.Text += front + " " + rear + "\n";
-            }
-
-            window.LandingLevels.Text = window.LandingLevels.Text.Substring(0, window.LandingLevels.Text.Length - 1); //Remove final \n
-            window.LandingNormalConfig.Text = window.LandingNormalConfig.Text.Substring(0, window.LandingNormalConfig.Text.Length - 1); //Remove final \n
-        }
+        
     }
 }

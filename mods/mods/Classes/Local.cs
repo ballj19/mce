@@ -17,7 +17,15 @@ namespace mods
 {
     public class Local : Controller
     {
-        public Local(string file)
+        public override int topLandingHeight
+        {
+            get
+            {
+                return 16 * (General.HexStringToDecimal(content.Get_Byte("BOTTOM:", 2)) + 1) + 10;
+            }
+        }
+
+    public Local(string file)
         {
             Initialize_Controller(file);
         }
@@ -46,7 +54,7 @@ namespace mods
                 rearDoor = content.Get_Bit("LOBBY:", 12, 0, 3);
                 ceBoard = content.Get_Bit("BOTTOM:", 6, 1, 1);
                 ncBoard = content.Get_Bit("LOBBY:", 38, 1, 3);
-                ftBoard = content.Get_Bit("BOTTOM:", 6, 1, 3);
+                ftBoard = content.Get_Bit("BOTTOM:", 6, 0, 3);
                 dlmBoard = content.Get_Bit("LOBBY:", 39, 0, 1);
                 referenceJob = content.Get_String("JOB_REF", 1).Substring(1, 5);
                 /*versionTop = content.Get_Comma_Separated_Byte("MPVERNUM:", 1, 0);
@@ -143,8 +151,6 @@ namespace mods
 
         public override void Job_Info()
         {
-            window = Application.Current.Windows.OfType<MainWindow>().First();
-
             //Job Info
             window.JobInfo.Text = "";
             window.JobInfo.Text += file + "\n";
