@@ -54,6 +54,3 @@ C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ProgramMotion.g
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ModDoc.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\Windows\ProgramMotion.baml
 C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods.csprojAssemblyReference.cache
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Debug\Controllers.mdf
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\bin\Debug\Controllers_log.ldf
-C:\Users\Jacob.Ball\source\repos\mce\mods\mods\obj\Debug\mods_Content.g.cs

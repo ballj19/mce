@@ -15,8 +15,8 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="SearchHistory" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="113,39,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="SearchHistory_SelectionChanged"/>
-        <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click" Height="22"/>
-        <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
+        <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="298,40,0,0" VerticalAlignment="Top" Width="99" Click="Search_Click" Height="22"/>
+        <TextBox x:Name="JobNumberTB" HorizontalAlignment="Left" Height="23" Margin="113,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="82"/>
         <Label x:Name="Label1" Content="Job Number:" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" Height="26" Width="78"/>
         <ListBox x:Name="FilesListBox" HorizontalAlignment="Left" Height="210" Margin="19,93,0,0" VerticalAlignment="Top" Width="274" SelectionChanged="FilesListBox_SelectionChanged">
             <ListBox.ContextMenu>
@@ -27,7 +27,7 @@
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
-        <Button x:Name="OpenFile" Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Button_Click_1" Height="22"/>
+        <Button x:Name="OpenFile" Content="Open" HorizontalAlignment="Left" Margin="298,93,0,0" VerticalAlignment="Top" Width="99" Click="Open_File_Click" Height="22"/>
         <Button x:Name="BrowseFile" Content="Browse" HorizontalAlignment="Left" Margin="298,67,0,0" VerticalAlignment="Top" Width="99" Click="BrowseFile_Click" Height="22"/>
         <ComboBox x:Name="FileExtension" HorizontalAlignment="Left" Margin="218,39,0,0" VerticalAlignment="Top" Width="75" Height="22"/>
         <ProgressBar x:Name="SearchProgress" Minimum="0" Maximum="29" HorizontalAlignment="Left" Height="20" Margin="19,68,0,0" VerticalAlignment="Top" Width="274"/>
@@ -112,17 +112,17 @@
                     <Button x:Name="Emulink" Content="EMULINK" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="99" Click="Emulink_Click" Height="22"/>
                     <Button x:Name="Mp2link" Content="MP2LINK" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Width="99" Click="Mp2link_Click" Height="22"/>
                     <Button x:Name="OpenSim" Content="Create Sim" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="99" Click="OpenSim_Click" Height="22"/>
-                    <ComboBox x:Name="PTHCProgRecordComboBox" HorizontalAlignment="Left" Margin="158,36,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="PTHCProgRecord" Content="PTHC Prog Rec" HorizontalAlignment="Left" Margin="283,36,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Prog_Record" Height="22"/>
-                    <Button x:Name="PTHCModDoc" Content="PTHC Mod Doc" HorizontalAlignment="Left" Margin="283,63,0,0" VerticalAlignment="Top" Width="99" Click="PTHC_Mod_Doc" Height="22"/>
-                    <Button x:Name="PrintsFolder" Content="Job Prints" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="99" Click="Job_Prints_Click" Height="22"/>
-                    <ListBox x:Name="ModPrintsBox" Margin="10,170,287,408"/>
-                    <Button x:Name="OpenModFolder" Content="Open Folder" HorizontalAlignment="Left" Margin="387,170,0,0" VerticalAlignment="Top" Width="99" Click="Open_Mod_Folder_Click" Height="22"/>
+                    <Button x:Name="ModUpgrade" Content="Upgrade" Width="99" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,9,0,0" Click="ModUpgrade_Click" />
+                </Grid>
+            </TabItem>
+            <TabItem Name="SettingsTab" Header="Settings">
+                <Grid>
+                    <TextBox x:Name="UserNameTB" HorizontalAlignment="Left" Height="22" Margin="10,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150"/>
+                    <Label Content="Nicknames (Add nicknames separated by a ';'  )" Margin="165,10,246,684" Height="30"/>
                 </Grid>
             </TabItem>
             <TabItem Name="AdminTab" Header="Admin">
                 <Grid>
-                    <Button x:Name="ModUpgrade" Content="Upgrade" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Click="ModUpgrade_Click" />
                     <Button x:Name="ArchiveButton" Content="Archive" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,37,0,0" Click="ArchiveButton_Click"/>
                     <Button x:Name="PersonalFileButton" Content="Create Personal" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,64,0,0" Click="CreatePersonalFile_Click"/>
                     <Button x:Name="N_EPLNK" Content="N_EPNLK" Width="90" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,91,0,0" Click="N_EPLNK_Click"/>

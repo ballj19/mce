@@ -29,6 +29,7 @@ namespace mods
         private List<string> removedInputs;
         private List<string> addedOutputs;
         private List<string> removedOutputs;
+        MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
 
         public UpgradeWindow(string jobnum)
         {
@@ -52,7 +53,7 @@ namespace mods
                 }
             }
 
-            SourceFile.Text = "F:\\Software\\Source\\MC-MP2\\MP2COC\\V8_06\\V8_06_1\\Mp2cocvar.ASM";
+            SourceFile.Text = "F:\\Software\\Source\\MC-MP2\\MP2COC\\V8_06\\V8_06_3\\Mp2cocvar.ASM";
 
             CarType.Items.Add("Simplex");
             CarType.Items.Add("Local");
@@ -183,7 +184,7 @@ namespace mods
 
             List<string> Usernames = new List<string>();
 
-            string userName = "jacob;jake";
+            string userName = mainWindow.UserNameTB.Text;
 
             while (userName.Contains(";"))
             {
@@ -278,11 +279,25 @@ namespace mods
             string boxText = CommentBox.Text;
             boxText = boxText.Replace("\r\n", "\r\n;\t\t");
 
+            List<string> Usernames = new List<string>();
+            string userNameText = mainWindow.UserNameTB.Text;
+
+            while (userNameText.Contains(";"))
+            {
+                int colonIndex = userNameText.IndexOf(';');
+                Usernames.Add(userNameText.Substring(0, colonIndex));
+                userNameText = userNameText.Substring(colonIndex + 1, userNameText.Length - colonIndex - 1);
+            }
+
+            Usernames.Add(userNameText);
+
             commentText = "";
             commentText += ";***************************************************************************************\n";
             commentText += "; UPDATE: " + date.ToString("MM/dd/yyyy") + "\t\tNOTIFICATION #: " + notificationNumber + "\n";
             commentText += boxText;
-            commentText += ";\t\t\t\t\t\t\t\t...............Jake\n";
+            commentText += ";\t\t\t\t\t\t\t\t...............";
+            commentText += Usernames[0];
+            commentText += "\n";
             commentText += ";***************************************************************************************";
 
             return commentText;

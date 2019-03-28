@@ -18,7 +18,6 @@ namespace mods
     {
         bool stopSearching = false;
         int searchProgress = 0;
-        int searchProgressMax = 1;
         string G_DRIVE = @"\\10.113.32.45\shared\";
         MainWindow window;
         DateTime database_last_updated;
@@ -325,7 +324,7 @@ namespace mods
             searchProgress++;
             SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = searchProgress, DispatcherPriority.Background);
 
-            return files; //Uncomment only when all files need updating
+            //return files; //Uncomment only when all files need updating
 
             var files_need_updating = files.Where(file => file.LastWriteTime > database_last_updated && Controller_Exists(file.FullName));
 

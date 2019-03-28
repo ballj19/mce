@@ -44,26 +44,21 @@ namespace mods
                 Set_Permissions();
                 
                 this.Title = "Modification Hub by Jake Ball " + version;
+                this.UserNameTB.Text = Properties.Settings.Default.Username;
             
                 //Check for new version on startup
                 if (Version_Check())
                 {
+                    //Grab the latest version of autoupdater
                     Update_Auto_Updater();
+                    //Ask user if they want to update
                     if (System.Windows.Forms.MessageBox.Show("There is a new version available, do you want to update?", "Update ModHub?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                     {
-                        //To get the location the assembly normally resides on disk or the install directory
-                        string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-
-                        //once you have the path you get the directory with:
-                        string directory = System.IO.Path.GetDirectoryName(path);
-
-                        string updatepath = directory + "\\ModHubUpdater.exe";
-                        string cmd = "C:\\Windows\\explorer.exe";
-                        Process.Start(cmd, updatepath);
-                        System.Windows.Application.Current.Shutdown();
+                        Update_Version();
                     }
                 }
 
+                //Default to Legacy Visibility
                 try
                 {
                     FilesListBox.SelectionMode = SelectionMode.Extended;
@@ -77,10 +72,15 @@ namespace mods
                     Write_Error_To_Log("Visibility Setup", ex);
                 }
 
+                //Set most recent search as default
                 try
                 {
-                      TextBox1.Text = SearchHistory.Items[1].ToString();
-                }catch{}
+                      JobNumberTB.Text = SearchHistory.Items[0].ToString();
+                }
+                catch(Exception ex)
+                {
+                    Write_Error_To_Log("SearchHistory", ex);
+                }
 
             }
             catch (Exception ex)
@@ -88,49 +88,41 @@ namespace mods
                 Write_Error_To_Log("Initialize Component", ex);
             }
         }
-        
-        private void Landing_Config_Animation(object sender, RoutedEventArgs e)
+
+        private void Update_Version()
         {
-            double height = controller.topLandingHeight;
+            //To get the location the assembly normally resides on disk or the install directory
+            string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
 
-            Add_Landing_Animation("LandingNormalConfig", height);
-            Add_Landing_Animation("LandingAltConfig", height);
-            Add_Landing_Animation("LandingLevels", height);
-            Add_Landing_Animation("LandingPIs", height);
+            //once you have the path you get the directory with:
+            string directory = System.IO.Path.GetDirectoryName(path);
 
-            landing_config_storyboard.Begin(this);
-        }
-
-        private void Add_Landing_Animation(string name, double height)
-        {
-            DoubleAnimation animation = new DoubleAnimation
-            {
-                From = 0.0,
-                To = height,
-                Duration = new Duration(TimeSpan.FromSeconds(1.5)),
-            };
-
-            landing_config_storyboard.Children.Add(animation);
-            Storyboard.SetTargetName(animation, name);
-            Storyboard.SetTargetProperty(animation, new PropertyPath(HeightProperty));
+            string updatepath = directory + "\\ModHubUpdater.exe";
+            string cmd = "C:\\Windows\\explorer.exe";
+            Process.Start(cmd, updatepath);
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            Properties.Settings.Default.Username = UserNameTB.Text;
+
             Properties.Settings.Default.Save();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Search_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                //Prevents user from clicking search multiple times
                 SearchButton.IsEnabled = false;
 
-                if (TextBox1.Text.Contains("-"))
+                //If user enters job year - such as 04-45215 - cut it off and only take the job number
+                if (JobNumberTB.Text.Contains("-"))
                 {
-                    int dashindex = TextBox1.Text.IndexOf("-");
+                    int dashindex = JobNumberTB.Text.IndexOf("-");
 
-                    TextBox1.Dispatcher.Invoke(() => TextBox1.Text = TextBox1.Text.Substring(dashindex + 1, TextBox1.Text.Length - dashindex - 1), DispatcherPriority.Background);
+                    JobNumberTB.Dispatcher.Invoke(() => JobNumberTB.Text = JobNumberTB.Text.Substring(dashindex + 1, JobNumberTB.Text.Length - dashindex - 1), DispatcherPriority.Background);
                 }
 
                 SearchFiles();
@@ -146,7 +138,7 @@ namespace mods
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Open_File_Click(object sender, RoutedEventArgs e)
         {
             if (FilesListBox.SelectedItems.Count > 0)
             {
@@ -155,6 +147,7 @@ namespace mods
                     string cmd = "C:\\Windows\\explorer.exe";
                     string arg = "";
 
+                    //Use the full path for a programming record, otherwise prepend gdrive and software folder
                     if (FilesListBox.SelectedItem.ToString().Contains(".afm"))
                     {
                         arg = item.ToString();
@@ -174,34 +167,32 @@ namespace mods
 
         private void ModDocs_Click(object sender, RoutedEventArgs e)
         {
-            if (TextBox1.Text == "")
+            if (JobNumberTB.Text == "")
             {
                 MessageBox.Show("Please enter a valid job number into the search bar");
                 return;
             }
             try
             {
-                /*if (System.Windows.Forms.MessageBox.Show("Would you like to generate a file to import?", "Generate File to Import?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    ModDoc md = new ModDoc(this.FilesListBox);
-                    md.ShowDialog();
-                }
-                */
-                string jobNumber = "*" + TextBox1.Text + "*.afm";
+                //Search for any existing modification document for the entered job number
+                string jobNumber = "*" + JobNumberTB.Text + "*.afm";
                 string folder = G_DRIVE + "Software\\Modification_docs";
                 List<string> files = Directory.GetFiles(@folder, jobNumber).ToList();
+
+                //Open modification documents for the entered job number
                 foreach (string file in files)
                 {
-                    Process.Start("C:\\Program Files (x86)\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                    Process.Start("C:\\Windows\\explorer.exe", file);
                 }
 
+                //If no mod doc is found - ask user to create one and open the new blank mod doc
                 if (files.Count < 1)
                 {
                     if (System.Windows.Forms.MessageBox.Show("There is no existing modification doc. Would you like to create one?", "Create Mod Doc?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                     {
-                        string file = folder + "\\MOD_" + TextBox1.Text + ".afm";
+                        string file = folder + "\\MOD_" + JobNumberTB.Text + ".afm";
                         System.IO.File.Copy(folder + "\\" + "Mod_Base.afm", file);
-                        Process.Start("C:\\Program Files (x86)\\Acro Software\\FormMax Filler\\AcroFill.exe", file);
+                        Process.Start("C:\\Windows\\explorer.exe", file);
                     }
                 }
             }
@@ -217,7 +208,7 @@ namespace mods
 
             proc.WaitForExit();
 
-            string response = Microsoft.VisualBasic.Interaction.InputBox("Rename File?", "Rename File", TextBox1.Text + ".BIN");
+            string response = Microsoft.VisualBasic.Interaction.InputBox("Rename File?", "Rename File", JobNumberTB.Text + ".BIN");
 
             if (response != "")
             {
@@ -235,7 +226,6 @@ namespace mods
 
             if(controller == null)
             {
-
                 jobNum =  Microsoft.VisualBasic.Interaction.InputBox("Job Number?", "Job Number?", "").ToUpper();
                 if(jobNum.StartsWith("C"))
                 {
@@ -321,30 +311,33 @@ namespace mods
 
         private void SearchFiles()
         {
+            //Hide previous job information while searching
             Make_Controls_Invisible();
 
+            //Clear past search results
             FilesListBox.Items.Clear();
 
             _search = new Semaphore(0, 100);
 
-            if (TextBox1.Text == "")
+            if (JobNumberTB.Text == "")
             {
                 MessageBox.Show("Please enter a job number into the search bar");
                 return;
             }
             else
             {
-                jobNumber = TextBox1.Text;
+                jobNumber = JobNumberTB.Text;
                 fileExtension = FileExtension.SelectedItem.ToString();
             }
 
             searchProgress = 0;
             SearchProgress.Dispatcher.Invoke(() => SearchProgress.Value = searchProgress, DispatcherPriority.Background);
 
+            //Search for a DDP version - to search for version 6.08 - type '608' in search bar
             if (FileExtension.SelectedItem.ToString() == "DDP")
             {
                 FilesListBox.Items.Clear();
-                string jobNumber = "*" + TextBox1.Text + "*";
+                string jobNumber = "*" + JobNumberTB.Text + "*";
 
                 string folder = G_DRIVE + "Software\\Product\\MASTER.BIN\\DDP";
                 string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
@@ -356,44 +349,17 @@ namespace mods
             }
             else if (FileExtension.SelectedItem.ToString() != "Motion") //Legacy Job
             {
-                if (Environment.UserName != "jacob.ball")
-                {
-                    using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(@"\\10.112.10.28\MCE-Rancho\Jake Ball\test.txt", true))
-                    {
-                        DateTime now = DateTime.Now;
-                        file.WriteLine("[" + now.ToString() + "] " + this.version + " " + Environment.UserName + " " + TextBox1.Text);
-                    }
-                }
-
-                string[] locations = new string[] { "MP2COC", "MP2OGM", "MPODH", "MPODT", "MPOGD", "MPOGM", "MPOLHD", "MPOLHM", "MPOLOM", "MPOLTD", "MPOLTM" };
-                string[] source_locations = new string[] { "MC-MP\\MPODH", "MC-MP\\MPODT", "MC-MP\\MPOGM", "MC-MP\\MPOLHM", "MC-MP\\MPOLOM", "MC-MP\\MPOLTM", "MC-MP2\\MP2COC", "MC-MP2\\MP2OGM" };
-
-                string[] custom_locations = new string[] { "MC-MP\\MPODH\\", "MC-MP\\MPODT\\", "MC-MP\\MPOGD\\", "MC-MP\\MPOGM\\", "MC-MP\\MPOLHD\\", "MC-MP\\MPOLHM\\", "MC-MP\\MPOLOM\\", "MC-MP\\MPOLTD\\", "MC-MP\\MPOLTM\\" };
-                string[] custom2_locations = new string[] { "" };
-
-                if(AllJobNumbersCheckBox.IsChecked == false)
-                {
-                    for (int i = 0; i < custom_locations.Length; i++)
-                    {
-                        custom_locations[i] += jobNumber;
-                    }
-                    for (int i = 0; i < custom2_locations.Length; i++)
-                    {
-                        custom2_locations[i] += jobNumber;
-                    }
-                }
+                //Set up search bar maximum
                 SearchProgress.Maximum = 0;
                 SearchProgress.Maximum += Directory.GetDirectories(G_DRIVE + "Software\\Product\\").Length;
 
-
                 SearchProgress.Maximum += Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP\\").Length;
                 SearchProgress.Maximum += Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP2\\").Length;
+
                 if(AllJobNumbersCheckBox.IsChecked == true)
                 {
                     SearchProgress.Maximum += Directory.GetDirectories(G_DRIVE + "Software\\Custom\\MC-MP\\").Length * 100;
                     SearchProgress.Maximum += Directory.GetDirectories(G_DRIVE + "Software\\Custom2\\").Length;
-                    //SearchProgress.Maximum += 1;
                 }
                 else
                 {
@@ -402,8 +368,10 @@ namespace mods
                     SearchProgress.Maximum += 10; //PUBLIK Locations
                 }
 
+                //Search Product Directory
                 foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Product\\"))
                 {
+                    //Master.bin is too large to search quickly and does not contain any legacy variable files
                     if (!directory.Contains("MASTER.BIN"))
                     {
                         Task t = new Task(() => SearchLocation(directory));
@@ -416,21 +384,25 @@ namespace mods
                     }
                 }
 
+                //Search PUBLIK directory
                 Task publik = new Task(() => SearchLocation(G_DRIVE + "Software\\Publik\\", 10));
                 publik.Start();
 
+                //Search MP1 source directory
                 foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP\\"))
                 {
                     Task t = new Task(() => SearchLocation(directory));
                     t.Start();
                 }
 
+                //Search MP2 source directory
                 foreach (string directory in Directory.GetDirectories(G_DRIVE + "Software\\Source\\MC-MP2\\"))
                 {
                     Task t = new Task(() => SearchLocation(directory));
                     t.Start();
                 }
-
+                
+                //Search under all job numbers if checkbox is checked, else only search under entered job number
                 if (AllJobNumbersCheckBox.IsChecked == false)
                 {
                     Task t = new Task(() => SearchLocation(G_DRIVE + "Software\\Custom2\\" + jobNumber));
@@ -459,15 +431,7 @@ namespace mods
                     }
                 }
                 _search.Release(100);
-
-                /*if (FilesListBox.Items.Count < 1)
-                {
-                    JobInfo.Visibility = Visibility.Visible;
-                    JobInfo.Text = "No preview available for this job.\n";
-                    JobInfo.Text += "This job may be custom and under a different Job Number.\n";
-                    JobInfo.Text += "Please consult the Software Department for more info on this job.";
-                }*/
-
+                
                 Legacy_Controls_Visible();
             }
             else //Motion Job
@@ -476,17 +440,17 @@ namespace mods
                 string jobNumber = "";
                 string jobYear = "";
 
-                if (TextBox1.Text.Contains("-"))
+                if (JobNumberTB.Text.Contains("-"))
                 {
-                    jobNumber = TextBox1.Text.Substring(3, 5);
-                    jobYear = "20" + TextBox1.Text.Substring(0, 2);
+                    jobNumber = JobNumberTB.Text.Substring(3, 5);
+                    jobYear = "20" + JobNumberTB.Text.Substring(0, 2);
                     fullNumber = jobYear + "0" + jobNumber;
                 }
                 else
                 {
-                    jobNumber = TextBox1.Text.Substring(5, 5);
-                    jobYear = TextBox1.Text.Substring(0, 4);
-                    fullNumber = TextBox1.Text;
+                    jobNumber = JobNumberTB.Text.Substring(5, 5);
+                    jobYear = JobNumberTB.Text.Substring(0, 4);
+                    fullNumber = JobNumberTB.Text;
                 }
 
                 string searchFolder = G_DRIVE + @"Test Dept\Controller Data\" + jobYear + "\\" + fullNumber;
@@ -549,10 +513,12 @@ namespace mods
             {
                 try
                 {
+                    //Get all files with entered job number
                     string jobNumber = "*" + this.jobNumber + "*";
                     string[] files = Directory.GetFiles(@folder, jobNumber, SearchOption.AllDirectories);
                     foreach (string file in files)
                     {
+                        //Validate all found files by extension and job number
                         bool validFile = false;
                         string fileExtension = General.Get_FileExtension_From_Path(file).ToLower();
 
@@ -579,6 +545,7 @@ namespace mods
                             validFile = false;
                         }
 
+                        //Add any valid files to the files list box
                         if (validFile)
                         {
                             int locationIndex = folder.IndexOf("Software") + 9;
@@ -588,9 +555,9 @@ namespace mods
                         }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    Write_Error_To_Log("SearchLocation", ex);
                 }
             }
 
@@ -606,8 +573,8 @@ namespace mods
         {
             try
             {
-                string topFolder = TextBox1.Text.Substring(0, TextBox1.Text.Length - 3) + "000";
-                string jobFolder = TextBox1.Text;
+                string topFolder = JobNumberTB.Text.Substring(0, JobNumberTB.Text.Length - 3) + "000";
+                string jobFolder = JobNumberTB.Text;
                 string path = @"\\10.113.32.203\Jobfiles\" + topFolder + "\\" + jobFolder;
                 string cmd = "C:\\Windows\\explorer.exe";
                 string arg = path;
@@ -618,24 +585,7 @@ namespace mods
                 MessageBox.Show("Please enter a job number into the search bar");
             }
         }
-
-        private void run_cmd(string cmd, string args)
-        {
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = cmd;
-            start.Arguments = args;
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            using (Process process = Process.Start(start))
-            {
-                using (StreamReader reader = process.StandardOutput)
-                {
-                    string result = reader.ReadToEnd();
-                    Console.Write(result);
-                }
-            }
-        }
-
+        
         private bool Job_Info()
         {
             try
@@ -870,13 +820,13 @@ namespace mods
 
             tempSearchHistory.Reverse();  //We need to reverse the list so the Add/Remove functions
                                           //behave as we want. We then reverse it back at the end.
-            if (TextBox1.Text != "")
+            if (JobNumberTB.Text != "")
             {
-                if (tempSearchHistory.Contains(TextBox1.Text))
+                if (tempSearchHistory.Contains(JobNumberTB.Text))
                 {
 
-                    tempSearchHistory.Remove(TextBox1.Text);
-                    tempSearchHistory.Add(TextBox1.Text);
+                    tempSearchHistory.Remove(JobNumberTB.Text);
+                    tempSearchHistory.Add(JobNumberTB.Text);
                 }
                 else
                 {
@@ -884,7 +834,7 @@ namespace mods
                     {
                         tempSearchHistory.Remove(tempSearchHistory[0]);
                     }
-                    tempSearchHistory.Add(TextBox1.Text);
+                    tempSearchHistory.Add(JobNumberTB.Text);
                 }
             }
 
@@ -911,11 +861,11 @@ namespace mods
             {
                 if (SearchHistory.SelectedValue.ToString().StartsWith("-"))
                 {
-                    TextBox1.Text = ""; //The user selected a title instead of a job number
+                    JobNumberTB.Text = ""; //The user selected a title instead of a job number
                 }
                 else
                 {
-                    TextBox1.Text = SearchHistory.SelectedValue.ToString();
+                    JobNumberTB.Text = SearchHistory.SelectedValue.ToString();
                 }
             }
         }
@@ -1111,7 +1061,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = dateReceived,
@@ -1124,7 +1073,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = shipDate,
@@ -1137,7 +1085,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notificationNumber,
@@ -1150,7 +1097,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = jobNumber,
@@ -1163,7 +1109,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = type,
@@ -1176,7 +1121,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = custom,
@@ -1189,7 +1133,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = engineer,
@@ -1202,7 +1145,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notes,
@@ -1346,7 +1288,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = dateReceived,
@@ -1359,7 +1300,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = shipDate,
@@ -1372,7 +1312,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = notificationNumber,
@@ -1385,7 +1324,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = jobNumber,
@@ -1398,7 +1336,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = type,
@@ -1411,7 +1348,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = custom,
@@ -1424,7 +1360,6 @@ namespace mods
                     {
                         Height = 50,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                         IsReadOnly = true,
                         Margin = new Thickness(0, 0, 5, 10),
                         Text = engineer,
@@ -1444,7 +1379,6 @@ namespace mods
                         TextWrapping = TextWrapping.Wrap,
                         VerticalContentAlignment = VerticalAlignment.Center,
                         Background = System.Windows.Media.Brushes.Transparent,
-                        Foreground = T_Foreground,
                     };
 
                     Button tracModSearchButton = new Button
@@ -1778,7 +1712,7 @@ namespace mods
                 jobNumber = jobNumber.Substring(dashIndex + 1, jobNumber.Length - dashIndex - 1);
             }
 
-            TextBox1.Text = jobNumber;
+            JobNumberTB.Text = jobNumber;
 
             blockSearchHistoryChange = true;
             Update_Search_History();
@@ -2028,13 +1962,16 @@ namespace mods
                     UtilityTab.Visibility = Visibility.Hidden;
                     TracModTab.Visibility = Visibility.Hidden;
                     OptionsTab.Visibility = Visibility.Hidden;
+                    SettingsTab.Visibility = Visibility.Hidden;
                     AdvancedSearch.Visibility = Visibility.Hidden;
 
                     LDrive.Margin = new Thickness(LDrive.Margin.Left, LDrive.Margin.Top - 51, LDrive.Margin.Right, LDrive.Margin.Bottom);
                     ExportExcel.Margin = new Thickness(ExportExcel.Margin.Left, ExportExcel.Margin.Top - 51, ExportExcel.Margin.Right, ExportExcel.Margin.Bottom);
-                    //AdvancedSearch.Margin = new Thickness(AdvancedSearch.Margin.Left, AdvancedSearch.Margin.Top - 51, AdvancedSearch.Margin.Right, AdvancedSearch.Margin.Bottom);
 
                     G_DRIVE = @"\\10.113.32.45\shared\";
+
+                    //Uncomment this line when moving to new server
+                    //G_DRIVE = @\\10.113.32.203\shared\";  
                 }
 
                 if (permission > 0)
@@ -2252,8 +2189,8 @@ namespace mods
         private void MotionDummyFolder_Click(object sender, RoutedEventArgs e)
         {
             string path = @"G:\Software\MOTION_LINE\";
-            string yearSubFolder = TextBox1.Text.Substring(0, 4);
-            string jobPath = path + yearSubFolder + "\\" + TextBox1.Text;
+            string yearSubFolder = JobNumberTB.Text.Substring(0, 4);
+            string jobPath = path + yearSubFolder + "\\" + JobNumberTB.Text;
 
             if (!Directory.Exists(jobPath))
             {
@@ -2291,7 +2228,7 @@ namespace mods
         {
             //KDM FOLDER
             string kdmpath = @"\\10.113.0.38\mce-public\MCE\Test\Motion Software\Custom Software";
-            string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
+            string kdmjobPath = kdmpath + "\\" + JobNumberTB.Text;
 
             if (!Directory.Exists(kdmjobPath))
             {
@@ -2318,7 +2255,7 @@ namespace mods
 
         private void Custom_Mod_Click(object sender, RoutedEventArgs e)
         {
-            CustomMod cm = new CustomMod(TextBox1.Text);
+            CustomMod cm = new CustomMod(JobNumberTB.Text);
             cm.Show();
         }
 
@@ -2356,7 +2293,7 @@ namespace mods
                         int locationIndex = folder.IndexOf("Software") + 9;
                         jobFile = file.Substring(locationIndex, file.Length - locationIndex);
                         string jobNumber = General.Get_Job_Number_From_Path(file);
-                        TextBox1.Text = jobNumber;
+                        JobNumberTB.Text = jobNumber;
                     }
                     else
                     {
@@ -2372,10 +2309,10 @@ namespace mods
 
         private void KDMEmail_Click(object sender, RoutedEventArgs e)
         {
-            string jobNumber = TextBox1.Text.Substring(5, 5);
-            string jobYear = TextBox1.Text.Substring(2, 2);
+            string jobNumber = JobNumberTB.Text.Substring(5, 5);
+            string jobYear = JobNumberTB.Text.Substring(2, 2);
             string kdmpath = @"\\10.113.0.38\mce-public\MCE\Test\Motion Software\Custom Software";
-            string kdmjobPath = kdmpath + "\\" + TextBox1.Text;
+            string kdmjobPath = kdmpath + "\\" + JobNumberTB.Text;
 
             Outlook.Application app = new Outlook.Application();
             string body = "Alan and Eliud,\n\n" +
@@ -2623,192 +2560,10 @@ namespace mods
             }
         }
 
-        private void Populate_PTHC()
-        {
-            List<string> prfiles = Directory.GetFiles(@"G:\Software\Programming_Record_Templetes\PTHC\PRECORD", "*.afm").ToList();
-
-            foreach (string file in prfiles)
-            {
-                PTHCProgRecordComboBox.Items.Add(file);
-            }
-        }
-
-        private void PTHC_Prog_Record(object sender, RoutedEventArgs e)
-        {
-            string fullNumber = TextBox1.Text;
-            string jobNumber = TextBox1.Text.Substring(5, 5);
-            string jobYear = TextBox1.Text.Substring(0, 4);
-
-            string jobFolder = G_DRIVE + @"Test Dept\Controller Data\" + jobYear + "\\" + fullNumber;
-            string kdmFolder = G_DRIVE + @"Test Dept\Controller Data\KDM\" + jobYear + "\\" + fullNumber;
-
-            if (!Directory.Exists(jobFolder) && !Directory.Exists(kdmFolder))
-            {
-                if (System.Windows.Forms.MessageBox.Show("There is no folder, would you like to create one?", "Create Folder?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    if (System.Windows.Forms.MessageBox.Show("KDM Job?", "KDM Job?", System.Windows.Forms.MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                    {
-                        Directory.CreateDirectory(jobFolder);
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(kdmFolder);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            if (Directory.Exists(jobFolder))
-            {
-                System.IO.File.Copy(@"G:\Software\Programming_Record_Templetes\PTHC\PRECORD\" + PTHCProgRecordComboBox.SelectedItem.ToString(), jobFolder + "\\" + fullNumber + ".afm");
-            }
-
-            if (Directory.Exists(kdmFolder))
-            {
-
-            }
-
-        }
-
-        private void PTHC_Mod_Doc(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void DifferentJobNumber_Click(object sender, RoutedEventArgs e)
         {
             AllJobNumbersCheckBox.IsChecked = true;
             SearchFiles();
-        }
-
-        private void Job_Prints_Click(object sender, RoutedEventArgs e)
-        {
-            ModPrintsBox.Items.Clear();
-            string notif = Microsoft.VisualBasic.Interaction.InputBox("Notif #?", "Notification #", "");
-            string jobNumber = Microsoft.VisualBasic.Interaction.InputBox("Job #?", "Job #", "");
-            string engineer = Microsoft.VisualBasic.Interaction.InputBox("Engineer?", "Engineer", "");
-
-            if (notif != "")
-            {
-                PrintsFolder.IsEnabled = false;
-                Find_Mod_Notif_Folder(@"F:\!!Mods Cabinet\Review Pending (Do not move to L)", notif, jobNumber, engineer);
-                //test(@"F:\!!Mods Cabinet\Review Pending (Do not move to L)", notif, jobNumber, engineer);
-            }
-            PrintsFolder.IsEnabled = true;
-        }
-
-        private void test(string dir, string notif, string jobNumber, string engineer)
-        {
-            foreach(string engineerDir in Directory.GetDirectories(dir))
-            {
-                if(engineer == "" || engineerDir.Contains(engineer))
-                {
-                    try
-                    {
-                        foreach (string jobDir in Directory.GetDirectories(engineerDir))
-                        {
-                            if (jobNumber == "" || jobDir.Contains(jobNumber))
-                            {
-                                try
-                                {
-                                    if (Directory.Exists(jobDir + "\\Documents"))
-                                    {
-                                        foreach (string notifDir in Directory.GetDirectories(jobDir + "\\Documents"))
-                                        {
-                                            try
-                                            {
-                                                if (notif == "" || notifDir.Contains(notif))
-                                                {
-                                                    ModPrintsBox.Items.Add(notifDir);
-                                                }
-                                            }catch{}
-                                        }
-                                    }
-                                }catch{}
-                            }
-                        }
-                    }catch{}
-                }
-            }
-        }
-
-        private void Find_Mod_Notif_Folder(string dir, string notif, string jobNumber, string engineer)
-        {
-            try
-            {
-                foreach (string subDir in Directory.GetDirectories(dir))
-                {
-                    Console.WriteLine(subDir);
-                    if (!subDir.Substring(30, subDir.Length - 30).Contains("!"))
-                    {
-                        if (engineer != "")
-                        {
-                            if (subDir.Contains(engineer))
-                            {
-                                if (jobNumber != "")
-                                {
-                                    if (subDir.Contains(jobNumber))
-                                    {
-                                        if (subDir.Contains(notif))
-                                        {
-                                            ModPrintsBox.Items.Add(subDir);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (subDir.Contains(notif))
-                                    {
-                                        ModPrintsBox.Items.Add(subDir);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (jobNumber != "")
-                            {
-                                if (subDir.Contains(jobNumber))
-                                {
-                                    if (subDir.Contains(notif))
-                                    {
-                                        ModPrintsBox.Items.Add(subDir);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (subDir.Contains(notif))
-                                {
-                                    ModPrintsBox.Items.Add(subDir);
-                                }
-                            }
-                        }
-                        Find_Mod_Notif_Folder(subDir, notif, jobNumber, engineer);
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-        }
-
-        private void Open_Mod_Folder_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string cmd = "C:\\Windows\\explorer.exe";
-                string arg = ModPrintsBox.SelectedItem.ToString();
-                Process.Start(cmd, arg);
-            }
-            catch
-            {
-                MessageBox.Show("Please Select an Item from the List");
-            }
         }
 
         private void Update_DB_Click(object sender, RoutedEventArgs e)
@@ -2831,58 +2586,7 @@ namespace mods
                 conn.Close();
             }
         }
-
-        private void Set_Theme()
-        {
-            if(Properties.Settings.Default.Theme == "Dark")
-            {
-                T_Background = System.Windows.Media.Brushes.Black;
-                T_Foreground = System.Windows.Media.Brushes.White;
-
-                T_Border = System.Windows.Media.Brushes.White;
-            }
-
-            Background = T_Background;
-            Foreground = T_Foreground;
-
-            foreach(TextBox x in FindVisualChildren<TextBox>(this))
-            {
-                x.Foreground = T_Foreground;
-                x.Background = T_Background;
-                x.BorderBrush = T_Border;
-            }
-
-            foreach (ListBox x in FindVisualChildren<ListBox>(this))
-            {
-                x.Foreground = T_Foreground;
-                x.Background = T_Background;
-                x.BorderBrush = T_Border;
-            }
-
-            foreach (TabControl x in FindVisualChildren<TabControl>(this))
-            {
-                x.Foreground = T_Foreground;
-                x.Background = T_Background;
-                x.BorderBrush = T_Border;
-            }
-
-            foreach (Label x in FindVisualChildren<Label>(this))
-            {
-                x.Foreground = T_Foreground;
-                x.Background = T_Background;
-                x.BorderBrush = T_Border;
-            }
-
-            foreach (TextBlock x in FindVisualChildren<TextBlock>(this))
-            {
-                if(x.Parent != null && x.Parent.GetType() != typeof(Button))
-                {
-                    x.Foreground = T_Foreground;
-                    x.Background = T_Background;
-                }
-            }
-        }
-
+        
         private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
